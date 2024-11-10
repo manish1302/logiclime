@@ -75,6 +75,7 @@
 
 .login-opp-text {
   color: #585565;
+  cursor: pointer;
 }
 
 .social-login-box {
@@ -100,4 +101,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+
+.container {
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-main);
 }

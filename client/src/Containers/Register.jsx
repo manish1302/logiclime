@@ -4,6 +4,7 @@ import { registerRequest } from "../Endpoints/Auth";
 import leftMain from "../assets/leftMain.jpg";
 import google from "../assets/google.png";
 import apple from "../assets/apple-logo.png";
+import DropdownComp from "../Components/Dropdown";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ const Register = () => {
     const payload = {
       firstName: values.firstName,
       secondName: values.secondName,
-      userName: values.userName,
+      role: values.role,
       email: values.email,
       password: values.password,
     };
@@ -42,6 +43,7 @@ const Register = () => {
               lastName: "",
               email: "",
               password: "",
+              role: "Student",
             }}
             validate={(values) => {
               const errors = {};
@@ -52,7 +54,14 @@ const Register = () => {
               OnFormSubmit(values);
             }}
           >
-            {({ values, errors, touched, handleChange, handleSubmit }) => (
+            {({
+              values,
+              setFieldValue,
+              errors,
+              touched,
+              handleChange,
+              handleSubmit,
+            }) => (
               <Form onSubmit={handleSubmit} className="login-form">
                 <div className="names-field">
                   <Field
@@ -73,13 +82,12 @@ const Register = () => {
                     className="login-fields"
                   />
                 </div>
-                <Field
-                  name="userName"
-                  type="text"
-                  value={values.userName}
-                  onChange={handleChange}
-                  placeholder="user Name"
+                <DropdownComp
                   className="login-fields"
+                  setFieldValue={setFieldValue}
+                  values={values}
+                  fieldName="role"
+                  items = {["Educator", "Student"]}
                 />
                 <Field
                   name="email"

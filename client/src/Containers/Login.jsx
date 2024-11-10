@@ -12,7 +12,6 @@ const Login = () => {
     loginRequest(values)
       .then((res) => {
         if (res.status == 200) {
-          localStorage.setItem("logiclimetoken", res.data.token);
           navigate("/dashboard");
         }
       })
@@ -74,7 +73,7 @@ const Login = () => {
                     Apple
                   </button>
                 </div>
-                <u className="login-opp-text">New here? Register</u>
+                <u className="login-opp-text" onClick={() => navigate('/register')}>New here? Register</u>
               </Form>
             )}
           </Formik>

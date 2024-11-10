@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const createUser = async (req, res) => {
-  const { firstName, secondName, userName, email, password } = req.body;
+  const { firstName, secondName, email, password, role } = req.body;
 
   try {
     const alreadyExists = await UserModel.find({ email: email });
@@ -18,9 +18,9 @@ const createUser = async (req, res) => {
     const newUser = new UserModel({
       firstName,
       secondName,
-      userName,
       email,
       password: hashedPassword,
+      role,
     });
 
     const createdUser = await newUser.save();
@@ -40,10 +40,7 @@ const login = async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    const passwordMatch = await bcrypt.compare(
-      password,
-      userExists?.password
-    );
+    const passwordMatch = await bcrypt.compare(password, userExists?.password);
 
     if (!passwordMatch) {
       res.status(401).json({ error: "Wrong Password" });
@@ -57,9 +54,16 @@ const login = async (req, res) => {
       }
     );
 
-    res.status(200).json({token})
+    res.cookie("logiclimetoken", token, {
+      httpOnly: false,
+      secure: true, // process.env.NODE_ENV === "production", // Only over HTTPS in production
+      sameSite: "None", // or "None" for cross-origin
+      // maxAge: 100 * 60 * 60 * 1000, // Expiration in milliseconds
+    });
+
+    res.status(200).json({ message: "login successful" });
   } catch (error) {
-    res.status(500).json({error : "Internal server error"});
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -87,5 +91,5 @@ module.exports = {
   createUser,
   getAllUsers,
   createDummyUser,
-  login
+  login,
 };

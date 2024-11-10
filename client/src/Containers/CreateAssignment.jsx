@@ -1,35 +1,12 @@
 import { Field, Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
-import { createClassroom, getClassroomsById } from "../Endpoints/Classroom";
-import { useEffect, useState } from "react";
 
-const Dashboard = () => {
+const CreateAssignment = () => {
   const navigate = useNavigate();
-  const [classes, setClasses] = useState([]);
 
-  useEffect(() => {
-    getClassroomsById().then((res) => {
-      console.log(res, "manih")
-      setClasses(res.data.classrooms);
-    }).catch(err => console.log(err));
-  }, [])
-
-  const OnFormSubmit = (values) => {
-    const payload = values;
-    console.log(values);
-    createClassroom(payload)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-
+  const OnFormSubmit = () => {};
   return (
     <div>
-      CreateClassroom
       <Formik
         initialValues={{
           Name: "",
@@ -76,16 +53,8 @@ const Dashboard = () => {
           </Form>
         )}
       </Formik>
-
-      {classes.map((item, id) => (
-        <div onClick={() => {
-          navigate(`/classroom/${item._id}`)
-        }} style={{color : "red"}} key = {id}>
-          {item.name} - {item.description}
-        </div>
-      ))}
     </div>
   );
 };
 
-export default Dashboard;
+export default CreateAssignment;

@@ -6,19 +6,20 @@ const apiInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials : true,
 });
 
-// Add a request interceptor to include the token automatically
-apiInstance.interceptors.request.use(
-  (config) => {
-    // Get the token from localStorage
-    const token = localStorage.getItem("logiclimetoken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+// // Add a request interceptor to include the token automatically
+// apiInstance.interceptors.request.use(
+//   (config) => {
+//     // Get the token from localStorage
+//     const token = localStorage.getItem("logiclimetoken");
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   (error) => Promise.reject(error)
+// );
 
 export default apiInstance;

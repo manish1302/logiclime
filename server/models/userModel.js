@@ -8,10 +8,6 @@ const userSchema = mongoose.Schema(
     secondName: {
       type: String,
     },
-    userName: {
-      type: String,
-      Unique : true,
-    },
     email: {
       type: String,
       Unique : true,
@@ -21,7 +17,7 @@ const userSchema = mongoose.Schema(
     },
     role : {
       type : String,
-      enum : ["Admin", "User"],
+      enum : ["Educator", "Student"],
       default : "User",
     }
   },

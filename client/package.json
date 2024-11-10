@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.1",
+    "@nextui-org/dropdown": "^2.1.31",
     "antd": "^5.21.6",
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",

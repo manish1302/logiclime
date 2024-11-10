@@ -5,7 +5,7 @@ export function loginRequest(payload) {
 }
 
 export function getAllUsers() {
-    return apiInstance.get('/');
+    return apiInstance.get('/getAllUsers');
 }
 
 export function registerRequest(payload) {
