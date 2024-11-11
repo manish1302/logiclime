@@ -1,12 +1,17 @@
+import { Modal } from "antd";
 import { Field, Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 
-const CreateAssignment = () => {
+const CreateAssignment = ({ isModalOpen, handleOk, handleCancel }) => {
   const navigate = useNavigate();
-
   const OnFormSubmit = () => {};
   return (
-    <div>
+    <Modal
+      title="Create assignment"
+      open={isModalOpen}
+      onOk={handleOk}
+      onCancel={handleCancel}
+    >
       <Formik
         initialValues={{
           Name: "",
@@ -24,17 +29,25 @@ const CreateAssignment = () => {
         {({ values, errors, touched, handleChange, handleSubmit }) => (
           <Form onSubmit={handleSubmit} className="login-form">
             <Field
-              name="Name"
+              name="title"
               type="text"
-              value={values.Name}
+              value={values.title}
               onChange={handleChange}
-              placeholder="Name"
+              placeholder="Title"
               className="login-fields"
             />
             <Field
-              name="Description"
+              name="description"
               type="text"
-              value={values.Description}
+              value={values.description}
+              onChange={handleChange}
+              placeholder="Description"
+              className="login-fields"
+            />
+            <Field
+              name="url"
+              type="text"
+              value={values.url}
               onChange={handleChange}
               placeholder="Description"
               className="login-fields"
@@ -53,7 +66,7 @@ const CreateAssignment = () => {
           </Form>
         )}
       </Formik>
-    </div>
+    </Modal>
   );
 };
 
