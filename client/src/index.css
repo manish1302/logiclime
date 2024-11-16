@@ -10,4 +10,6 @@ font-family: "Poppins", sans-serif;
    
 @import "./Styles/Login.scss";
 @import "./Variable.scss";
-@import './Styles/DropDown.scss'
+@import './Styles/DropDown.scss';
+@import './Styles/Home.scss';
+@import './Styles/Common.scss';

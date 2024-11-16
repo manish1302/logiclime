@@ -13,7 +13,7 @@ connectDB();
 const app = express();
 app.use(
   cors({
-    origin: "http://127.0.0.1:5173", // Replace with your frontend origin
+    origin: "http://localhost:5173", // Replace with your frontend origin
     credentials: true, // Allow credentials (cookies) to be sent
   })
 );

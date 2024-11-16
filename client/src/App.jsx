@@ -4,21 +4,21 @@ import Home from "./Containers/Home";
 import Register from "./Containers/Register";
 import Dashboard from "./Containers/Dashboard";
 import Classroom from "./Containers/Classroom";
+import Navbar from "./Components/Navbar";
 
 const App = () => {
   return (
-    <div style={{height : '100vh', width: "100vw"}}>
-      {/* <SideMenuLayout> */}
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path = "/register" element = {<Register />} />
-            <Route path = "/dashboard" element = {<Dashboard />} />
-            <Route path = "/classroom/:classroomId" element = {<Classroom />} />
-          </Routes>
-        </BrowserRouter>
-      {/* </SideMenuLayout> */}
+    <div style={{ height: '100vh', width: "100vw" }}>
+      <Navbar />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/home" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/classroom/:classroomId" element={<Classroom />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 };
