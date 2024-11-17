@@ -2,7 +2,43 @@ import coding from '../assets/coding.png'
 import realtime from '../assets/real-time.png'
 import videoChat from '../assets/video-call.png'
 import settings from '../assets/settings.png'
+import React, { useEffect, useState } from 'react';
+import ClassroomModal from '../Components/ClassroomModal';
+import { createClassroom, getClassroomsById } from '../Endpoints/Classroom';
+import Classroom from './Classroom';
 const Home = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [classroom, setClassroom] = useState(null);
+
+  // useEffect(() => {
+  //   getClassroomsById().then(res => {
+  //     console.log(res, "coderes")
+  //     setClassroom(res.data.classrooms);
+  //   }).catch((err) => {
+  //     console.log(err);
+  //   })
+  // }, [])
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleFormSubmit = (values) => {
+    const payload = {
+      Name: values.title,
+      Description: values.description
+    }
+
+    createClassroom(payload).then((res) => {
+      setClassroom(res.data.classroom);
+    }).catch((err) => {
+      console.log(err);
+    })
+  };
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+
   return (
     <div className="home-container">
       <div className="create-meet-container">
@@ -12,11 +48,12 @@ const Home = () => {
             Create, teach, and collaborate with your students in an interactive coding environment.
           </p>
           <div className="create-input">
-            <div className="create-button">Create a Class</div> &nbsp; &nbsp;
+            <div className="create-button" onClick={showModal}>Create a Class</div> &nbsp; &nbsp;
             <input type="text" placeholder="Enter code to join" />
           </div>
         </div>
       </div>
+      <ClassroomModal classCode={classroom?.classCode} setClassroom = {setClassroom} setIsModalOpen = {setIsModalOpen} set isModalOpen={isModalOpen} handleCancel={handleCancel} handleFormSubmit={handleFormSubmit} />
       <div className="create-meet-image">
         <div className="feature-content">
           <div className="feature-title">What We Offer<div className="feature-title-desc">Explore the key features that make teaching and learning code easier, faster, and more interactive.</div></div>

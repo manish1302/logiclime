@@ -1,0 +1,26 @@
+.code-meet-container {
+    height: 93vh;
+    color: black;
+    display: flex;
+    flex-grow: 0;
+    flex-direction: column;
+    margin: 0 32px;
+}
+
+.code-copy {
+    align-self: flex-start;
+    height: 100%;
+
+}
+
+.code-meet-header {
+    width: 100%;
+    height: 5vh;
+    display: flex;
+    align-items: center;
+    .code-meet-heading {
+        font-weight: 600;
+        font-size: 20px;
+        margin-right: 16px;
+    }
+}

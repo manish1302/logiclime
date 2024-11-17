@@ -16,6 +16,14 @@
   gap: 16px;
 }
 
+.classroom-form {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 32px;
+}
+
 .login-fields {
   border: none;
   background-color: var(--bg-secondary);

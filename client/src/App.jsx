@@ -5,6 +5,7 @@ import Register from "./Containers/Register";
 import Dashboard from "./Containers/Dashboard";
 import Classroom from "./Containers/Classroom";
 import Navbar from "./Components/Navbar";
+import CodeMeet from "./Containers/CodeMeet";
 
 const App = () => {
   return (
@@ -16,7 +17,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/classroom/:classroomId" element={<Classroom />} />
+          <Route path="/classroom/:classCode" element={<CodeMeet />} />
         </Routes>
       </BrowserRouter>
     </div>

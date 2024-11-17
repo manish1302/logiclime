@@ -178,3 +178,38 @@
     }
 }
 
+.create-class-cancel {
+    font-size: 16px;
+    color: grey;
+    border: none;
+    background: none;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.create-class-create {
+    font-size: 16px;
+    color: white;
+    border: none;
+    background: #b19cd9;
+    border-radius: 8px;
+    padding: 4px 10px;
+    cursor: pointer;
+}
+
+.classroom-fields {
+    background-color: white;
+    border: none;
+    border-bottom: 1px solid grey;
+    padding: 8px 16px;
+    width: 100%;
+}
+
+.classroom-fields:focus {
+    outline: none;
+}
+
+.class-link {
+    font-size: 12px;
+    font-weight: 500;
+}

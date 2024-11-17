@@ -3,8 +3,16 @@ const ClassroomModel = require("../models/ClassroomModel");
 const createClassroom = async (req, res) => {
     const { Name, Description } = req.body;
     try {
-        const classCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-        console.log(classCode);
+        var classCode;
+
+        while(true) {
+            classCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+            let found = await ClassroomModel.find({classCode}); 
+            if(found?.length == 0) {
+                break;
+            }
+        }
+
         const newClassroom = new ClassroomModel({
             educator : req.user.userId,
             name : Name, 
@@ -27,8 +35,8 @@ const createClassroom = async (req, res) => {
 
 const getClassroomsById = async (req, res) => {
     const educatorId = req.user.userId;
-    const Classrooms = await ClassroomModel.find({educator : educatorId});
-    res.status(200).json({success: true, classrooms : Classrooms});
+    const Classroom = await ClassroomModel.findOne({educator : educatorId});
+    res.status(200).json({success: true, classrooms : Classroom});
 }
 
 module.exports = {
