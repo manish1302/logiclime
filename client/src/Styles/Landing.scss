@@ -1,0 +1,183 @@
+.landing-container {
+  width: 100vw;
+  height: 93vh;
+  color: black;
+  overflow-y: scroll;
+  box-sizing: border-box;
+  align-items: center;
+
+  .landing-box {
+    width: 100%;
+    height: 83vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 100px;
+    box-sizing: border-box;
+  }
+
+  .text-section {
+    width: 50%;
+    text-align: center;
+  }
+
+  .main-heading {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+
+  .sub-heading {
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+  }
+
+  .description {
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+    color: #555;
+  }
+
+  .cta-button {
+    padding: 9px 20px;
+    font-size: 1.1rem;
+    background-color: #b19cd9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: 1px solid #b19cd9;
+  }
+
+  .cta-button:hover {
+    border: 1px solid #b19cd9;
+    background-color: white;
+    color: #b19cd9;
+    font-weight: 600;
+  }
+
+  .image-section {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .product-image {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .banner-section {
+    width: 100%;
+    background-color: rgba(177, 156, 217, 0.3);
+    padding: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+  }
+
+  .banner-content {
+    display: flex;
+    justify-content: space-between;
+    width: 60%;
+    gap: 20px;
+  }
+
+  .company-logo {
+    height: 60px;
+    width: auto;
+    margin: 0 32px;
+  }
+
+  .features {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 80vh;
+  }
+
+  .features-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 32px;
+
+    .f-heading {
+      font-size: 3rem;
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+
+    .f-desc {
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+    }
+  }
+
+  .features-content {
+    width: 60%;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .feature-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 30%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .feature-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+
+  .feature-card p {
+    font-size: 0.8rem;
+    color: #555;
+  }
+}
+
+
+.Aboutus {
+  padding: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 80vh;
+  background-color: rgba(177, 156, 217, 0.3);
+
+  .About-heading {
+    font-size: 3rem;
+    font-weight: bold;
+  }
+
+  .About-desc {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  
+  .aboutus-content {
+    width: 60%;
+    display: flex;
+    justify-content: center;  
+  }
+
+  .about-img {
+    filter: grayscale(60%);
+  }
+
+  .About-header {
+    margin-left: 40px;
+  }
+}

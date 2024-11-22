@@ -10,7 +10,6 @@
 .code-copy {
     align-self: flex-start;
     height: 100%;
-
 }
 
 .code-meet-header {
@@ -18,6 +17,7 @@
     height: 5vh;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     .code-meet-heading {
         font-weight: 600;
         font-size: 20px;

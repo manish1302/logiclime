@@ -6,6 +6,7 @@ import Dashboard from "./Containers/Dashboard";
 import Classroom from "./Containers/Classroom";
 import Navbar from "./Components/Navbar";
 import CodeMeet from "./Containers/CodeMeet";
+import Landingpage from "./Containers/Landingpage";
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/home" element={<Home />} />
+          <Route path="/" element={<Landingpage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />

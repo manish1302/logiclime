@@ -4,15 +4,17 @@ import { useNavigate } from "react-router-dom";
 import { loginRequest } from "../Endpoints/Auth";
 import google from "../assets/google.png";
 import apple from "../assets/apple-logo.png";
-import leftMain from '../assets/leftMain.jpg'
+import leftMain from "../assets/leftMain.jpg";
 
 const Login = () => {
   const navigate = useNavigate();
   const OnFormSubmit = (values) => {
     loginRequest(values)
       .then((res) => {
+        localStorage.setItem("userId", res.userId);
+        localStorage.setItem("email", res.email);
         if (res.status == 200) {
-          navigate("/dashboard");
+          navigate("/home");
         }
       })
       .catch((err) => {
@@ -73,7 +75,12 @@ const Login = () => {
                     Apple
                   </button>
                 </div>
-                <u className="login-opp-text" onClick={() => navigate('/register')}>New here? Register</u>
+                <u
+                  className="login-opp-text"
+                  onClick={() => navigate("/register")}
+                >
+                  New here? Register
+                </u>
               </Form>
             )}
           </Formik>

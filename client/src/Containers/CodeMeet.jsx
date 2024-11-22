@@ -1,10 +1,18 @@
 import { CopyOutlined } from "@ant-design/icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { getClassroomByCode } from "../Endpoints/Classroom";
 
 const CodeMeet = () => {
   const { classCode } = useParams();
   const [copied, setCopied] = useState(null);
+  const [classroomData, setClassroomData] = useState({});
+
+  useEffect(() => {
+    getClassroomByCode(classCode).then((res) => {
+      setClassroomData(res.data.classroom);
+    });
+  }, []);
 
   const handleCopy = () => {
     if (classCode) {
@@ -21,31 +29,36 @@ const CodeMeet = () => {
   return (
     <div className="code-meet-container">
       <div className="code-meet-header">
-        <div className="code-meet-heading">Code Meet</div> &nbsp;&nbsp;
-        <div className="d-flex align-items-center code-copy">
-          <pre
-            style={{
-              padding: "2px 10px",
-              backgroundColor: "#f4f4f4",
-              borderRadius: "5px",
-              width: "fit-content",
-              marginRight: "8px",
-            }}
-          >
-            <code>{classCode}</code>
-          </pre>{" "}
-          {copied ? (
-            <div style={{ color: "grey" }}>Copied!</div>
-          ) : (
-            <CopyOutlined
-              className="cursor-pointer"
-              style={{ color: "grey" }}
-              onClick={handleCopy}
-            />
-          )}
+        <div className="d-flex align-items-center">
+          <div className="code-meet-heading">{classroomData.name}</div>
+          <div className="d-flex align-items-center code-copy">
+            <pre
+              style={{
+                padding: "2px 10px",
+                backgroundColor: "#f4f4f4",
+                borderRadius: "5px",
+                width: "fit-content",
+                marginRight: "8px",
+              }}
+            >
+              <code>{classCode}</code>
+            </pre>{" "}
+            {copied ? (
+              <div style={{ color: "grey" }}>Copied!</div>
+            ) : (
+              <CopyOutlined
+                className="cursor-pointer"
+                style={{ color: "grey" }}
+                onClick={handleCopy}
+              />
+            )}
+          </div>
+        </div>
+        <div className="d-flex align-items-center">
+          <h4>Educator</h4> : Manish patil
         </div>
       </div>
-      <div className="">description</div>
+      <div className="">{classroomData.description}</div>
     </div>
   );
 };

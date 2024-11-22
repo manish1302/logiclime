@@ -7,3 +7,11 @@ export function createClassroom(payload) {
 export function getClassroomsById() {
   return apiInstance.get("/getAllClassroomsById");
 }
+
+export function getClassroomByCode(code) {
+  return apiInstance.get("/getClassroomByCode", {
+    params: {
+      classCode: code,
+    },
+  });
+}

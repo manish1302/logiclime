@@ -39,7 +39,15 @@ const getClassroomsById = async (req, res) => {
     res.status(200).json({success: true, classrooms : Classroom});
 }
 
+const getClassroomByCode = async (req, res) => {
+    const classCode = req.query.classCode;
+    const Classroom = await ClassroomModel.findOne({classCode});
+    res.status(200).json({success : true, classroom: Classroom});
+}
+
+
 module.exports = {
     createClassroom,
-    getClassroomsById
+    getClassroomsById,
+    getClassroomByCode
 }

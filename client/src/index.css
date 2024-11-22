@@ -14,3 +14,5 @@ font-family: "Poppins", sans-serif;
 @import './Styles/Home.scss';
 @import './Styles/Common.scss';
 @import "./Styles/Codemeet.scss";
+@import "./Styles//Landing.scss";
+@import "./Styles/Contact.scss";
