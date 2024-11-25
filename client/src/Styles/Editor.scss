@@ -1,0 +1,32 @@
+.code-and-compile {
+    display: flex;
+    width: 90vw;
+}
+
+.code-editor-box {
+    width: 60%;
+    margin-right: 16px;
+}
+
+.output-box {
+    width: 30%;
+}
+
+.run-code {
+    border: 1px solid #00CC00;
+    padding: 5px 16px;
+    background-color: white;
+    border-radius: 8px;
+    margin: 16px 0;
+}
+
+.run-code:hover{
+    border: 1px solid #00CC00;
+    background-color: #00CC00;
+}
+
+.output {
+    border: 1px solid lightgray;
+    height: 75vh;
+    padding: 16px;
+}
