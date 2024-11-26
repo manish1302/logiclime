@@ -57,7 +57,6 @@ const login = async (req, res) => {
       }
     );
 
-
     res.cookie("logiclimetoken", token, {
       httpOnly: false,
       secure: true, // process.env.NODE_ENV === "production", // Only over HTTPS in production
@@ -65,7 +64,15 @@ const login = async (req, res) => {
       // maxAge: 100 * 60 * 60 * 1000, // Expiration in milliseconds
     });
 
-    res.status(200).json({ userId : userExists?._id, emaild : userExists?.email, message: "login successful" });
+    res
+      .status(200)
+      .json({
+        token: token,
+        userId: userExists?._id,
+        emaild: userExists?.email,
+        userRole : userExists?.role,
+        message: "login successful",
+      });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }

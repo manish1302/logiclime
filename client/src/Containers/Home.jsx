@@ -11,27 +11,44 @@ import {
 } from "../Endpoints/Classroom";
 import Classroom from "./Classroom";
 import { useNavigate } from "react-router-dom";
+import { isTokenExpired } from "../Helpers";
+import { SmileOutlined } from "@ant-design/icons";
+import { Button, notification } from "antd";
+
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [classroom, setClassroom] = useState(null);
   const [code, setCode] = useState("");
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   getClassroomsById().then(res => {
-  //     console.log(res, "coderes")
-  //     setClassroom(res.data.classrooms);
-  //   }).catch((err) => {
-  //     console.log(err);
-  //   })
-  // }, [])
+  const [api, contextHolder] = notification.useNotification();
+  const openNotification = () => {
+    api.open({
+      message: "Only Educators can create a class",
+      description: "Change your role to an Educator",
+      icon: (
+        <SmileOutlined
+          style={{
+            color: "#108ee9",
+          }}
+        />
+      ),
+    });
+  };
 
   const showModal = () => {
-    if (!localStorage.getItem("userId")) {
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("role");
+    if (!token) {
       navigate("/login");
       return;
     }
-    setIsModalOpen(true);
+    console.log(userRole, userRole == "Educator", "lelrole")
+    if (userRole == "Educator") {
+      setIsModalOpen(true);
+    } else {
+      openNotification();
+    }
   };
   const handleFormSubmit = (values) => {
     const payload = {
@@ -60,7 +77,7 @@ const Home = () => {
         }
       })
       .catch((err) => {
-        if(err.status == 401) {
+        if (err.status == 401) {
           navigate("/login");
         }
       });
@@ -68,6 +85,7 @@ const Home = () => {
 
   return (
     <div className="home-container">
+      {contextHolder}
       <div className="create-meet-container">
         <div className="heading-container">
           <div className="heading">Real-Time Coding Classes for Everyone</div>

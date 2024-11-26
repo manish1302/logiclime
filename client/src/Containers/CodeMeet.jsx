@@ -7,28 +7,14 @@ import { CODE_SNIPPETS, LANGUAGE_VERSIONS, LANGUAGES } from "../constants";
 import { Button } from "antd";
 import { Editor } from "@monaco-editor/react";
 import Output from "../Components/Output";
+import AssignmentModal from "../Components/AssignmentModal";
+import AssignmentCard from "../Components/AssignmentCard";
 
 const CodeMeet = () => {
   const { classCode } = useParams();
   const [copied, setCopied] = useState(null);
   const [classroomData, setClassroomData] = useState({});
-  const [language, setLanguage] = useState(1); // this is the id of that language
-  const [codeSnippet, setCodeSnippet] = useState(
-    Object.entries(CODE_SNIPPETS)[0][1]
-  );
-  const [value, setValue] = useState("");
-  const editorRef = useRef(null);
-
-  const languagesVersions = Object.entries(LANGUAGE_VERSIONS);
-
-  const onMount = (editor) => {
-    editorRef.current = editor;
-    editor.focus();
-  };
-
-  useEffect(() => {
-    setValue(codeSnippet);
-  }, [codeSnippet]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     getClassroomByCode(classCode).then((res) => {
@@ -48,12 +34,99 @@ const CodeMeet = () => {
     }
   };
 
-  const onSelectChange = (value) => {
-    setLanguage(value);
-    setCodeSnippet(Object.entries(CODE_SNIPPETS)[value - 1][1]);
+  const showModal = () => {
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("role");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    console.log(userRole, userRole == "Educator", "lelrole");
+    if (userRole == "Educator") {
+      setIsModalOpen(true);
+    } else {
+      openNotification();
+    }
   };
 
-  const runCode = () => {};
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleFormSubmit = (values) => {
+    console.log(values, "logg");
+  };
+
+  const assignments = [
+    {
+      id: 1,
+      title: "Reverse a Linked List",
+      difficulty: "Easy",
+      tags: "Linked List, Data Structures",
+    },
+    {
+      id: 2,
+      title: "Dynamic Programming - Knapsack Problem",
+      difficulty: "Medium",
+      tags: "Dynamic Programming, Optimization",
+    },
+    {
+      id: 3,
+      title: "Graph Traversal Optimization",
+      difficulty: "Hard",
+      tags: "Graphs, Algorithms",
+    },
+    {
+      id: 3,
+      title: "Graph Traversal Optimization",
+      difficulty: "Hard",
+      tags: "Graphs, Algorithms",
+    },
+    {
+      id: 3,
+      title: "Graph Traversal Optimization",
+      difficulty: "Hard",
+      tags: "Graphs, Algorithms",
+    },
+    {
+      id: 1,
+      title: "Reverse a Linked List",
+      difficulty: "Easy",
+      tags: "Linked List, Data Structures",
+    },
+    {
+      id: 2,
+      title: "Dynamic Programming - Knapsack Problem",
+      difficulty: "Medium",
+      tags: "Dynamic Programming, Optimization",
+    },
+    {
+      id: 3,
+      title: "Graph Traversal Optimization",
+      difficulty: "Hard",
+      tags: "Graphs, Algorithms",
+    },
+    {
+      id: 3,
+      title: "Graph Traversal Optimization",
+      difficulty: "Hard",
+      tags: "Graphs, Algorithms",
+    },
+    {
+      id: 3,
+      title: "Graph Traversal Optimization",
+      difficulty: "Hard",
+      tags: "Graphs, Algorithms",
+    },
+    // Add more assignments as needed
+  ];
+
+  const handleSolve = (assignmentId) => {
+    // Handle navigation or any other logic when Solve is clicked
+    console.log(`Solve assignment with ID: ${assignmentId}`);
+    // For example, navigate to the solve page
+    // history.push(`/solve/${assignmentId}`);
+  };
 
   return (
     <div className="code-meet-container">
@@ -68,6 +141,8 @@ const CodeMeet = () => {
                 borderRadius: "5px",
                 width: "fit-content",
                 marginRight: "8px",
+                marginBottom: 0,
+                marginTop: "2px",
               }}
             >
               <code>{classCode}</code>
@@ -84,33 +159,47 @@ const CodeMeet = () => {
           </div>
         </div>
         <div className="d-flex align-items-center">
-          <h4>Educator</h4> : Manish patil
+          <div className="educator-heading text-muted">Educator: </div>&nbsp;
+          <div className="educator-heading"> Manish patil</div>
         </div>
       </div>
-      <div className="">{classroomData.description}</div>
-      <div className="code-and-compile">
-        <div className="code-editor-box">
-          <div>
-            <LanguageMenu onSelectChange={onSelectChange} language={language} />
-          </div>
-          <div>
-            <Editor
-              height={"75vh"}
-              theme="vs-dark"
-              language={LANGUAGES[language - 1]}
-              defaultValue={"//code here"}
-              value={value}
-              onChange={(data) => {
-                setValue(data);
-              }}
-              onMount={onMount}
-            />
-          </div>
-        </div>
-        <div className="output-box">
-          <Output editorRef = {editorRef} language = {LANGUAGES[language - 1]} />
-        </div>
+      <div className="code-meet-desc">{classroomData.description}</div>
+      <div className="code-meet-create-assign">
+        <div className="assignments-heading">Assignments</div>
+        <button
+          className="create-button"
+          onClick={() => {
+            setIsModalOpen(true);
+          }}
+        >
+          + Create assignment
+        </button>
       </div>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+          padding: "24px",
+          backgroundColor: "#f0f2f5",
+        }}
+      >
+        {assignments.map((assignment) => (
+          <AssignmentCard
+            key={assignment.id}
+            title={assignment.title}
+            difficulty={assignment.difficulty}
+            tags={assignment.tags}
+            onSolve={() => handleSolve(assignment.id)}
+          />
+        ))}
+      </div>
+      <AssignmentModal
+        setIsModalOpen={setIsModalOpen}
+        isModalOpen={isModalOpen}
+        handleCancel={handleCancel}
+        handleFormSubmit={handleFormSubmit}
+      />
     </div>
   );
 };
