@@ -71,7 +71,6 @@ const Home = () => {
   const handleJoin = () => {
     getClassroomByCode(code)
       .then((res) => {
-        console.log("reseafeft");
         if (res.status == 200) {
           navigate(`/classroom/${code}`);
         }

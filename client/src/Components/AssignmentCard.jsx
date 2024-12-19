@@ -37,7 +37,7 @@ const AssignmentCard = ({
 
       <div style={{ margin: "8px 0" }}>
         {tags &&
-          tags.split(",").map((tag) => (
+          tags?.map((tag) => (
             <Tag key={tag.trim()} color="blue" style={{ marginBottom: "4px" }}>
               {tag.trim()}
             </Tag>

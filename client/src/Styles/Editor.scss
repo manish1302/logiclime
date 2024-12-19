@@ -1,6 +1,7 @@
 .code-and-compile {
     display: flex;
     width: 90vw;
+    margin: 0 16px;
 }
 
 .code-editor-box {
@@ -27,6 +28,21 @@
 
 .output {
     border: 1px solid lightgray;
+    height: 25vh;
+    padding: 16px;
+}
+
+.error-output {
+    border: 1px solid red;
     height: 75vh;
     padding: 16px;
+    color: red;
+}
+
+.problem-desc {
+    border: 1px solid lightgray;
+    height: 47vh;
+    padding: 16px;
+    margin-bottom: 20px;
+    overflow-y: auto;
 }

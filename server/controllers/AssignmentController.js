@@ -41,10 +41,13 @@ const saveAssignment = async (req, res) => {
 };
 
 const getAssignments = async (req, res) => {
-    const {classCode} = req.body;
-    console.log(classCode)
+    const {classCode} = req.query;
     try {
-        AssignmentModel.find({classCode : classCode})
+        const Assignments = await AssignmentModel.find({classCode : classCode})
+        res.status(200).json({
+          success : true,
+          message : Assignments
+        })
     } catch (error) {
         res.status(500).json({
             success : false,
@@ -53,7 +56,22 @@ const getAssignments = async (req, res) => {
     }
 }
 
+const getAssignmentById = async (req, res) => {
+  const {Id} = req.query
+  try {
+    const assignment = await AssignmentModel.findOne({ _id: Id });
+
+      res.status(200).json({
+        success : true,
+        message : assignment
+      })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 module.exports = {
     saveAssignment,
-    getAssignments
+    getAssignments,
+    getAssignmentById
 }

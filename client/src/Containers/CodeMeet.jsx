@@ -9,17 +9,28 @@ import { Editor } from "@monaco-editor/react";
 import Output from "../Components/Output";
 import AssignmentModal from "../Components/AssignmentModal";
 import AssignmentCard from "../Components/AssignmentCard";
+import { getAssignmentsByClassCode, saveAssignments } from "../Endpoints/Assignment";
 
 const CodeMeet = () => {
   const { classCode } = useParams();
   const [copied, setCopied] = useState(null);
   const [classroomData, setClassroomData] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalKey, setModalKey] = React.useState(0);
+  const [assignments, setAssignments] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getClassroomByCode(classCode).then((res) => {
       setClassroomData(res.data.classroom);
+      console.log(res.data.classroom)
     });
+
+    getAssignmentsByClassCode(classCode).then(res => {
+      setAssignments(res.data.message);
+    }).catch((err) => {
+      console.log(err);
+    })
   }, []);
 
   const handleCopy = () => {
@@ -50,89 +61,38 @@ const CodeMeet = () => {
   };
 
   const handleCancel = () => {
+    setModalKey((prevKey) => prevKey + 1);
     setIsModalOpen(false);
   };
 
   const handleFormSubmit = (values) => {
-    console.log(values, "logg");
+    const payload = {
+      ...values,
+      classCode : classCode
+    }
+    setModalKey((prevKey) => prevKey + 1);
+    setIsModalOpen(false);
+    saveAssignments(payload)
+    .then((res) => {
+      setAssignments([...assignments, res.data.message]);
+    })
+    .catch((err) => {
+      console.log(err, "errr");
+    });
+    console.log(payload, "manish")
   };
 
-  const assignments = [
-    {
-      id: 1,
-      title: "Reverse a Linked List",
-      difficulty: "Easy",
-      tags: "Linked List, Data Structures",
-    },
-    {
-      id: 2,
-      title: "Dynamic Programming - Knapsack Problem",
-      difficulty: "Medium",
-      tags: "Dynamic Programming, Optimization",
-    },
-    {
-      id: 3,
-      title: "Graph Traversal Optimization",
-      difficulty: "Hard",
-      tags: "Graphs, Algorithms",
-    },
-    {
-      id: 3,
-      title: "Graph Traversal Optimization",
-      difficulty: "Hard",
-      tags: "Graphs, Algorithms",
-    },
-    {
-      id: 3,
-      title: "Graph Traversal Optimization",
-      difficulty: "Hard",
-      tags: "Graphs, Algorithms",
-    },
-    {
-      id: 1,
-      title: "Reverse a Linked List",
-      difficulty: "Easy",
-      tags: "Linked List, Data Structures",
-    },
-    {
-      id: 2,
-      title: "Dynamic Programming - Knapsack Problem",
-      difficulty: "Medium",
-      tags: "Dynamic Programming, Optimization",
-    },
-    {
-      id: 3,
-      title: "Graph Traversal Optimization",
-      difficulty: "Hard",
-      tags: "Graphs, Algorithms",
-    },
-    {
-      id: 3,
-      title: "Graph Traversal Optimization",
-      difficulty: "Hard",
-      tags: "Graphs, Algorithms",
-    },
-    {
-      id: 3,
-      title: "Graph Traversal Optimization",
-      difficulty: "Hard",
-      tags: "Graphs, Algorithms",
-    },
-    // Add more assignments as needed
-  ];
+
 
   const handleSolve = (assignmentId) => {
-    // Handle navigation or any other logic when Solve is clicked
-    console.log(`Solve assignment with ID: ${assignmentId}`);
-    // For example, navigate to the solve page
-    // history.push(`/solve/${assignmentId}`);
+    navigate(`/classroom/${classCode}/${assignmentId}`);
   };
 
   return (
     <div className="code-meet-container">
       <div className="code-meet-header">
         <div className="d-flex align-items-center">
-          <div className="code-meet-heading">{classroomData.name}</div>
+          <div className="code-meet-heading">{classroomData?.name}</div>
           <div className="d-flex align-items-center code-copy">
             <pre
               style={{
@@ -163,12 +123,13 @@ const CodeMeet = () => {
           <div className="educator-heading"> Manish patil</div>
         </div>
       </div>
-      <div className="code-meet-desc">{classroomData.description}</div>
+      <div className="code-meet-desc">{classroomData?.description}</div>
       <div className="code-meet-create-assign">
         <div className="assignments-heading">Assignments</div>
         <button
           className="create-button"
           onClick={() => {
+            setModalKey((prevKey) => prevKey + 1);
             setIsModalOpen(true);
           }}
         >
@@ -186,11 +147,11 @@ const CodeMeet = () => {
       >
         {assignments.map((assignment) => (
           <AssignmentCard
-            key={assignment.id}
+            key={assignment._id}
             title={assignment.title}
             difficulty={assignment.difficulty}
             tags={assignment.tags}
-            onSolve={() => handleSolve(assignment.id)}
+            onSolve={() => handleSolve(assignment._id)}
           />
         ))}
       </div>
@@ -199,6 +160,7 @@ const CodeMeet = () => {
         isModalOpen={isModalOpen}
         handleCancel={handleCancel}
         handleFormSubmit={handleFormSubmit}
+        modalKey={modalKey}
       />
     </div>
   );

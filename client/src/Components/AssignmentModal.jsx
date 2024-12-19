@@ -4,8 +4,10 @@ import { CopyOutlined } from "@ant-design/icons";
 import React, { useState } from "react";
 import * as Yup from "yup";
 import { Select } from "antd";
+import { saveAssignments } from "../Endpoints/Assignment";
 
 const AssignmentModal = ({
+  modalKey,
   isModalOpen,
   handleFormSubmit,
   handleCancel,
@@ -18,7 +20,7 @@ const AssignmentModal = ({
     difficulty: Yup.string()
       .oneOf(["Easy", "Medium", "Hard"], "Please select a difficulty")
       .required("Difficulty is required"),
-    tags: Yup.string().required("Tags are required"),
+    // tags: Yup.string().required("Tags are required"),
     description: Yup.string().required("Problem description is required"),
     // functionSignature: Yup.string().required("Function signature is required"),
     // constraints: Yup.string().required("Constraints are required"),
@@ -35,7 +37,7 @@ const AssignmentModal = ({
   const initialValues = {
     title: "",
     difficulty: "",
-    tags: ['a10', 'b11'],
+    tags: "",
     description: "",
     functionSignature: "",
     constraints: "",
@@ -64,32 +66,38 @@ const AssignmentModal = ({
     { value: "backtracking", label: "Backtracking" },
     { value: "divide_and_conquer", label: "Divide and Conquer" },
     { value: "graph_traversal", label: "Graph Traversal (BFS, DFS)" },
-    { value: "shortest_path_algorithms", label: "Shortest Path Algorithms (Dijkstra, Bellman-Ford, Floyd-Warshall)" },
-    { value: "minimum_spanning_tree", label: "Minimum Spanning Tree (Kruskal, Prim)" },
+    {
+      value: "shortest_path_algorithms",
+      label:
+        "Shortest Path Algorithms (Dijkstra, Bellman-Ford, Floyd-Warshall)",
+    },
+    {
+      value: "minimum_spanning_tree",
+      label: "Minimum Spanning Tree (Kruskal, Prim)",
+    },
     { value: "knapsack_problem", label: "Knapsack Problem" },
-    { value: "string_matching_algorithms", label: "String Matching Algorithms (KMP, Rabin-Karp, Z-Algorithm)" },
+    {
+      value: "string_matching_algorithms",
+      label: "String Matching Algorithms (KMP, Rabin-Karp, Z-Algorithm)",
+    },
     { value: "matrix_manipulation", label: "Matrix Manipulation Algorithms" },
     { value: "bit_manipulation", label: "Bit Manipulation" },
     { value: "sliding_window", label: "Sliding Window" },
     { value: "two_pointer_technique", label: "Two Pointer Technique" },
     { value: "topological_sort", label: "Topological Sort" },
     { value: "union_find_algorithms", label: "Union-Find Algorithms" },
-    { value: "trie_based_string_processing", label: "Trie-based String Processing" },
-    { value: "network_flow_algorithms", label: "Network Flow Algorithms (Ford-Fulkerson, Edmonds-Karp)" },
+    {
+      value: "trie_based_string_processing",
+      label: "Trie-based String Processing",
+    },
+    {
+      value: "network_flow_algorithms",
+      label: "Network Flow Algorithms (Ford-Fulkerson, Edmonds-Karp)",
+    },
     { value: "randomized_algorithms", label: "Randomized Algorithms" },
     { value: "monte_carlo_algorithms", label: "Monte Carlo Algorithms" },
-    { value: "branch_and_bound", label: "Branch and Bound" }
-];
-
-
-  const handletagChange = (value, setFieldValue) => {
-    setFieldValue("tags", value)
-    console.log(`selected ${value}`);
-  };
-
-  const onFormSubmit = (values) => {
-    console.log(values, "form")
-  }
+    { value: "branch_and_bound", label: "Branch and Bound" },
+  ];
 
   return (
     <Modal
@@ -105,11 +113,23 @@ const AssignmentModal = ({
       }}
     >
       <Formik
+        key={modalKey}
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={onFormSubmit}
+        onSubmit={handleFormSubmit}
+        enableReinitialize
       >
-        {({ values, handleChange, handleBlur, handleSubmit }) => (
+        {({
+          values,
+          setValues,
+          resetForm,
+          setFieldValue,
+          setTouched,
+          setErrors,
+          handleChange,
+          handleBlur,
+          handleSubmit,
+        }) => (
           <Form>
             <div className="mb-3">
               <label htmlFor="title">Title</label>
@@ -152,26 +172,20 @@ const AssignmentModal = ({
 
             <div className="mb-3">
               <label htmlFor="tags">Tags</label>
-              <Field
-                type="text"
-                id="tags"
-                name="tags"
-                placeholder="E.g., Array, Linked List"
-                className="mb-3 classroom-fields"
-              />
               <Select
                 mode="tags"
                 style={{
                   width: "100%",
                 }}
+                name="tags"
                 placeholder="E.g., Array, Linked List"
                 onChange={(value) => {
-                  setFieldValue("tags", value)
+                  console.log(value, "valueee");
+                  setFieldValue("tags", value);
                 }}
                 // defaultValue={values["tags"]}
                 options={options}
               />
-              <ErrorMessage name="tags" component="div" className="error" />
             </div>
 
             <div className="mb-3">
@@ -229,7 +243,7 @@ const AssignmentModal = ({
                   type="button"
                   onClick={() => {
                     const newTestCase = { input: "", output: "" };
-                    values.testCases.push(newTestCase);
+                    setValues({...values, testCases : [...values.testCases, newTestCase]})
                   }}
                   className="test-case-button"
                 >
@@ -271,8 +285,15 @@ const AssignmentModal = ({
               ))}
             </div>
 
-            <div className="mb-3">
-              <button className="create-class-cancel">clear</button>
+            <div className="mb-3 d-flex align-items-center">
+              <div
+                onClick={() => {
+                  resetForm(initialValues);
+                }}
+                className="create-class-cancel"
+              >
+                clear
+              </div>
               <button type="submit" className="submit-assignment-button">
                 Submit Question
               </button>

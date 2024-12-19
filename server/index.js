@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 
 const userRouter = require("./routes/userRoutes");
 const classroomRoutes = require('./routes/ClassroomRoutes');
+const asssignmentRoutes = require("./routes/AssignmentRoutes")
 const connectDB = require("./config/db");
 const userModel = require("./models/userModel");
 
@@ -22,6 +23,7 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use("/api", userRouter);
 app.use("/api", classroomRoutes);
+app.use("/api", asssignmentRoutes);
 
 const PORT = process.env.PORT || 5050;
 

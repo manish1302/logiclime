@@ -1,7 +1,8 @@
 import { Editor } from "@monaco-editor/react";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import LanguageMenu from "../Components/LanguageMenu";
 import Output from "../Components/Output";
+import { CODE_SNIPPETS, LANGUAGE_VERSIONS, LANGUAGES } from "../constants";
 
 const PlayGround = () => {
   const [language, setLanguage] = useState(1); // this is the id of that language
