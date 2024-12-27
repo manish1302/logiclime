@@ -3,3 +3,12 @@ export const isTokenExpired = (token) => {
     const expiry = decoded.exp * 1000; // Convert to milliseconds
     return Date.now() > expiry;
 }
+
+
+export const isStudent = () => {
+    return localStorage.getItem('role') == 'Student'
+}
+
+export const isEducator = () => {
+    return localStorage.getItem('role') == 'Educator'
+}

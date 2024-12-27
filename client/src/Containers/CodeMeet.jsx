@@ -13,6 +13,7 @@ import {
   getAssignmentsByClassCode,
   saveAssignments,
 } from "../Endpoints/Assignment";
+import { isEducator } from "../Helpers";
 
 const CodeMeet = () => {
   const { classCode } = useParams();
@@ -133,15 +134,17 @@ const CodeMeet = () => {
       <div className="code-meet-desc">{classroomData?.description}</div>
       <div className="code-meet-create-assign">
         <div className="assignments-heading">Assignments</div>
-        <button
-          className="create-button"
-          onClick={() => {
-            setModalKey((prevKey) => prevKey + 1);
-            setIsModalOpen(true);
-          }}
-        >
-          + Create assignment
-        </button>
+        {isEducator() && (
+          <button
+            className="create-button"
+            onClick={() => {
+              setModalKey((prevKey) => prevKey + 1);
+              setIsModalOpen(true);
+            }}
+          >
+            + Create assignment
+          </button>
+        )}
       </div>
       <div
         style={{

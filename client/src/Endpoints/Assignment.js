@@ -19,3 +19,11 @@ export const getAssignmentById = (Id) => {
         }
     })
 }
+
+export const getDashboardAssignmentByClassCode = (Id) => {
+    return apiInstance.get("/getAssignmentByClassCode", {
+        params : {
+            Id : Id
+        }
+    })
+}

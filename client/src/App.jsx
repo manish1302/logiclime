@@ -9,22 +9,35 @@ import CodeMeet from "./Containers/CodeMeet";
 import Landingpage from "./Containers/Landingpage";
 import PlayGround from "./Containers/PlayGround";
 import EducatorDashboard from "./Containers/EducatorDashboard";
-
+import Classinfo from "./Containers/Classinfo";
 const App = () => {
   return (
     <div style={{ height: "100vh", width: "100vw" }}>
       <BrowserRouter>
-          <Navbar />
+        <Navbar />
         <Routes>
           <Route path="/home" element={<Home />} />
           <Route path="/" element={<Landingpage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<EducatorDashboard />} />
+          <Route
+            path="/dashboard"
+            element={
+              localStorage.getItem("role") == 'Student' ? (
+                <EducatorDashboard />
+              ) : (
+                <EducatorDashboard />
+              )
+            }
+          />
           <Route path="/classroom/:classCode" element={<CodeMeet />} />
           <Route
             path="/classroom/:classCode/:assignmentCode"
             element={<PlayGround />}
+          />
+          <Route
+            path="/class-info/:educatorId"
+            element={<Classinfo />}
           />
         </Routes>
       </BrowserRouter>
