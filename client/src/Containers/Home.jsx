@@ -69,17 +69,7 @@ const Home = () => {
   };
 
   const handleJoin = () => {
-    getClassroomByCode(code)
-      .then((res) => {
-        if (res.status == 200) {
-          // navigate(`/classroom/${code}`);
-        }
-      })
-      .catch((err) => {
-        if (err.status == 401) {
-          navigate("/login");
-        }
-      });
+    window.open(`${import.meta.env.VITE_UI_BASE_URL}/classroom/${code}`);
   };
 
   return (

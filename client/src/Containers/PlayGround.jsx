@@ -5,6 +5,7 @@ import Output from "../Components/Output";
 import { CODE_SNIPPETS, LANGUAGE_VERSIONS, LANGUAGES } from "../constants";
 import { useParams } from "react-router-dom";
 import { getAssignmentById } from "../Endpoints/Assignment";
+import { getAssignmentCode } from "../Endpoints/StudentMarks";
 
 const PlayGround = () => {
   const [language, setLanguage] = useState(1); // this is the id of that language
@@ -12,6 +13,7 @@ const PlayGround = () => {
     Object.entries(CODE_SNIPPETS)[0][1]
   );
   const [value, setValue] = useState("");
+  const [submittedCode, setSubmittedCode] = useState("");
   const editorRef = useRef(null);
   const [assignment, setAssignment] = useState(null);
 
@@ -34,10 +36,18 @@ const PlayGround = () => {
   }, []);
 
   useEffect(() => {
-    assignment?.functionSignature
-      ? setValue(assignment?.functionSignature)
-      : setValue(codeSnippet);
-  }, [codeSnippet, assignment]);
+    getAssignmentCode(assignmentCode).then(res => {
+      setSubmittedCode(res?.data?.data);
+    })
+  }, []);
+
+  useEffect(() => {
+    if(LANGUAGES[language - 1] == submittedCode?.language) {
+      setValue(submittedCode?.Code)
+    } else {
+      setValue(codeSnippet)
+    }
+  }, [language, submittedCode, codeSnippet])
 
   const onSelectChange = (value) => {
     setLanguage(value);
