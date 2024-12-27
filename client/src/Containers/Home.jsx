@@ -72,7 +72,7 @@ const Home = () => {
     getClassroomByCode(code)
       .then((res) => {
         if (res.status == 200) {
-          navigate(`/classroom/${code}`);
+          // navigate(`/classroom/${code}`);
         }
       })
       .catch((err) => {

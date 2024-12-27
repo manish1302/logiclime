@@ -14,16 +14,29 @@
 }
 
 .run-code {
-    border: 1px solid #00CC00;
+    border: 1px solid #fff;
     padding: 5px 16px;
-    background-color: white;
+    background-color: grey;
     border-radius: 8px;
+    color: white;
     margin: 16px 0;
 }
 
 .run-code:hover{
-    border: 1px solid #00CC00;
+    background-color: rgba(128, 128, 128, 0.8);
+}
+
+.submit-code {
     background-color: #00CC00;
+    padding: 5px 16px;
+    border-radius: 8px;
+    margin: 16px 0;
+    border: 1px solid #00CC00;
+    color: white;
+}
+
+.submit-code:hover{
+    background-color: rgba(0, 204, 0,.8);
 }
 
 .output {

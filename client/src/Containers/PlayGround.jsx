@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from "react";
 import LanguageMenu from "../Components/LanguageMenu";
 import Output from "../Components/Output";
 import { CODE_SNIPPETS, LANGUAGE_VERSIONS, LANGUAGES } from "../constants";
+import { useParams } from "react-router-dom";
+import { getAssignmentById } from "../Endpoints/Assignment";
 
 const PlayGround = () => {
   const [language, setLanguage] = useState(1); // this is the id of that language
@@ -11,6 +13,9 @@ const PlayGround = () => {
   );
   const [value, setValue] = useState("");
   const editorRef = useRef(null);
+  const [assignment, setAssignment] = useState(null);
+
+  const { assignmentCode } = useParams();
 
   const languagesVersions = Object.entries(LANGUAGE_VERSIONS);
 
@@ -18,10 +23,21 @@ const PlayGround = () => {
     editorRef.current = editor;
     editor.focus();
   };
+  useEffect(() => {
+    getAssignmentById(assignmentCode)
+      .then((res) => {
+        setAssignment(res.data.message);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   useEffect(() => {
-    setValue(codeSnippet);
-  }, [codeSnippet]);
+    assignment?.functionSignature
+      ? setValue(assignment?.functionSignature)
+      : setValue(codeSnippet);
+  }, [codeSnippet, assignment]);
 
   const onSelectChange = (value) => {
     setLanguage(value);
@@ -49,7 +65,11 @@ const PlayGround = () => {
         </div>
       </div>
       <div className="output-box">
-        <Output editorRef={editorRef} language={LANGUAGES[language - 1]} />
+        <Output
+          editorRef={editorRef}
+          language={LANGUAGES[language - 1]}
+          assignment={assignment}
+        />
       </div>
     </div>
   );

@@ -17,3 +17,4 @@ font-family: "Poppins", sans-serif;
 @import "./Styles//Landing.scss";
 @import "./Styles/Contact.scss";
 @import "./Styles/Editor.scss";
+@import './Styles/Dashboard.scss';

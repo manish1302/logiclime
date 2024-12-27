@@ -26,6 +26,7 @@ const ClassroomModal = ({
   };
 
   const handleJoin = () => {
+    console.log(import.meta.env.VITE_UI_BASE_URL)
     window.open(`${import.meta.env.VITE_UI_BASE_URL}/classroom/${classCode}`);
     setClassroom(null);
     setIsModalOpen(false);

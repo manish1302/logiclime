@@ -1,0 +1,30 @@
+.dashboard-container {
+  width: 100vw;
+  height: 93vh;
+  color: black;
+  padding: 16px 32px;
+
+  .class-card {
+    border: none;
+    border-radius: 8px;
+    // box-shadow: 3px 3px 10px 4px rgba(0, 0, 0, 0.05);
+    padding: 8px 16px;
+    width: 32%;
+    height: 150px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    margin: 16px 0;
+    background-color: rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    .class-name {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .class-desc {
+      font-size: 14px;
+      font-weight: 500;
+      color: grey;
+    }
+  }
+}

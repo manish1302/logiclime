@@ -9,12 +9,16 @@ import { Editor } from "@monaco-editor/react";
 import Output from "../Components/Output";
 import AssignmentModal from "../Components/AssignmentModal";
 import AssignmentCard from "../Components/AssignmentCard";
-import { getAssignmentsByClassCode, saveAssignments } from "../Endpoints/Assignment";
+import {
+  getAssignmentsByClassCode,
+  saveAssignments,
+} from "../Endpoints/Assignment";
 
 const CodeMeet = () => {
   const { classCode } = useParams();
   const [copied, setCopied] = useState(null);
   const [classroomData, setClassroomData] = useState({});
+  const [educatorData, setEducatorData] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalKey, setModalKey] = React.useState(0);
   const [assignments, setAssignments] = useState([]);
@@ -23,14 +27,17 @@ const CodeMeet = () => {
   useEffect(() => {
     getClassroomByCode(classCode).then((res) => {
       setClassroomData(res.data.classroom);
-      console.log(res.data.classroom)
+      setEducatorData(res.data.educator);
+      console.log(res.data.classroom);
     });
 
-    getAssignmentsByClassCode(classCode).then(res => {
-      setAssignments(res.data.message);
-    }).catch((err) => {
-      console.log(err);
-    })
+    getAssignmentsByClassCode(classCode)
+      .then((res) => {
+        setAssignments(res.data.message);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   const handleCopy = () => {
@@ -68,21 +75,19 @@ const CodeMeet = () => {
   const handleFormSubmit = (values) => {
     const payload = {
       ...values,
-      classCode : classCode
-    }
+      classCode: classCode,
+    };
     setModalKey((prevKey) => prevKey + 1);
     setIsModalOpen(false);
     saveAssignments(payload)
-    .then((res) => {
-      setAssignments([...assignments, res.data.message]);
-    })
-    .catch((err) => {
-      console.log(err, "errr");
-    });
-    console.log(payload, "manish")
+      .then((res) => {
+        setAssignments([...assignments, res.data.message]);
+      })
+      .catch((err) => {
+        console.log(err, "errr");
+      });
+    console.log(payload, "manish");
   };
-
-
 
   const handleSolve = (assignmentId) => {
     navigate(`/classroom/${classCode}/${assignmentId}`);
@@ -120,7 +125,9 @@ const CodeMeet = () => {
         </div>
         <div className="d-flex align-items-center">
           <div className="educator-heading text-muted">Educator: </div>&nbsp;
-          <div className="educator-heading"> Manish patil</div>
+          <div className="educator-heading">
+            {educatorData.firstName} {educatorData.secondName}
+          </div>
         </div>
       </div>
       <div className="code-meet-desc">{classroomData?.description}</div>

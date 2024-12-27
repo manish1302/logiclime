@@ -1,4 +1,6 @@
 const ClassroomModel = require("../models/ClassroomModel");
+const userModel = require("../models/userModel");
+const AssignmentModel = require("../models/AssignmentModel");
 
 const createClassroom = async (req, res) => {
   const { Name, Description } = req.body;
@@ -36,18 +38,50 @@ const createClassroom = async (req, res) => {
 const getClassroomsById = async (req, res) => {
   const educatorId = req.user.userId;
   const Classroom = await ClassroomModel.findOne({ educator: educatorId });
+
   res.status(200).json({ success: true, classrooms: Classroom });
 };
 
 const getClassroomByCode = async (req, res) => {
   try {
     const classCode = req.query.classCode;
-    console.log(classCode);
+    const educatorId = req.user.userId;
     const Classroom = await ClassroomModel.findOne({ classCode });
-    console.log(Classroom);
-    res.status(200).json({ success: true, classroom: Classroom });
+    const Educator = await userModel.findOne({
+      _id: educatorId,
+    });
+    res
+      .status(200)
+      .json({ success: true, classroom: Classroom, educator: Educator });
   } catch (error) {
     console.log(err);
+  }
+};
+
+const getClassroomByEducatorId = async (req, res) => {
+  const educatorId = req.user.userId;
+
+  try {
+    const data = await ClassroomModel.find({ educator: educatorId });
+    const updatedData = await Promise.all(
+      data.map(async (item) => {
+        const assignmentCount = await AssignmentModel.countDocuments({
+          classCode: item.classCode,
+        });
+        return {
+          ...item,
+          assignmentCount,
+        };
+      })
+    );
+    res.status(200).json({
+      success: true,
+      data: updatedData,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+    });
   }
 };
 
@@ -55,4 +89,5 @@ module.exports = {
   createClassroom,
   getClassroomsById,
   getClassroomByCode,
+  getClassroomByEducatorId,
 };

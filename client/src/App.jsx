@@ -8,20 +8,24 @@ import Navbar from "./Components/Navbar";
 import CodeMeet from "./Containers/CodeMeet";
 import Landingpage from "./Containers/Landingpage";
 import PlayGround from "./Containers/PlayGround";
+import EducatorDashboard from "./Containers/EducatorDashboard";
 
 const App = () => {
   return (
-    <div style={{ height: '100vh', width: "100vw" }}>
-      <Navbar />
+    <div style={{ height: "100vh", width: "100vw" }}>
       <BrowserRouter>
+          <Navbar />
         <Routes>
           <Route path="/home" element={<Home />} />
           <Route path="/" element={<Landingpage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<EducatorDashboard />} />
           <Route path="/classroom/:classCode" element={<CodeMeet />} />
-          <Route path = "/classroom/:classCode/:assignmentCode" element ={<PlayGround />} />
+          <Route
+            path="/classroom/:classCode/:assignmentCode"
+            element={<PlayGround />}
+          />
         </Routes>
       </BrowserRouter>
     </div>

@@ -204,7 +204,7 @@ const AssignmentModal = ({
               />
             </div>
 
-            <div className="mb-3">
+            {/* <div className="mb-3">
               <label htmlFor="functionSignature">Function Signature</label>
               <Field
                 type="text"
@@ -218,7 +218,7 @@ const AssignmentModal = ({
                 component="div"
                 className="error"
               />
-            </div>
+            </div> */}
 
             <div className="mb-3">
               <label htmlFor="constraints">Constraints</label>

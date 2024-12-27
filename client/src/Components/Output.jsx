@@ -3,6 +3,7 @@ import { runCode } from "../Api";
 import { getAssignmentById } from "../Endpoints/Assignment";
 import { useParams } from "react-router-dom";
 import { Card, Typography, Tag, Divider, Row, Col, List } from "antd";
+import { saveStudentCode } from "../Endpoints/StudentMarks";
 
 const { Title, Text } = Typography;
 
@@ -19,11 +20,9 @@ const getDifficultyColor = (difficulty) => {
   }
 };
 
-const Output = ({ language, editorRef }) => {
+const Output = ({ language, editorRef, assignment }) => {
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
-  const [assignment, setAssignment] = useState(null);
-
   const { assignmentCode } = useParams();
 
   const handleRunCode = async () => {
@@ -35,22 +34,29 @@ const Output = ({ language, editorRef }) => {
     setOutput(run.stdout);
   };
 
-  useEffect(() => {
-    getAssignmentById(assignmentCode)
+  const handleSubmit = () => {
+    saveStudentCode({
+      code: editorRef.current.getValue(),
+      assignmentId: assignmentCode,
+      language : language
+    })
       .then((res) => {
-        console.log(res, "'''");
-        setAssignment(res.data.message);
+        console.log(res);
       })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+      .catch((err) => console.log(err));
+  };
 
   return (
     <>
-      <button className="run-code" onClick={handleRunCode}>
-        Run Code
-      </button>
+      <div>
+        <button className="run-code" onClick={handleRunCode}>
+          Run Code
+        </button>{" "}
+        &nbsp; &nbsp;
+        <button className="submit-code" onClick={handleSubmit}>
+          Submit
+        </button>
+      </div>
       <Card
         title={
           <div className="d-flex align-items-center justify-content-between">
@@ -69,25 +75,29 @@ const Output = ({ language, editorRef }) => {
           overflowY: "auto",
         }}
       >
-
         {/* Description */}
         <Text strong>Description:</Text>
         <Text style={{ display: "block", marginBottom: "16px" }}>
           {assignment?.description}
         </Text>
 
-
         <Divider />
 
         {/* Test Cases */}
         <Text strong>Test Cases:</Text>
         <List
-          style={{marginBottom : "16px"}}
+          style={{ marginBottom: "16px" }}
           bordered
           dataSource={assignment?.testCases}
           renderItem={(testCase, index) => (
             <List.Item>
-              <Row style={{ display : "flex", flexDirection : "column", width: "100%" }}>
+              <Row
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  width: "100%",
+                }}
+              >
                 <Col span={12}>
                   <Text strong>Input:</Text> <Text>{testCase.input}</Text>
                 </Col>
@@ -98,10 +108,9 @@ const Output = ({ language, editorRef }) => {
             </List.Item>
           )}
         />
-        
 
         {/* Function Signature */}
-        {assignment?.functionSignature && (
+        {/* {assignment?.functionSignature && (
           <>
             <Text strong>Function Signature:</Text>
             <Text style={{ display: "block", marginBottom: "16px" }}>
@@ -109,7 +118,7 @@ const Output = ({ language, editorRef }) => {
             </Text>
             <Divider />
           </>
-        )}
+        )} */}
 
         {/* Constraints */}
         <Text strong>Constraints:</Text>
