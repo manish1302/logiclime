@@ -4,6 +4,7 @@ import { getAssignmentById } from "../Endpoints/Assignment";
 import { useParams } from "react-router-dom";
 import { Card, Typography, Tag, Divider, Row, Col, List } from "antd";
 import { saveStudentCode } from "../Endpoints/StudentMarks";
+import MarksInput from "./MarksInput";
 
 const { Title, Text } = Typography;
 
@@ -20,7 +21,7 @@ const getDifficultyColor = (difficulty) => {
   }
 };
 
-const Output = ({ language, editorRef, assignment }) => {
+const Output = ({ language, editorRef, assignment, studentId }) => {
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
   const { assignmentCode } = useParams();
@@ -38,7 +39,7 @@ const Output = ({ language, editorRef, assignment }) => {
     saveStudentCode({
       code: editorRef.current.getValue(),
       assignmentId: assignmentCode,
-      language : language
+      language: language,
     })
       .then((res) => {
         console.log(res);
@@ -48,14 +49,24 @@ const Output = ({ language, editorRef, assignment }) => {
 
   return (
     <>
-      <div>
+      <div className="d-flex align-items-center">
         <button className="run-code" onClick={handleRunCode}>
           Run Code
         </button>{" "}
         &nbsp; &nbsp;
-        <button className="submit-code" onClick={handleSubmit}>
-          Submit
-        </button>
+        {!studentId ? (
+          <button className="submit-code" onClick={handleSubmit}>
+            Submit
+          </button>
+        ) : (
+          <MarksInput />
+        )}
+        {/* <div
+          className="link-text mx-3"
+          style={{ textDecoration: "underline", color: "blue" }}
+        >
+          Remarks
+        </div> */}
       </div>
       <Card
         title={

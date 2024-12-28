@@ -19,3 +19,6 @@ export function getClassroomByCode(code) {
 export function getClassroomsByEducatorId() {
   return apiInstance.get('/getClassroomByEducatorId')
 }
+
+
+

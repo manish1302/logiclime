@@ -17,7 +17,7 @@ const PlayGround = () => {
   const editorRef = useRef(null);
   const [assignment, setAssignment] = useState(null);
 
-  const { assignmentCode } = useParams();
+  const { assignmentCode, studentId, classCode } = useParams();
 
   const languagesVersions = Object.entries(LANGUAGE_VERSIONS);
 
@@ -36,18 +36,21 @@ const PlayGround = () => {
   }, []);
 
   useEffect(() => {
-    getAssignmentCode(assignmentCode).then(res => {
+    getAssignmentCode({
+      assignmentCode: assignmentCode,
+      studentId: studentId,
+    }).then((res) => {
       setSubmittedCode(res?.data?.data);
-    })
+    });
   }, []);
 
   useEffect(() => {
-    if(LANGUAGES[language - 1] == submittedCode?.language) {
-      setValue(submittedCode?.Code)
+    if (LANGUAGES[language - 1] == submittedCode?.language) {
+      setValue(submittedCode?.Code);
     } else {
-      setValue(codeSnippet)
+      setValue(codeSnippet);
     }
-  }, [language, submittedCode, codeSnippet])
+  }, [language, submittedCode, codeSnippet]);
 
   const onSelectChange = (value) => {
     setLanguage(value);
@@ -79,6 +82,7 @@ const PlayGround = () => {
           editorRef={editorRef}
           language={LANGUAGES[language - 1]}
           assignment={assignment}
+          studentId = {studentId}
         />
       </div>
     </div>

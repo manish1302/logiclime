@@ -36,6 +36,10 @@ const App = () => {
             element={<PlayGround />}
           />
           <Route
+            path="/playground/:classCode/:studentId/:assignmentCode"
+            element={<PlayGround />}
+          />
+          <Route
             path="/class-info/:classCode"
             element={<Classinfo />}
           />

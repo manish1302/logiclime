@@ -7,7 +7,16 @@ export function saveStudentCode(payload) {
 export function getAssignmentCode(payload) {
     return apiInstance.get('/getAssignmentCode', {
         params : {
-            assignmentId : payload
+            assignmentId : payload.assignmentCode,
+            studentId: payload.studentId
+        }
+    })
+}
+
+export function getSubmissionsByClassCode(classCode) {
+    return apiInstance.get('/getSubmissionsByClassCode', {
+        params : {
+            classCode : classCode
         }
     })
 }

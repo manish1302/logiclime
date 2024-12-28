@@ -253,3 +253,15 @@
   font-size: 16px;
   font-weight: 500;
 }
+
+.link-text:hover {
+  text-decoration: underline;
+  color: blue;
+  cursor: pointer;
+}
+
+.marks-input {
+  border: none;
+  border-bottom: 1px solid black;
+  width: 40px;
+}

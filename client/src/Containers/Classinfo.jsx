@@ -6,8 +6,13 @@ import {
   getDashboardAssignmentByClassCode,
   getStudentsByClassCode,
 } from "../Endpoints/Assignment";
-import { columnsAssignments, columnsStudent, columnSubmissions } from "../constants";
+import {
+  columnsAssignments,
+  columnsStudent,
+  columnSubmissions,
+} from "../constants";
 import { PhoneFilled } from "@ant-design/icons";
+import { getSubmissionsByClassCode } from "../Endpoints/StudentMarks";
 
 const tabs = ["Assignments", "Students", "Submissions"];
 const difficultyColors = {
@@ -17,14 +22,20 @@ const difficultyColors = {
 };
 
 const Classinfo = () => {
-  const [tab, setTab] = useState(1);
+  const [tab, setTab] = useState("Assignments");
   const [tableData, setTableDate] = useState([]);
   const [tableDataStudent, setTableDateStudent] = useState([]);
-  const [submissionsData, setSubmissionsData] = useState([])
+  const [submissionsData, setSubmissionsData] = useState([]);
   const { classCode } = useParams();
 
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
+  };
+
+  const handleMarking = (studentId, assignmentId) => {
+    window.open(
+      `${import.meta.env.VITE_UI_BASE_URL}/playground/${classCode}/${studentId}/${assignmentId}`
+    );
   };
 
   useEffect(() => {
@@ -77,7 +88,26 @@ const Classinfo = () => {
         console.log(err);
       });
 
-
+    getSubmissionsByClassCode(classCode)
+      .then((res) => {
+        const data = res.data;
+        console.log(data);
+        const transformedData = data.map((item, index) => ({
+          serial: index + 1,
+          name: item.studentName,
+          title: (
+            <div
+              onClick={() => handleMarking(item?.studentId, item?.assignmentId)}
+              className="link-text"
+            >
+              {item.assignmentTitle}
+            </div>
+          ),
+          marks: item?.marks ? item?.marks : "-",
+        }));
+        setSubmissionsData(transformedData);
+      })
+      .catch((err) => console.log(err));
   }, []);
 
   return (
@@ -90,7 +120,7 @@ const Classinfo = () => {
       />
 
       {tab == "Students" ? (
-        <div style={{width : "80%", margin : "16px 0"}}>
+        <div style={{ width: "80%", margin: "16px 0" }}>
           <Table
             columns={columnsStudent}
             dataSource={tableDataStudent}
@@ -98,7 +128,7 @@ const Classinfo = () => {
           />
         </div>
       ) : tab == "Assignments" ? (
-        <div style={{width : "80%", margin : "16px 0"}}>
+        <div style={{ width: "80%", margin: "16px 0" }}>
           <Table
             columns={columnsAssignments}
             dataSource={tableData}
@@ -106,7 +136,7 @@ const Classinfo = () => {
           />{" "}
         </div>
       ) : (
-        <div style={{width : "80%", margin : "16px 0"}}>
+        <div style={{ width: "80%", margin: "16px 0" }}>
           <Table
             columns={columnSubmissions}
             dataSource={submissionsData}
