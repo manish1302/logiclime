@@ -36,7 +36,7 @@ const App = () => {
             element={<PlayGround />}
           />
           <Route
-            path="/class-info/:educatorId"
+            path="/class-info/:classCode"
             element={<Classinfo />}
           />
         </Routes>

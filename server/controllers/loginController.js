@@ -47,8 +47,6 @@ const login = async (req, res) => {
       return;
     }
 
-    console.log(userExists);
-
     const token = jwt.sign(
       { userId: userExists?._id, email: userExists?.email },
       process.env.SECRET_KEY,
@@ -95,12 +93,26 @@ const createDummyUser = async () => {
   });
 
   await newUser.save();
-  console.log("User created:", newUser);
 };
+
+const getUserById = async (req, res) => {
+  const Id = req.user.userId;
+  try {
+    const data = await UserModel.findOne({_id : Id});
+    res.status(200).json({
+      name : data?.firstName + data?.secondName,
+      email : data?.email,
+      role : data?.role
+    });
+  } catch (error) {
+    res.status(500).json(error || 'internal server error');
+  }
+}
 
 module.exports = {
   createUser,
   getAllUsers,
   createDummyUser,
   login,
+  getUserById
 };

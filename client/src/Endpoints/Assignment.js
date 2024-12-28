@@ -27,3 +27,20 @@ export const getDashboardAssignmentByClassCode = (Id) => {
         }
     })
 }
+
+// export const joinClassroom = (payload) => {
+//     return apiInstance.post("/joinClassroom", payload)
+// }
+
+export const getStudentsByClassCode = (classCode) => {
+    return apiInstance.get('/getStudentsByClassCode', {
+        params : {
+            classCode
+        }
+    })
+}
+
+export const joinClassroom = (code) => {
+    console.log(typeof code)
+    return apiInstance.post('/joinClassroom', code);
+}

@@ -11,3 +11,7 @@ export function getAllUsers() {
 export function registerRequest(payload) {
     return apiInstance.post('/register', payload)
 }
+
+export function getUserById() {
+    return apiInstance.get('/getUserById');
+}

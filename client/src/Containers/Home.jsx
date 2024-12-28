@@ -11,9 +11,10 @@ import {
 } from "../Endpoints/Classroom";
 import Classroom from "./Classroom";
 import { useNavigate } from "react-router-dom";
-import { isTokenExpired } from "../Helpers";
+import { isEducator, isTokenExpired } from "../Helpers";
 import { SmileOutlined } from "@ant-design/icons";
 import { Button, notification } from "antd";
+import { joinClassroom } from "../Endpoints/Assignment";
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,7 +44,7 @@ const Home = () => {
       navigate("/login");
       return;
     }
-    console.log(userRole, userRole == "Educator", "lelrole")
+    console.log(userRole, userRole == "Educator", "lelrole");
     if (userRole == "Educator") {
       setIsModalOpen(true);
     } else {
@@ -69,6 +70,13 @@ const Home = () => {
   };
 
   const handleJoin = () => {
+    joinClassroom({
+      code : code
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.log(err));
     window.open(`${import.meta.env.VITE_UI_BASE_URL}/classroom/${code}`);
   };
 
@@ -83,9 +91,11 @@ const Home = () => {
             coding environment.
           </p>
           <div className="create-input">
-            <div className="create-button" onClick={showModal}>
-              Create a Class
-            </div>{" "}
+            {isEducator() && (
+              <div className="create-button" onClick={showModal}>
+                Create a Class
+              </div>
+            )}{" "}
             &nbsp; &nbsp;
             <input
               type="text"
@@ -125,7 +135,6 @@ const Home = () => {
         classCode={classroom?.classCode}
         setClassroom={setClassroom}
         setIsModalOpen={setIsModalOpen}
-        set
         isModalOpen={isModalOpen}
         handleCancel={handleCancel}
         handleFormSubmit={handleFormSubmit}

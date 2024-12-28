@@ -1,6 +1,7 @@
 const ClassroomModel = require("../models/ClassroomModel");
 const userModel = require("../models/userModel");
 const AssignmentModel = require("../models/AssignmentModel");
+const ClassroomStudentModel = require("../models/ClassroomStudentModel");
 
 const createClassroom = async (req, res) => {
   const { Name, Description } = req.body;
@@ -85,9 +86,77 @@ const getClassroomByEducatorId = async (req, res) => {
   }
 };
 
+const getStudentByClassCode = async (req, res) => {
+  const { classCode } = req.query;
+
+  try {
+    const data = await ClassroomStudentModel.aggregate([
+      {
+        $match: { ClassCode: classCode },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "StudentId",
+          foreignField: "_id",
+          as: "studentDetails",
+        },
+      },
+      {
+        $unwind: "$studentDetails",
+      },
+      {
+        $project: {
+          _id: 0,
+          name: {
+            $concat: [
+              "$studentDetails.firstName",
+              " ",
+              "$studentDetails.secondName",
+            ],
+          },
+          email: "$studentDetails.email",
+        },
+      },
+    ]);
+
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      data: error || "Internal server error",
+    });
+  }
+};
+
+const joinClassroom = (req, res) => {
+  const { code } = req.body;
+  const userId = req.user.userId;
+
+  console.log(code, userId);
+
+  try {
+    const StudentClassroom = new ClassroomStudentModel({
+      StudentId: userId,
+      ClassCode: code,
+    });
+
+    StudentClassroom.save();
+
+    res.status(200).json(StudentClassroom);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      data: error || "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   createClassroom,
   getClassroomsById,
   getClassroomByCode,
   getClassroomByEducatorId,
+  getStudentByClassCode,
+  joinClassroom,
 };

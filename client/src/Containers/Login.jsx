@@ -11,9 +11,10 @@ const Login = () => {
   const OnFormSubmit = (values) => {
     loginRequest(values)
       .then((res) => {
+        console.log(res, res.data.emaild)
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("userId", res.data.userId);
-        localStorage.setItem("email", res.data.email);
+        localStorage.setItem("email", res.data.emaild);
         localStorage.setItem("role", res.data.userRole);
         if (res.status == 200) {
           navigate("/home");

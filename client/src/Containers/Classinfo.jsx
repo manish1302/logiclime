@@ -1,9 +1,15 @@
 import { Segmented, Table, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getAssignmentsByClassCode, getDashboardAssignmentByClassCode } from "../Endpoints/Assignment";
+import {
+  getAssignmentsByClassCode,
+  getDashboardAssignmentByClassCode,
+  getStudentsByClassCode,
+} from "../Endpoints/Assignment";
+import { columnsAssignments, columnsStudent, columnSubmissions } from "../constants";
+import { PhoneFilled } from "@ant-design/icons";
 
-const tabs = ["Assignments", "Students"];
+const tabs = ["Assignments", "Students", "Submissions"];
 const difficultyColors = {
   Easy: "green",
   Medium: "orange",
@@ -12,119 +18,68 @@ const difficultyColors = {
 
 const Classinfo = () => {
   const [tab, setTab] = useState(1);
-  const [tableData, setTableDate] = useState([])
-  const { classCode }= useParams();
-  const columns = [
-    {
-      title: "S.No",
-      dataIndex: "serial",
-      width : 150,
-    },
-    {
-      title: "Title",
-      dataIndex: "title",
-    },
-    {
-      title: "Difficulty",
-      dataIndex: "difficulty",
-      width : 200
-      //   sorter: {
-      //     compare: (a, b) => a.chinese - b.chinese,
-      //     multiple: 3,
-      //   },
-    },
-    {
-      title: "Tags",
-      dataIndex: "tags",
-      width : 200
-    },
-    {
-      title: "Submissions",
-      dataIndex: "submissions",
-      width : 200
-      //   sorter: {
-      //     compare: (a, b) => a.math - b.math,
-      //     multiple: 2,
-      //   },
-    },
-    // {
-    //   title: 'English Score',
-    //   dataIndex: 'english',
-    //   sorter: {
-    //     compare: (a, b) => a.english - b.english,
-    //     multiple: 1,
-    //   },
-    // },
-  ];
-  const data = [
-    {
-      key: "1",
-      serial: 1,
-      title: "John Brown",
-      difficulty: "easy",
-      tags : "Arrays",
-      submissions: "34/46",
-    },
-    {
-      key: "1",
-      serial: 1,
-      title: "John Brown",
-      difficulty: "easy",
-      tags : "Arrays",
-      submissions: "34/46",
-    },
-    {
-      key: "1",
-      serial: 1,
-      title: "John Brown",
-      difficulty: <div style={{color : "red"}}>easy</div>,
-      tags : "Arrays",
-      submissions: "34/46",
-    },
-    {
-      key: "1",
-      serial: 1,
-      title: "John Brown",
-      difficulty: "easy",
-      tags : "Arrays",
-      submissions: "34/46",
-    },
-  ];
+  const [tableData, setTableDate] = useState([]);
+  const [tableDataStudent, setTableDateStudent] = useState([]);
+  const [submissionsData, setSubmissionsData] = useState([])
+  const { classCode } = useParams();
+
   const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
   };
 
-
   useEffect(() => {
-    getDashboardAssignmentByClassCode(classCode).then(res => {
-      const data = res.data;
-      console.log(data)
-      const transformedData = data.map((assignment, index) => ({
-        key: index + 1,
-        serial: index + 1,
-        title: assignment.assignmentTitle,
-        difficulty: (
-          <Tag
-            style={{ alignSelf: "flex-start" }}
-            color={difficultyColors[assignment.difficulty] || "default"}
-          >
-            {assignment.difficulty}
-          </Tag>
-        ),
-        tags: assignment.assignmentTags.map((tag) => (
-          <Tag key={tag.trim()} color="blue" style={{ marginBottom: "4px" }}>
-            {tag.trim()}
-          </Tag>
-        )),
-        submissions: `${assignment.students.length}`,
-      }));
-      
-      console.log(transformedData)
-      setTableDate(transformedData)
-    }).then(err => {
-      console.log(err)
-    })
-  }, [])
+    getDashboardAssignmentByClassCode(classCode)
+      .then((res) => {
+        const data = res.data;
+        console.log(data, "classsss");
+        const transformedData = data.map((assignment, index) => ({
+          key: index + 1,
+          serial: index + 1,
+          title: assignment.title,
+          difficulty: (
+            <Tag
+              style={{ alignSelf: "flex-start" }}
+              color={difficultyColors[assignment.difficulty] || "default"}
+            >
+              {assignment.difficulty}
+            </Tag>
+          ),
+          tags: assignment.tags.map((tag) => (
+            <Tag key={tag.trim()} color="blue" style={{ marginBottom: "4px" }}>
+              {tag.trim()}
+            </Tag>
+          )),
+          submissions: `${assignment.studentCount}`,
+        }));
+
+        console.log(transformedData);
+        setTableDate(transformedData);
+      })
+      .then((err) => {
+        console.log(err);
+      });
+
+    getStudentsByClassCode(classCode)
+      .then((res) => {
+        const data = res.data;
+
+        const transformedData = data.map((item, index) => ({
+          serial: index + 1,
+          name: item.name,
+          email: item.email,
+          action: <PhoneFilled />,
+          isOnline: "*",
+        }));
+
+        setTableDateStudent(transformedData);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+
+  }, []);
+
   return (
     <div className="class-info">
       <Segmented
@@ -135,12 +90,28 @@ const Classinfo = () => {
       />
 
       {tab == "Students" ? (
-        <div>
-          <Table columns={columns} dataSource={tableData} onChange={onChange} />
+        <div style={{width : "80%", margin : "16px 0"}}>
+          <Table
+            columns={columnsStudent}
+            dataSource={tableDataStudent}
+            onChange={onChange}
+          />
+        </div>
+      ) : tab == "Assignments" ? (
+        <div style={{width : "80%", margin : "16px 0"}}>
+          <Table
+            columns={columnsAssignments}
+            dataSource={tableData}
+            onChange={onChange}
+          />{" "}
         </div>
       ) : (
-        <div>
-          <Table columns={columns} dataSource={tableData} onChange={onChange} />{" "}
+        <div style={{width : "80%", margin : "16px 0"}}>
+          <Table
+            columns={columnSubmissions}
+            dataSource={submissionsData}
+            onChange={onChange}
+          />{" "}
         </div>
       )}
     </div>

@@ -7,7 +7,7 @@ const {saveStudentCode, getAssignmentCode} = require('../controllers/StudentMark
 const authenticate = require('../middlewares/AuthenticateJWT');
 
 
-router.post('/saveStudentCode', authenticate, saveStudentCode);
+// router.post('/saveStudentCode', authenticate, saveStudentCode);
 router.get('/getAssignmentCode', authenticate, getAssignmentCode)
 
 

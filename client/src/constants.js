@@ -26,3 +26,134 @@ export const CODE_SNIPPETS = {
     'using System;\n\nnamespace HelloWorld\n{\n\tclass Hello { \n\t\tstatic void Main(string[] args) {\n\t\t\tConsole.WriteLine("Hello World in C#");\n\t\t}\n\t}\n}\n',
   php: "<?php\n\n$name = 'Alex';\necho $name;\n",
 };
+
+
+export const columnsAssignments = [
+  {
+    title: "S.No",
+    dataIndex: "serial",
+    width : 150,
+  },
+  {
+    title: "Title",
+    dataIndex: "title",
+  },
+  {
+    title: "Difficulty",
+    dataIndex: "difficulty",
+    width : 200
+    //   sorter: {
+    //     compare: (a, b) => a.chinese - b.chinese,
+    //     multiple: 3,
+    //   },
+  },
+  {
+    title: "Tags",
+    dataIndex: "tags",
+    width : 200
+  },
+  {
+    title: "Submissions",
+    dataIndex: "submissions",
+    width : 200
+    //   sorter: {
+    //     compare: (a, b) => a.math - b.math,
+    //     multiple: 2,
+    //   },
+  },
+  // {
+  //   title: 'English Score',
+  //   dataIndex: 'english',
+  //   sorter: {
+  //     compare: (a, b) => a.english - b.english,
+  //     multiple: 1,
+  //   },
+  // },
+];
+export const columnsStudent = [
+  {
+    title: "S.No",
+    dataIndex: "serial",
+    width : 150,
+  },
+  {
+    title: "Name",
+    dataIndex: "name",
+    width : 300
+  },
+  {
+    title: "Email",
+    dataIndex: "email",
+    width : 300
+    //   sorter: {
+    //     compare: (a, b) => a.chinese - b.chinese,
+    //     multiple: 3,
+    //   },
+  },
+  {
+    title: "Action",
+    dataIndex: "action",
+    width : 150
+  },
+  {
+    title: "Online",
+    dataIndex: "isOnline",
+    width : 150
+    //   sorter: {
+    //     compare: (a, b) => a.math - b.math,
+    //     multiple: 2,
+    //   },
+  },
+  // {
+  //   title: 'English Score',
+  //   dataIndex: 'english',
+  //   sorter: {
+  //     compare: (a, b) => a.english - b.english,
+  //     multiple: 1,
+  //   },
+  // },
+];
+
+export const columnSubmissions = [
+  {
+    title: "S.No",
+    dataIndex: "serial",
+    width : 150,
+  },
+  {
+    title: "Name",
+    dataIndex: "name",
+    width : 300
+  },
+  {
+    title: "Assignment title",
+    dataIndex: "title",
+    width : 300
+    //   sorter: {
+    //     compare: (a, b) => a.chinese - b.chinese,
+    //     multiple: 3,
+    //   },
+  },
+  {
+    title: "Action",
+    dataIndex: "action",
+    width : 150
+  },
+  {
+    title: "Marks",
+    dataIndex: "marks",
+    width : 150
+    //   sorter: {
+    //     compare: (a, b) => a.math - b.math,
+    //     multiple: 2,
+    //   },
+  },
+  // {
+  //   title: 'English Score',
+  //   dataIndex: 'english',
+  //   sorter: {
+  //     compare: (a, b) => a.english - b.english,
+  //     multiple: 1,
+  //   },
+  // },
+];

@@ -71,57 +71,31 @@ const getAssignmentById = async (req, res) => {
 
 const getAssignmentsByClassCode = async (req, res) => {
   const { Id } = req.query;
-
   try {
     const result = await AssignmentModel.aggregate([
-      
-      { $match: { Id } },
-
-    
+      {
+        $match: { classCode : Id }, // Filter assignments by the provided classCode
+      },
       {
         $lookup: {
-          from: "StudentMarks", 
-          localField: "_id", 
-          foreignField: "AssignmentId", 
-          as: "studentSubmissions",
+          from: "StudentMarks", // The collection name for StudentMarksModel
+          localField: "_id", // The field in AssignmentModel
+          foreignField: "AssignmentId", // The field in StudentMarksModel
+          as: "studentSubmissions", // Alias for the joined data
         },
       },
-
-
-      { $unwind: "$studentSubmissions" },
-
-     
       {
-        $lookup: {
-          from: "users",
-          localField: "studentSubmissions.StudentId", 
-          foreignField: "_id", 
-          as: "studentDetails",
+        $addFields: {
+          studentCount: { $size: "$studentSubmissions" }, // Count the number of submissions
         },
       },
-
-      
-      { $unwind: "$studentDetails" },
-
-     
-      {
-        $group: {
-          _id: "$_id", 
-          assignmentTitle: { $first: "$title" },
-          assignmentTags: { $first: "$tags" },
-          difficulty: { $first: "$difficulty" },
-          students: { $addToSet: "$studentDetails.firstName" }, 
-        },
-      },
-
-     
       {
         $project: {
-          _id: 0,
-          assignmentTitle: 1,
-          assignmentTags: 1,
-          difficulty: 1,
-          students: 1,
+          _id: 0, // Exclude the `_id` field
+          title: 1, // Include the title
+          difficulty: 1, // Include the difficulty
+          tags: 1, // Include the tags
+          studentCount: 1, // Include the student count
         },
       },
     ]);

@@ -9,7 +9,9 @@ const ClassroomModal = ({
   handleCancel,
   classCode = false,
   setClassroom,
-  setIsModalOpen
+  setIsModalOpen,
+  create, 
+  setCreate
 }) => {
   const [copied, setCopied] = useState(null);
 
@@ -27,6 +29,7 @@ const ClassroomModal = ({
 
   const handleJoin = () => {
     window.open(`${import.meta.env.VITE_UI_BASE_URL}/classroom/${classCode}`);
+    setCreate(true)
     setClassroom(null);
     setIsModalOpen(false);
   }
@@ -39,7 +42,7 @@ const ClassroomModal = ({
       open={isModalOpen}
       onCancel={handleCancel}
     >
-      {!classCode ? (
+      {create ? (
         <Formik
           initialValues={{
             title: "",
