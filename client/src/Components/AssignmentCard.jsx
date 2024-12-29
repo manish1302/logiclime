@@ -13,7 +13,10 @@ const AssignmentCard = ({
   difficulty,
   tags,
   onSolve, // Function to handle solve button click
+  marks,
+  submitted 
 }) => {
+  console.log(marks, submitted)
   return (
     <Card
       hoverable
@@ -43,20 +46,28 @@ const AssignmentCard = ({
             </Tag>
           ))}
       </div>
-
-      <Button
-        onClick={onSolve}
-        style={{
-          backgroundColor: "#00CC00",
-          borderRadius: "8px",
-          border : "none",
-          cursor : "pointer",
-          fontWeight : 600,
-          color : "white"
-        }}
-      >
-        Solve
-      </Button>
+      <div className="d-flex align-items-center justify-content-between">
+        <Button
+          onClick={onSolve}
+          style={{
+            backgroundColor: "#00CC00",
+            borderRadius: "8px",
+            border: "none",
+            cursor: "pointer",
+            fontWeight: 600,
+            color: "white",
+          }}
+        >
+          Solve
+        </Button>
+        {marks ? (
+          <div style={{ margin: "8px 0", color : "grey" }}>
+            Marks: <span style={{ color: "#1890ff", fontWeight: "bold" }}>{marks}</span>
+          </div>
+        ) : submitted ? (
+          <div style={{color : "#00CC00"}}>Submitted</div>
+        ) : ""}
+      </div>
     </Card>
   );
 };

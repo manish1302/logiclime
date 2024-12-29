@@ -14,6 +14,7 @@ import {
   saveAssignments,
 } from "../Endpoints/Assignment";
 import { isEducator } from "../Helpers";
+import { getAssignmentMarks } from "../Endpoints/StudentMarks";
 
 const CodeMeet = () => {
   const { classCode } = useParams();
@@ -33,8 +34,29 @@ const CodeMeet = () => {
     });
 
     getAssignmentsByClassCode(classCode)
-      .then((res) => {
-        setAssignments(res.data.message);
+      .then(async (res) => {
+        const transformedData = await Promise.all(
+          res?.data?.message.map(async (item) => {
+            try {
+              const marksRes = await getAssignmentMarks(item._id);
+              console.log(marksRes?.data, "mlmlm")
+              return {
+                ...item,
+                marks: marksRes?.data?.marks,
+                Success : marksRes?.data?.Success
+              };
+            } catch (err) {
+              console.log(err);
+              return {
+                ...item,
+                marks: null,
+              };
+            }
+          })
+        );
+
+        console.log(transformedData, "trans");
+        setAssignments(transformedData);
       })
       .catch((err) => {
         console.log(err);
@@ -162,6 +184,8 @@ const CodeMeet = () => {
             difficulty={assignment.difficulty}
             tags={assignment.tags}
             onSolve={() => handleSolve(assignment._id)}
+            marks = {assignment.marks}
+            submitted = {assignment.Success}
           />
         ))}
       </div>

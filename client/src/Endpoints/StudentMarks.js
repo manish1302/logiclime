@@ -22,6 +22,16 @@ export function getSubmissionsByClassCode(classCode) {
 }
 
 
+export function getAssignmentMarks(Id) {
+    return apiInstance.get('/getAssignmentMarks', {
+        params : {
+            assignmentId : Id
+        }
+    })
+}
+
+
+
 export function addmarks(payload) {
     return apiInstance.post('/addMarks', payload)
 }

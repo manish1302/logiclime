@@ -18,7 +18,7 @@ const saveStudentCode = async (req, res) => {
       $set: {
         Code: code,
         language: language,
-        success : false,
+        Success : true,
         Marks : null
       }
     };
@@ -152,9 +152,32 @@ const addMarks = async (req, res) => {
   }
 };
 
+const getAssignmentMarks = async (req, res) => {
+  const {assignmentId} = req.query;
+  const userId = req.user.userId;
+
+  try {
+    const assignmentMarks = await StudentAssignmentModel.findOne({
+      AssignmentId : assignmentId,
+      StudentId : userId
+    })
+
+    res.status(200).json({
+      marks : assignmentMarks?.Marks,
+      Success : assignmentMarks?.Success
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error || "Internal server error",
+    });
+  }
+}
+
 module.exports = {
   saveStudentCode,
   getAssignmentCode,
   getSubmissionsByClassCode,
   addMarks,
+  getAssignmentMarks
 };

@@ -24,7 +24,7 @@ const getDifficultyColor = (difficulty) => {
 const Output = ({ language, editorRef, assignment, studentId, markss, assignmentId }) => {
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
-  const [marks, setMarks] = useState("-");
+  const [marks, setMarks] = useState("");
   const { assignmentCode } = useParams();
   const [isEditable, setIsEditable] = useState(true);
 
