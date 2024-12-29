@@ -42,7 +42,6 @@ const Classinfo = () => {
     getDashboardAssignmentByClassCode(classCode)
       .then((res) => {
         const data = res.data;
-        console.log(data, "classsss");
         const transformedData = data.map((assignment, index) => ({
           key: index + 1,
           serial: index + 1,
@@ -63,7 +62,6 @@ const Classinfo = () => {
           submissions: `${assignment.studentCount}`,
         }));
 
-        console.log(transformedData);
         setTableDate(transformedData);
       })
       .then((err) => {
@@ -91,7 +89,6 @@ const Classinfo = () => {
     getSubmissionsByClassCode(classCode)
       .then((res) => {
         const data = res.data;
-        console.log(data);
         const transformedData = data.map((item, index) => ({
           serial: index + 1,
           name: item.studentName,

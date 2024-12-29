@@ -44,7 +44,6 @@ const Home = () => {
       navigate("/login");
       return;
     }
-    console.log(userRole, userRole == "Educator", "lelrole");
     if (userRole == "Educator") {
       setIsModalOpen(true);
     } else {

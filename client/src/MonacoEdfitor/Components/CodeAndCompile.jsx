@@ -29,7 +29,6 @@ const CodeAndCompile = () => {
       .init()
       .then((monaco) => {
         import("monaco-themes/themes/All Hallows Eve.json").then((data) => {
-          console.log(data, "data")
           monaco.editor.defineTheme("Blackboard", data);
           setTheme(true);
         });
@@ -46,7 +45,6 @@ const CodeAndCompile = () => {
   const ctrlPress = useKeyPress("Control");
 
   const onSelectChange = (sl) => {
-    console.log("selected Option...", sl);
     setLanguage(sl);
   };
 
@@ -130,7 +128,6 @@ const CodeAndCompile = () => {
           />
         </div>
       </div>
-      {console.log(language, "language")}
       <div className="flex flex-row space-x-4 items-start px-4 py-4">
         <div className="flex flex-col w-full h-full justify-start items-end">
           <CodeEditor

@@ -180,7 +180,6 @@ const AssignmentModal = ({
                 name="tags"
                 placeholder="E.g., Array, Linked List"
                 onChange={(value) => {
-                  console.log(value, "valueee");
                   setFieldValue("tags", value);
                 }}
                 // defaultValue={values["tags"]}

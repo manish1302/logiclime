@@ -9,14 +9,12 @@ const Dashboard = () => {
 
   useEffect(() => {
     getClassroomsById().then((res) => {
-      console.log(res, "manih")
       setClasses(res.data.classrooms);
     }).catch(err => console.log(err));
   }, [])
 
   const OnFormSubmit = (values) => {
     const payload = values;
-    console.log(values);
     createClassroom(payload)
       .then((res) => {
         console.log(res);

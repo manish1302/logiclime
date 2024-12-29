@@ -16,7 +16,6 @@ const AssignmentCard = ({
   marks,
   submitted 
 }) => {
-  console.log(marks, submitted)
   return (
     <Card
       hoverable

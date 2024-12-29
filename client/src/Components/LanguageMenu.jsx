@@ -4,7 +4,6 @@ import { LANGUAGE_VERSIONS } from "../constants";
 
 const LanguageMenu = ({ onSelectChange, language }) => {
   const handleChange = (value, label) => {
-    console.log(value, "value")
     onSelectChange(value);
   };
   return (

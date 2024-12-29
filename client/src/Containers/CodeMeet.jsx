@@ -30,7 +30,6 @@ const CodeMeet = () => {
     getClassroomByCode(classCode).then((res) => {
       setClassroomData(res.data.classroom);
       setEducatorData(res.data.educator);
-      console.log(res.data.classroom);
     });
 
     getAssignmentsByClassCode(classCode)
@@ -39,7 +38,6 @@ const CodeMeet = () => {
           res?.data?.message.map(async (item) => {
             try {
               const marksRes = await getAssignmentMarks(item._id);
-              console.log(marksRes?.data, "mlmlm")
               return {
                 ...item,
                 marks: marksRes?.data?.marks,
@@ -55,7 +53,6 @@ const CodeMeet = () => {
           })
         );
 
-        console.log(transformedData, "trans");
         setAssignments(transformedData);
       })
       .catch((err) => {
@@ -82,7 +79,6 @@ const CodeMeet = () => {
       navigate("/login");
       return;
     }
-    console.log(userRole, userRole == "Educator", "lelrole");
     if (userRole == "Educator") {
       setIsModalOpen(true);
     } else {
@@ -109,7 +105,6 @@ const CodeMeet = () => {
       .catch((err) => {
         console.log(err, "errr");
       });
-    console.log(payload, "manish");
   };
 
   const handleSolve = (assignmentId) => {

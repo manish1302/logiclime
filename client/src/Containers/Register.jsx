@@ -18,8 +18,6 @@ const Register = () => {
       password: values.password,
     };
 
-    console.log(import.meta.env.VITE_API_BASE_URL, "base");
-
     registerRequest(payload)
       .then((res) => {
         navigate("/login");
