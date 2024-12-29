@@ -20,3 +20,8 @@ export function getSubmissionsByClassCode(classCode) {
         }
     })
 }
+
+
+export function addmarks(payload) {
+    return apiInstance.post('/addMarks', payload)
+}

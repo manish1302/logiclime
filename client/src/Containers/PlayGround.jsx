@@ -83,6 +83,7 @@ const PlayGround = () => {
           language={LANGUAGES[language - 1]}
           assignment={assignment}
           studentId = {studentId}
+          marks = {submittedCode?.Marks}
         />
       </div>
     </div>

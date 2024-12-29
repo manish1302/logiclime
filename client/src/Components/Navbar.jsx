@@ -3,7 +3,8 @@ import user from "../assets/user.png";
 import lemon from "../assets/lemon.png";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, ConfigProvider, Flex, Popover } from "antd";
-import { getUserById } from "../Endpoints/Auth";
+import { getUserById, logout } from "../Endpoints/Auth";
+import { isTokenExpired } from "../Helpers";
 const text = <span>Profile</span>;
 
 const buttonWidth = 80;
@@ -11,9 +12,26 @@ const buttonWidth = 80;
 const Navbar = () => {
   const navigate = useNavigate();
   const [userInfo, setUserInfo] = useState({});
+  const [log, setLog] = useState();
 
   const handleDashboard = () => {
     navigate("/dashboard");
+  };
+
+  useEffect(() => {
+    setLog(
+      !localStorage.getItem("token") ||
+        isTokenExpired(localStorage.getItem("token"))
+    );
+  }, [localStorage.getItem("token")]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("email");
+    localStorage.removeItem("role");
+    logout().then((res) => console.log(res).catch((err) => console.log(err)));
+    navigate("/login");
   };
 
   const handleLogin = () => {
@@ -54,13 +72,15 @@ const Navbar = () => {
           Dashboard
         </div>{" "}
         &nbsp; &nbsp;
-        <div className="cursor-pointer" onClick={handleLogin}>
-          Login
-        </div>{" "}
-        &nbsp; &nbsp;
-        <div className="cursor-pointer" onClick={handleLogin}>
-          Logout
-        </div>{" "}
+        {log ? (
+          <div className="cursor-pointer" onClick={handleLogin}>
+            Login
+          </div>
+        ) : (
+          <div className="cursor-pointer" onClick={handleLogout}>
+            Logout
+          </div>
+        )}
         &nbsp; &nbsp;
         <div onClick={handleProfile}>
           <ConfigProvider

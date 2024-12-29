@@ -26,7 +26,7 @@ const StudentMarksModel = mongoose.Schema(
       required: true,
     },
     Marks: {
-      type: String,
+      type: Number,
     },
     Remarks: {
       type: String,

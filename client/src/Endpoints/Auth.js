@@ -4,6 +4,10 @@ export function loginRequest(payload) {
     return apiInstance.post('/login', payload);
 }
 
+export function logout() {
+    return apiInstance.post('/logout')
+}
+
 export function getAllUsers() {
     return apiInstance.get('/getAllUsers');
 }

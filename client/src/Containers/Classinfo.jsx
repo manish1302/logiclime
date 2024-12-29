@@ -103,7 +103,7 @@ const Classinfo = () => {
               {item.assignmentTitle}
             </div>
           ),
-          marks: item?.marks ? item?.marks : "-",
+          marks: item?.marks ? `${item?.marks} / 10` : "-",
         }));
         setSubmissionsData(transformedData);
       })

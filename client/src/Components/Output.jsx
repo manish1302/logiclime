@@ -21,7 +21,7 @@ const getDifficultyColor = (difficulty) => {
   }
 };
 
-const Output = ({ language, editorRef, assignment, studentId }) => {
+const Output = ({ language, editorRef, assignment, studentId, marks }) => {
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
   const { assignmentCode } = useParams();
@@ -59,7 +59,7 @@ const Output = ({ language, editorRef, assignment, studentId }) => {
             Submit
           </button>
         ) : (
-          <MarksInput />
+          <MarksInput studentId={studentId} markss={marks} />
         )}
         {/* <div
           className="link-text mx-3"

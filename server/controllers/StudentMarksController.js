@@ -1,7 +1,7 @@
 const AssignmentModel = require("../models/AssignmentModel");
 const StudentAssignmentModel = require("../models/AssignmentSolutionsModel");
 const UserModel = require("../models/userModel");
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
 const saveStudentCode = (req, res) => {
   const { assignmentId, code, language } = req.body;
@@ -32,7 +32,7 @@ const saveStudentCode = (req, res) => {
 const getAssignmentCode = async (req, res) => {
   const { assignmentId, studentId } = req.query;
   const role = req.user.role;
-  const userId = role == 'Educator'? studentId : req.user.userID
+  const userId = role == "Educator" ? studentId : req.user.userID;
   try {
     const data = await StudentAssignmentModel.findOne({
       StudentId: userId,
@@ -91,9 +91,15 @@ const getSubmissionsByClassCode = async (req, res) => {
         // Project the required fields
         $project: {
           _id: 0,
-          studentId : "$studentDetails._id",
-          assignmentId : "$assignmentDetails._id",
-          studentName: { $concat: ["$studentDetails.firstName", " ", "$studentDetails.secondName"] },
+          studentId: "$studentDetails._id",
+          assignmentId: "$assignmentDetails._id",
+          studentName: {
+            $concat: [
+              "$studentDetails.firstName",
+              " ",
+              "$studentDetails.secondName",
+            ],
+          },
           assignmentTitle: "$assignmentDetails.title",
           marks: "$Marks",
         },
@@ -109,8 +115,28 @@ const getSubmissionsByClassCode = async (req, res) => {
   }
 };
 
+const addMarks = async (req, res) => {
+  const { studentId, marks } = req.body;
+
+  try {
+    const updatedDocument = await StudentAssignmentModel.findOneAndUpdate(
+      { StudentId: studentId},
+      { $set: { Marks: marks } },
+      { new: true }
+    );
+
+    res.status(200).json(updatedDocument);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error || "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   saveStudentCode,
   getAssignmentCode,
   getSubmissionsByClassCode,
+  addMarks,
 };

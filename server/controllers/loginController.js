@@ -76,6 +76,21 @@ const login = async (req, res) => {
   }
 };
 
+const logout = (req, res) => {
+  try {
+    res.clearCookie("logiclimetoken", {
+      httpOnly: true, 
+      secure: true, 
+      sameSite: "None",
+    });
+
+    res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error during logout" });
+  }
+};
+
+
 const getAllUsers = async (req, res) => {
   try {
     const users = await UserModel.find(); // Await the query to resolve
@@ -114,5 +129,6 @@ module.exports = {
   getAllUsers,
   createDummyUser,
   login,
-  getUserById
+  getUserById,
+  logout
 };
