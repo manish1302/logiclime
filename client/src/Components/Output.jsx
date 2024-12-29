@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { Card, Typography, Tag, Divider, Row, Col, List } from "antd";
 import { saveStudentCode } from "../Endpoints/StudentMarks";
 import MarksInput from "./MarksInput";
+import { Button, message, Space } from "antd";
 
 const { Title, Text } = Typography;
 
@@ -21,12 +22,26 @@ const getDifficultyColor = (difficulty) => {
   }
 };
 
-const Output = ({ language, editorRef, assignment, studentId, markss, assignmentId }) => {
+const Output = ({
+  language,
+  editorRef,
+  assignment,
+  studentId,
+  markss,
+  assignmentId,
+}) => {
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
   const [marks, setMarks] = useState("");
   const { assignmentCode } = useParams();
   const [isEditable, setIsEditable] = useState(true);
+  const [messageApi, contextHolder] = message.useMessage();
+  const success = () => {
+    messageApi.open({
+      type: "success",
+      content: "Submitted",
+    });
+  };
 
   useEffect(() => {
     if (markss) {
@@ -46,6 +61,7 @@ const Output = ({ language, editorRef, assignment, studentId, markss, assignment
 
   const handleSubmit = () => {
     setMarks("");
+    success()
     saveStudentCode({
       code: editorRef.current.getValue(),
       assignmentId: assignmentCode,
@@ -59,6 +75,7 @@ const Output = ({ language, editorRef, assignment, studentId, markss, assignment
 
   return (
     <>
+      {contextHolder}
       <div className="d-flex align-items-center">
         <button className="run-code" onClick={handleRunCode}>
           Run Code
@@ -79,7 +96,7 @@ const Output = ({ language, editorRef, assignment, studentId, markss, assignment
           setMarks={setMarks}
           isEditable={isEditable}
           setIsEditable={setIsEditable}
-          assignmentId = {assignmentId}
+          assignmentId={assignmentId}
         />
         {/* <div
           className="link-text mx-3"
