@@ -74,7 +74,7 @@ const getAssignmentsByClassCode = async (req, res) => {
   try {
     const result = await AssignmentModel.aggregate([
       {
-        $match: { classCode : Id }, // Filter assignments by the provided classCode
+        $match: { classCode: Id }, // Filter assignments by the provided classCode
       },
       {
         $lookup: {

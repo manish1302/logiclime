@@ -3,23 +3,41 @@ const StudentAssignmentModel = require("../models/AssignmentSolutionsModel");
 const UserModel = require("../models/userModel");
 const mongoose = require("mongoose");
 
-const saveStudentCode = (req, res) => {
+const saveStudentCode = async (req, res) => {
   const { assignmentId, code, language } = req.body;
   const studentId = req.user.userId;
-  try {
-    const studentAssignment = new StudentAssignmentModel({
-      StudentId: studentId,
-      AssignmentId: assignmentId,
-      Code: code,
-      Success: false,
-      language: language,
-    });
 
-    studentAssignment.save();
+  console.log(studentId)
+  try {
+    const filter = {
+      StudentId: studentId,
+      AssignmentId: assignmentId
+    };
+
+    const update = {
+      $set: {
+        Code: code,
+        language: language,
+        success : false,
+        Marks : null
+      }
+    };
+
+    const options = {
+      new: true,
+      upsert: true,
+      runValidators: true 
+    };
+
+    const studentAssignment = await StudentAssignmentModel.findOneAndUpdate(
+      filter,
+      update,
+      options
+    );
 
     res.status(200).json({
       success: true,
-      data: studentAssignment,
+      data: studentAssignment
     });
   } catch (error) {
     res.status(500).json({
@@ -32,7 +50,7 @@ const saveStudentCode = (req, res) => {
 const getAssignmentCode = async (req, res) => {
   const { assignmentId, studentId } = req.query;
   const role = req.user.role;
-  const userId = role == "Educator" ? studentId : req.user.userID;
+  const userId = role == "Educator" ? studentId : req.user.userId;
   try {
     const data = await StudentAssignmentModel.findOne({
       StudentId: userId,
@@ -120,7 +138,7 @@ const addMarks = async (req, res) => {
 
   try {
     const updatedDocument = await StudentAssignmentModel.findOneAndUpdate(
-      { StudentId: studentId},
+      { StudentId: studentId },
       { $set: { Marks: marks } },
       { new: true }
     );

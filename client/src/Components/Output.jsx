@@ -21,10 +21,19 @@ const getDifficultyColor = (difficulty) => {
   }
 };
 
-const Output = ({ language, editorRef, assignment, studentId, marks }) => {
+const Output = ({ language, editorRef, assignment, studentId, markss }) => {
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
+  const [marks, setMarks] = useState("-");
   const { assignmentCode } = useParams();
+  const [isEditable, setIsEditable] = useState(true);
+
+  useEffect(() => {
+    if (markss) {
+      setMarks(markss);
+      setIsEditable(false);
+    }
+  }, [markss]);
 
   const handleRunCode = async () => {
     const sourceCode = editorRef.current.getValue();
@@ -36,6 +45,7 @@ const Output = ({ language, editorRef, assignment, studentId, marks }) => {
   };
 
   const handleSubmit = () => {
+    setMarks("");
     saveStudentCode({
       code: editorRef.current.getValue(),
       assignmentId: assignmentCode,
@@ -54,13 +64,22 @@ const Output = ({ language, editorRef, assignment, studentId, marks }) => {
           Run Code
         </button>{" "}
         &nbsp; &nbsp;
-        {!studentId ? (
-          <button className="submit-code" onClick={handleSubmit}>
+        {!studentId && (
+          <button
+            className="submit-code"
+            style={{ marginRight: "16px" }}
+            onClick={handleSubmit}
+          >
             Submit
           </button>
-        ) : (
-          <MarksInput studentId={studentId} markss={marks} />
         )}
+        <MarksInput
+          studentId={studentId}
+          marks={marks}
+          setMarks={setMarks}
+          isEditable={isEditable}
+          setIsEditable={setIsEditable}
+        />
         {/* <div
           className="link-text mx-3"
           style={{ textDecoration: "underline", color: "blue" }}

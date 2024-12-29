@@ -20,5 +20,6 @@ export function getClassroomsByEducatorId() {
   return apiInstance.get('/getClassroomByEducatorId')
 }
 
-
-
+export function getClassroomsByStudentId() {
+  return apiInstance.get('/getClassroomByStudentId')
+}

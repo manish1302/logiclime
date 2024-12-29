@@ -10,6 +10,7 @@ import Landingpage from "./Containers/Landingpage";
 import PlayGround from "./Containers/PlayGround";
 import EducatorDashboard from "./Containers/EducatorDashboard";
 import Classinfo from "./Containers/Classinfo";
+import StudentDashboard from "./Containers/StudentDashboard";
 const App = () => {
   return (
     <div style={{ height: "100vh", width: "100vw" }}>
@@ -24,7 +25,7 @@ const App = () => {
             path="/dashboard"
             element={
               localStorage.getItem("role") == 'Student' ? (
-                <EducatorDashboard />
+                <StudentDashboard />
               ) : (
                 <EducatorDashboard />
               )

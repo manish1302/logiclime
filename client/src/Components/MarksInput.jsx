@@ -2,21 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Input, Button } from "antd";
 import { CheckOutlined, EditOutlined } from "@ant-design/icons";
 import { addmarks } from "../Endpoints/StudentMarks";
+import { isStudent } from "../Helpers";
 
-const MarksInput = ({ studentId, markss}) => {
-  const [marks, setMarks] = useState(markss);
-  const [isEditable, setIsEditable] = useState(true);
+const MarksInput = ({ studentId, marks, setMarks, setIsEditable, isEditable}) => {
 
   const handleMarksChange = (e) => {
     setMarks(e.target.value);
-  };  
+  };
 
-  useEffect(() => {
-    if(markss) {
-      setMarks(markss);
-      setIsEditable(false);
-    }
-  }, [markss])
 
   const handleSubmit = () => {
     setIsEditable(false);
@@ -31,34 +24,34 @@ const MarksInput = ({ studentId, markss}) => {
   const handleEdit = () => {
     setIsEditable(true);
   };
-
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
       <Input
         type="number"
         value={marks}
         onChange={handleMarksChange}
-        readOnly={!isEditable}
+        readOnly={!isEditable || isStudent()}
         style={{ width: "100px" }}
         max={10}
         min={0}
         placeholder="Marks"
       />
-      {isEditable ? (
-        <Button
-          variant="solid"
-          icon={<CheckOutlined style={{ color: "white" }} />}
-          onClick={handleSubmit}
-          disabled={!marks || marks < 0 || marks > 10}
-          style={{ backgroundColor: "#00CC00" }}
-        ></Button>
-      ) : (
-        <Button
-          type="default"
-          icon={<EditOutlined />}
-          onClick={handleEdit}
-        ></Button>
-      )}
+      {!isStudent() &&
+        (isEditable ? (
+          <Button
+            variant="solid"
+            icon={<CheckOutlined style={{ color: "white" }} />}
+            onClick={handleSubmit}
+            disabled={!marks || marks < 0 || marks > 10}
+            style={{ backgroundColor: "#00CC00" }}
+          ></Button>
+        ) : (
+          <Button
+            type="default"
+            icon={<EditOutlined />}
+            onClick={handleEdit}
+          ></Button>
+        ))}
     </div>
   );
 };

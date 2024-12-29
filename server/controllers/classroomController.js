@@ -86,6 +86,50 @@ const getClassroomByEducatorId = async (req, res) => {
   }
 };
 
+const getClassroomByStudentId = async (req, res) => {
+  const userId = req.user.userId;
+
+  try {
+    const studentClasses = await ClassroomStudentModel.find({ StudentId: userId }).select("ClassCode");
+
+    const classCodes = studentClasses.map((entry) => entry.ClassCode);
+
+    if (classCodes.length === 0) {
+      console.log("No classes found for this student.");
+      return [];
+    }
+
+    // Step 2: Fetch class details and assignment counts
+    const classroomDetails = await ClassroomModel.aggregate([
+      {
+        $match: { classCode: { $in: classCodes } }, // Filter by class codes
+      },
+      {
+        $lookup: {
+          from: "Assignments", // Name of the Assignment collection
+          localField: "classCode",
+          foreignField: "classCode",
+          as: "assignments",
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          description: 1,
+          classCode : 1,
+          numberOfAssignments: { $size: "$assignments" },
+        },
+      },
+    ]);
+
+    res.status(200).json(classroomDetails)
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+    });
+  }
+}
+
 const getStudentByClassCode = async (req, res) => {
   const { classCode } = req.query;
 
@@ -159,4 +203,5 @@ module.exports = {
   getClassroomByEducatorId,
   getStudentByClassCode,
   joinClassroom,
+  getClassroomByStudentId
 };

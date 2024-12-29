@@ -29,6 +29,30 @@
     }
   }
 
+  .student-class-card {
+    border: none;
+    border-radius: 8px;
+    // box-shadow: 3px 3px 10px 4px rgba(0, 0, 0, 0.05);
+    padding: 8px 16px;
+    width: 32%;
+    height: 150px;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    margin: 16px 0;
+    margin-right: 16px;
+    background-color: rgba(0, 0, 0, 0.05);
+    .class-name {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .class-desc {
+      font-size: 14px;
+      font-weight: 500;
+      color: grey;
+    }
+  }
+
   .class-card:hover {
     border: 1px solid black;
   }
