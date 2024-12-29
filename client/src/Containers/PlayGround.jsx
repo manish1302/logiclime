@@ -84,6 +84,7 @@ const PlayGround = () => {
           assignment={assignment}
           studentId = {studentId}
           markss = {submittedCode?.Marks}
+          assignmentId = {assignmentCode}
         />
       </div>
     </div>

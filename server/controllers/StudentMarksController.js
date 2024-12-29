@@ -134,11 +134,11 @@ const getSubmissionsByClassCode = async (req, res) => {
 };
 
 const addMarks = async (req, res) => {
-  const { studentId, marks } = req.body;
+  const { studentId, marks, assignmentId } = req.body;
 
   try {
     const updatedDocument = await StudentAssignmentModel.findOneAndUpdate(
-      { StudentId: studentId },
+      { StudentId: studentId, AssignmentId : assignmentId },
       { $set: { Marks: marks } },
       { new: true }
     );

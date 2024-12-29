@@ -4,17 +4,23 @@ import { CheckOutlined, EditOutlined } from "@ant-design/icons";
 import { addmarks } from "../Endpoints/StudentMarks";
 import { isStudent } from "../Helpers";
 
-const MarksInput = ({ studentId, marks, setMarks, setIsEditable, isEditable}) => {
-
+const MarksInput = ({
+  studentId,
+  marks,
+  setMarks,
+  setIsEditable,
+  isEditable,
+  assignmentId,
+}) => {
   const handleMarksChange = (e) => {
     setMarks(e.target.value);
   };
-
 
   const handleSubmit = () => {
     setIsEditable(false);
     addmarks({
       studentId: studentId,
+      assignmentId: assignmentId,
       marks: marks,
     })
       .then((res) => console.log(res))

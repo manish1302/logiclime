@@ -49,7 +49,7 @@ const getClassroomByCode = async (req, res) => {
     const educatorId = req.user.userId;
     const Classroom = await ClassroomModel.findOne({ classCode });
     const Educator = await userModel.findOne({
-      _id: educatorId,
+      _id: Classroom.educator,
     });
     res
       .status(200)

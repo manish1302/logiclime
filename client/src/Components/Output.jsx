@@ -21,7 +21,7 @@ const getDifficultyColor = (difficulty) => {
   }
 };
 
-const Output = ({ language, editorRef, assignment, studentId, markss }) => {
+const Output = ({ language, editorRef, assignment, studentId, markss, assignmentId }) => {
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
   const [marks, setMarks] = useState("-");
@@ -79,6 +79,7 @@ const Output = ({ language, editorRef, assignment, studentId, markss }) => {
           setMarks={setMarks}
           isEditable={isEditable}
           setIsEditable={setIsEditable}
+          assignmentId = {assignmentId}
         />
         {/* <div
           className="link-text mx-3"
