@@ -33,8 +33,10 @@ const Register = () => {
         navigate("/login");
       })
       .catch((err) => {
-        errorMessage();
-        console.log(err);
+        if(err.status == 400) {
+          errorMessage();
+        }
+        console.log(err)
       });
   };
   return (
