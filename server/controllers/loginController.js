@@ -10,7 +10,7 @@ const createUser = async (req, res) => {
     const alreadyExists = await UserModel.find({ email: email });
 
     if (alreadyExists?.length > 0) {
-      res.status(400).json({ error: "User already exists" });
+      return res.status(400).json({ error: "User already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);

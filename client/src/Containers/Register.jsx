@@ -5,9 +5,19 @@ import leftMain from "../assets/leftMain.jpg";
 import google from "../assets/google.png";
 import apple from "../assets/apple-logo.png";
 import DropdownComp from "../Components/Dropdown";
+import { useState } from "react";
+import { Button, message, Space } from "antd";
 
 const Register = () => {
   const navigate = useNavigate();
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const errorMessage = () => {
+    messageApi.open({
+      type: "error",
+      content: "Email Id already registered",
+    });
+  };
 
   const OnFormSubmit = (values) => {
     const payload = {
@@ -21,14 +31,15 @@ const Register = () => {
     registerRequest(payload)
       .then((res) => {
         navigate("/login");
-        console.log(res);
       })
       .catch((err) => {
+        errorMessage();
         console.log(err);
       });
   };
   return (
     <div className="login-container">
+      {contextHolder}
       <div className="left-login">
         <img src={leftMain} className="left-image" />
       </div>
@@ -85,7 +96,7 @@ const Register = () => {
                   setFieldValue={setFieldValue}
                   values={values}
                   fieldName="role"
-                  items = {["Educator", "Student"]}
+                  items={["Educator", "Student"]}
                 />
                 <Field
                   name="email"
