@@ -38,17 +38,17 @@ const DropdownComp = (props) => {
           readOnly
           className="dropdown-input"
         />
-        <button className="dropdown-arrow" onClick={toggleDropdown}>
+        <div className="dropdown-arrow" onClick={toggleDropdown}>
           ▼
-        </button>
+        </div>
       </div>
       {isDropdownVisible && (
-        <div className="dropdown-menu">
+        <div className="dropdown-bxx">
           {items.map((item, index) => (
             <div
               key={index}
-              className="dropdown-item"
               onClick={() => handleOptionClick(item)}
+              className="dropdown-item"
             >
               {item}
             </div>
