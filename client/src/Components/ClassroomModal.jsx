@@ -9,9 +9,7 @@ const ClassroomModal = ({
   handleCancel,
   classCode = false,
   setClassroom,
-  setIsModalOpen,
-  create, 
-  setCreate
+  setIsModalOpen
 }) => {
   const [copied, setCopied] = useState(null);
 
@@ -42,7 +40,7 @@ const ClassroomModal = ({
       open={isModalOpen}
       onCancel={handleCancel}
     >
-      {create ? (
+      {!classCode ? (
         <Formik
           initialValues={{
             title: "",

@@ -97,7 +97,6 @@ const EducatorDashboard = () => {
 
               <div className="d-flex w-100 justify-content-between">
                 <div>Assignments: {item?.assignmentCount}</div>
-                <div>Students: 34</div>
               </div>
             </div>
           );
