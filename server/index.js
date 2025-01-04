@@ -67,23 +67,30 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on('home-code-changed', ({data, roomId}) => {
-    const myRooms = getAllClients(roomId);
-    socket.to(roomId).emit('home-code', data);
-  })
+  socket.on("home-code-changed", ({ data, roomId }) => {
+    socket.to(roomId).emit("home-code", data);
+  });
 
-  socket.on('disconnecting', () => {
+  socket.on("submission-code", ({ data, educatorStudentId, fromStudentId, roomId }) => {
+    io.to(roomId).emit("submission-code", {
+      data,
+      educatorStudentId,
+      fromStudentId,
+    });
+  });
+
+  socket.on("disconnecting", () => {
     const myRooms = [...socket.rooms];
     myRooms.forEach((roomId) => {
-      socket.in(roomId).emit('disconnected', {
-        socketId : socket.id,
-        username : userSocketMap[socket.id]
-      })
-    })
+      socket.in(roomId).emit("disconnected", {
+        socketId: socket.id,
+        username: userSocketMap[socket.id],
+      });
+    });
 
-    delete userSocketMap[socket.id]
+    delete userSocketMap[socket.id];
     socket.leave();
-  })
+  });
 });
 
 httpServer.listen(PORT);

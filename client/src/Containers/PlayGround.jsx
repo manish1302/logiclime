@@ -10,7 +10,7 @@ import { Segmented } from "antd";
 import { initializeSocket } from "../socket";
 import { getUserById } from "../Endpoints/Auth";
 import { toast, Toaster } from "react-hot-toast";
-import { isStudent } from "../Helpers";
+import { isEducator, isStudent } from "../Helpers";
 
 const PlayGround = () => {
   const [language, setLanguage] = useState(1); // this is the id of that language
@@ -130,6 +130,21 @@ const PlayGround = () => {
         setHomeValue(data);
       });
 
+      socketRef.current.on("submission-code", ({
+        data,
+        educatorStudentId,
+        fromStudentId,
+      }) => {
+        if (isEducator() && fromStudentId == studentId) {
+          setValue(data);
+        } else if (
+          isStudent() &&
+          localStorage.getItem("userId") == educatorStudentId
+        ) {
+          setValue(data);
+        }
+      });
+
       socketRef.current.on("disconnected", ({ socketId, username }) => {
         toast.error(`${username} left the room`);
       });
@@ -158,8 +173,16 @@ const PlayGround = () => {
   }, [homeValue]);
 
   useEffect(() => {
-
-  }, [value])
+    if (socketRef.current) {
+      console.log("hiiii")
+      socketRef.current.emit("submission-code", {
+        data: value,
+        educatorStudentId: studentId ?? "",
+        fromStudentId: localStorage.getItem("userId"),
+        roomId : assignmentCode
+      });
+    }
+  }, [value]);
 
   console.log(homeValue + "xx", value + "yy");
 
