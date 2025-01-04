@@ -6,6 +6,7 @@ import { Card, Typography, Tag, Divider, Row, Col, List } from "antd";
 import { saveStudentCode } from "../Endpoints/StudentMarks";
 import MarksInput from "./MarksInput";
 import { Button, message, Space } from "antd";
+import { isStudent } from "../Helpers";
 
 const { Title, Text } = Typography;
 
@@ -29,6 +30,7 @@ const Output = ({
   studentId,
   markss,
   assignmentId,
+  editorOption
 }) => {
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
@@ -81,7 +83,7 @@ const Output = ({
           Run Code
         </button>{" "}
         &nbsp; &nbsp;
-        {!studentId && (
+        {isStudent() && (
           <button
             className="submit-code"
             style={{ marginRight: "16px" }}

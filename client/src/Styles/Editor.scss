@@ -1,61 +1,73 @@
 .code-and-compile {
-    display: flex;
-    width: 90vw;
-    margin: 0 16px;
+  display: flex;
+  width: 90vw;
+  margin: 0 16px;
 }
 
 .code-editor-box {
-    width: 60%;
-    margin-right: 16px;
+  width: 60%;
+  margin-right: 16px;
 }
 
 .output-box {
-    width: 30%;
+  width: 30%;
 }
 
 .run-code {
-    border: 1px solid #fff;
-    padding: 5px 16px;
-    background-color: grey;
-    border-radius: 8px;
-    color: white;
-    margin: 16px 0;
+  border: 1px solid #fff;
+  padding: 5px 16px;
+  background-color: grey;
+  border-radius: 8px;
+  color: white;
+  margin: 16px 0;
 }
 
-.run-code:hover{
-    background-color: rgba(128, 128, 128, 0.8);
+.run-code:hover {
+  background-color: rgba(128, 128, 128, 0.8);
 }
 
 .submit-code {
-    background-color: #00CC00;
-    padding: 5px 16px;
-    border-radius: 8px;
-    margin: 16px 0;
-    border: 1px solid #00CC00;
-    color: white;
+  background-color: #00cc00;
+  padding: 5px 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+  border: 1px solid #00cc00;
+  color: white;
 }
 
-.submit-code:hover{
-    background-color: rgba(0, 204, 0,.8);
+.submit-code:hover {
+  background-color: rgba(0, 204, 0, 0.8);
 }
 
 .output {
-    border: 1px solid lightgray;
-    height: 25vh;
-    padding: 16px;
+  border: 1px solid lightgray;
+  height: 25vh;
+  padding: 16px;
 }
 
 .error-output {
-    border: 1px solid red;
-    height: 75vh;
-    padding: 16px;
-    color: red;
+  border: 1px solid red;
+  height: 75vh;
+  padding: 16px;
+  color: red;
 }
 
 .problem-desc {
-    border: 1px solid lightgray;
-    height: 47vh;
-    padding: 16px;
-    margin-bottom: 20px;
-    overflow-y: auto;
+  border: 1px solid lightgray;
+  height: 47vh;
+  padding: 16px;
+  margin-bottom: 20px;
+  overflow-y: auto;
+}
+
+.secondary-cursor {
+  border-left: 2px solid red;
+  height: 1em;
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
 }
