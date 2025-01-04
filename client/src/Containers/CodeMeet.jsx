@@ -111,6 +111,10 @@ const CodeMeet = () => {
     navigate(`/classroom/${classCode}/${assignmentId}`);
   };
 
+  const handleDiscuss = (assignmentId) => {
+    navigate(`/discussion/${classCode}/${assignmentId}`);
+  }
+
   return (
     <div className="code-meet-container">
       <div className="code-meet-header">
@@ -179,6 +183,7 @@ const CodeMeet = () => {
             difficulty={assignment.difficulty}
             tags={assignment.tags}
             onSolve={() => handleSolve(assignment._id)}
+            onDiscuss = {() => handleDiscuss(assignment._id)}
             marks = {assignment.marks}
             submitted = {assignment.Success}
           />

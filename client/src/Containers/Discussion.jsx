@@ -7,12 +7,12 @@ import { useParams } from "react-router-dom";
 import { getAssignmentById } from "../Endpoints/Assignment";
 import { getAssignmentCode } from "../Endpoints/StudentMarks";
 import { Segmented } from "antd";
-import { initializeSocket } from "../socket";
+import { initializeDisussionSocket, initializeSocket } from "../socket";
 import { getUserById } from "../Endpoints/Auth";
 import { toast, Toaster } from "react-hot-toast";
-import { isStudent } from "../Helpers";
+import { isEducator, isStudent } from "../Helpers";
 
-const PlayGround = () => {
+const Discussion = () => {
   const [language, setLanguage] = useState(1); // this is the id of that language
   const [codeSnippet, setCodeSnippet] = useState(
     Object.entries(CODE_SNIPPETS)[0][1]
@@ -24,56 +24,63 @@ const PlayGround = () => {
   const [assignment, setAssignment] = useState(null);
   const { assignmentCode, studentId, classCode } = useParams();
   const [editorOption, setEditorOption] = useState("Home");
+  const [position, setPosition] = useState(null);
 
   const socketRef = useRef(null);
-
-  const onMountHome = (editor) => {
-    editorRef.current = editor;
-    editor.focus();
-    const position = { lineNumber: 2, column: 5 };
-
-    // editor.deltaDecorations(
-    //   [],
-    //   [
-    //     {
-    //       range: new monaco.Range(
-    //         position.lineNumber,
-    //         position.column,
-    //         position.lineNumber,
-    //         position.column
-    //       ),
-    //       options: {
-    //         className: "secondary-cursor",
-    //         afterContentClassName: "username-label", // Add styling for the label
-    //       },
-    //     },
-    //   ]
-    // );
-  };
+  const decorationRef = useRef(null);
 
   const onMount = (editor) => {
     editorRef.current = editor;
     editor.focus();
-    const position = { lineNumber: 2, column: 5 };
 
-    // editor.deltaDecorations(
-    //   [],
-    //   [
-    //     {
-    //       range: new monaco.Range(
-    //         position.lineNumber,
-    //         position.column,
-    //         position.lineNumber,
-    //         position.column
-    //       ),
-    //       options: {
-    //         className: "secondary-cursor",
-    //         afterContentClassName: "username-label", // Add styling for the label
+    // if (position) {
+    //   decorationRef.current = editor.deltaDecorations(
+    //     [], // Clear existing decorations
+    //     [
+    //       {
+    //         range: new monaco.Range(
+    //           position.lineNumber,
+    //           position.column,
+    //           position.lineNumber,
+    //           position.column
+    //         ),
+    //         options: {
+    //           className: "secondary-cursor",
+    //           afterContentClassName: "username-label", // Add styling for the label (can customize as per requirement)
+    //         },
     //       },
-    //     },
-    //   ]
-    // );
+    //     ]
+    //   );
+    // }
   };
+
+  // useEffect(() => {
+  //   if (editorRef.current && position) {
+  //     // Remove the previous decoration
+  //     if (decorationRef.current) {
+  //       editorRef.current.deltaDecorations(decorationRef.current, []);
+  //     }
+
+  //     // Add the new cursor decoration
+  //     decorationRef.current = editorRef.current.deltaDecorations(
+  //       [], // Clear previous decorations
+  //       [
+  //         {
+  //           range: new monaco.Range(
+  //             position.lineNumber,
+  //             position.column,
+  //             position.lineNumber,
+  //             position.column
+  //           ),
+  //           options: {
+  //             className: "secondary-cursor",
+  //             afterContentClassName: "username-label", // Optional styling
+  //           },
+  //         },
+  //       ]
+  //     );
+  //   }
+  // }, [position])
 
   const getCurrentCursorPosition = () => {
     return editorRef?.current?.getPosition();
@@ -116,7 +123,7 @@ const PlayGround = () => {
   // Socket Logic here...
   useEffect(() => {
     const initialize = async () => {
-      socketRef.current = await initializeSocket(classCode);
+      socketRef.current = await initializeDisussionSocket();
       socketRef.current.on("connect_error", (err) => handleErrors(err));
       socketRef.current.on("connect_failed", (err) => handleErrors(err));
       socketRef.current.on("joined", ({ allClients, username, socketId }) => {
@@ -126,8 +133,9 @@ const PlayGround = () => {
         console.log(err);
       }
 
-      socketRef.current.on("home-code", (data) => {
-        setHomeValue(data);
+      socketRef.current.on("code-changed", ({ data, position }) => {
+        setValue(data);
+        setPosition(position);
       });
 
       socketRef.current.on("disconnected", ({ socketId, username }) => {
@@ -136,8 +144,10 @@ const PlayGround = () => {
 
       getUserById()
         .then((res) => {
+          const sId = isEducator() ? studentId : localStorage.getItem("userId");
+          console.log(sId);
           socketRef.current.emit("join-room", {
-            roomId: assignmentCode,
+            roomId: assignmentCode + sId,
             username: res?.data?.name,
           });
         })
@@ -146,22 +156,14 @@ const PlayGround = () => {
         });
     };
     initialize();
+
+    return () => {
+      if (socketRef.current?.connected) {
+        socketRef.current.removeAllListeners();
+        socketRef.current.close();
+      }
+    };
   }, []);
-
-  useEffect(() => {
-    if (homeValue != "// code here") {
-      socketRef.current.emit("home-code-changed", {
-        data: homeValue,
-        roomId: assignmentCode,
-      });
-    }
-  }, [homeValue]);
-
-  useEffect(() => {
-    
-  }, [value])
-
-  console.log(homeValue + "xx", value + "yy");
 
   return (
     <div className="code-and-compile">
@@ -173,44 +175,29 @@ const PlayGround = () => {
           <div>
             <LanguageMenu onSelectChange={onSelectChange} language={language} />
           </div>
-          <div className="mb-2">
-            <Segmented
-              options={["Home", "Practice"]}
-              onChange={(value) => {
-                setEditorOption(value);
-              }}
-            />
-          </div>
         </div>
         <div onClick={cursorPosition}>
-          {editorOption == "Home" && (
-            <Editor
-              height={"75vh"}
-              theme="vs-dark"
-              language={LANGUAGES[language - 1]}
-              value={homeValue}
-              onChange={(data) => {
-                setHomeValue(data);
-              }}
-              options={{
-                readOnly: isStudent(),
-              }}
-              onMount={onMountHome}
-            />
-          )}
-          {editorOption == "Practice" && (
-            <Editor
-              height={"75vh"}
-              theme="vs-dark"
-              language={LANGUAGES[language - 1]}
-              defaultValue={"//code here"}
-              value={value}
-              onChange={(data) => {
-                setValue(data);
-              }}
-              onMount={onMount}
-            />
-          )}
+          <Editor
+            height={"75vh"}
+            theme="vs-dark"
+            language={LANGUAGES[language - 1]}
+            defaultValue={"//code here"}
+            value={value}
+            onChange={(data) => {
+              if (socketRef.current) {
+                const sId = isEducator()
+                  ? studentId
+                  : localStorage.getItem("userId");
+                socketRef.current.emit("code-changed", {
+                  data: data,
+                  position: getCurrentCursorPosition(),
+                  roomId: assignmentCode + sId,
+                });
+              }
+              setValue(data);
+            }}
+            onMount={onMount}
+          />
         </div>
       </div>
       <div className="output-box">
@@ -228,4 +215,4 @@ const PlayGround = () => {
   );
 };
 
-export default PlayGround;
+export default Discussion;

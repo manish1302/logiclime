@@ -40,6 +40,7 @@ const io = new Server(httpServer, {
 });
 
 const userSocketMap = {};
+const userDiscussSocketMap = {};
 
 function getAllClients(roomId) {
   return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
@@ -47,6 +48,17 @@ function getAllClients(roomId) {
       return {
         socketId,
         username: userSocketMap[socketId],
+      };
+    }
+  );
+}
+
+function getAllDiscussClients(roomId) {
+  return Array.from(io.of("/discuss").adapter.rooms.get(roomId) || []).map(
+    (socketId) => {
+      return {
+        socketId,
+        username: userDiscussSocketMap[socketId],
       };
     }
   );
@@ -67,23 +79,59 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on('home-code-changed', ({data, roomId}) => {
+  socket.on("home-code-changed", ({ data, roomId }) => {
     const myRooms = getAllClients(roomId);
-    socket.to(roomId).emit('home-code', data);
-  })
+    socket.to(roomId).emit("home-code", data);
+  });
 
-  socket.on('disconnecting', () => {
+  socket.on("disconnecting", () => {
     const myRooms = [...socket.rooms];
     myRooms.forEach((roomId) => {
-      socket.in(roomId).emit('disconnected', {
-        socketId : socket.id,
-        username : userSocketMap[socket.id]
-      })
-    })
+      socket.in(roomId).emit("disconnected", {
+        socketId: socket.id,
+        username: userSocketMap[socket.id],
+      });
+    });
 
-    delete userSocketMap[socket.id]
+    delete userSocketMap[socket.id];
     socket.leave();
-  })
+  });
+});
+
+io.of("/discuss").on("connection", (socket) => {
+  socket.on("join-room", ({ roomId, username }) => {
+    userDiscussSocketMap[socket.id] = username;
+    const allClients = getAllDiscussClients(roomId);
+    socket.join(roomId);
+    allClients.forEach(({ socketId }) => {
+      if (socketId != socket.id)
+        io.of("/discuss").to(socketId).emit("joined", {
+          allClients,
+          username,
+          socketId: socket.id,
+        });
+    });
+  });
+
+  socket.on("code-changed", ({ data, position, roomId }) => {
+    socket.to(roomId).emit("code-changed", {
+      data,
+      position,
+    });
+  });
+
+  socket.on("disconnecting", () => {
+    const myRooms = [...socket.rooms];
+    myRooms.forEach((roomId) => {
+      socket.in(roomId).emit("disconnected", {
+        socketId: socket.id,
+        username: userDiscussSocketMap[socket.id],
+      });
+    });
+
+    delete userSocketMap[socket.id];
+    socket.leave();
+  });
 });
 
 httpServer.listen(PORT);

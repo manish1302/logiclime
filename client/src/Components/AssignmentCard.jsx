@@ -13,8 +13,9 @@ const AssignmentCard = ({
   difficulty,
   tags,
   onSolve, // Function to handle solve button click
+  onDiscuss,
   marks,
-  submitted 
+  submitted,
 }) => {
   return (
     <Card
@@ -46,26 +47,47 @@ const AssignmentCard = ({
           ))}
       </div>
       <div className="d-flex align-items-center justify-content-between">
-        <Button
-          onClick={onSolve}
-          style={{
-            backgroundColor: "#00CC00",
-            borderRadius: "8px",
-            border: "none",
-            cursor: "pointer",
-            fontWeight: 600,
-            color: "white",
-          }}
-        >
-          Solve
-        </Button>
+        <div>
+          <Button
+            onClick={onSolve}
+            style={{
+              backgroundColor: "#00CC00",
+              borderRadius: "8px",
+              border: "none",
+              cursor: "pointer",
+              fontWeight: 600,
+              color: "white",
+              marginRight : "16px"
+            }}
+          >
+            Solve
+          </Button>
+          <Button
+            onClick={onDiscuss}
+            style={{
+              backgroundColor: "orange",
+              borderRadius: "8px",
+              border: "none",
+              cursor: "pointer",
+              fontWeight: 600,
+              color: "white",
+            }}
+          >
+            Discuss
+          </Button>
+        </div>
         {marks ? (
-          <div style={{ margin: "8px 0", color : "grey" }}>
-            Marks: <span style={{ color: "#1890ff", fontWeight: "bold" }}>{marks}</span>
+          <div style={{ margin: "8px 0", color: "grey" }}>
+            Marks:{" "}
+            <span style={{ color: "#1890ff", fontWeight: "bold" }}>
+              {marks}
+            </span>
           </div>
         ) : submitted ? (
-          <div style={{color : "#00CC00"}}>Submitted</div>
-        ) : ""}
+          <div style={{ color: "#00CC00" }}>Submitted</div>
+        ) : (
+          ""
+        )}
       </div>
     </Card>
   );

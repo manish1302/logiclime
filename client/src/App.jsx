@@ -11,6 +11,7 @@ import PlayGround from "./Containers/PlayGround";
 import EducatorDashboard from "./Containers/EducatorDashboard";
 import Classinfo from "./Containers/Classinfo";
 import StudentDashboard from "./Containers/StudentDashboard";
+import Discussion from "./Containers/Discussion";
 const App = () => {
   return (
     <div style={{ height: "100vh", width: "100vw" }}>
@@ -37,8 +38,12 @@ const App = () => {
             element={<PlayGround />}
           />
           <Route
-            path="/playground/:classCode/:studentId/:assignmentCode"
-            element={<PlayGround />}
+            path="/discussion/:classCode/:studentId/:assignmentCode"
+            element={<Discussion />}
+          />
+          <Route
+            path="/discussion/:classCode/:assignmentCode"
+            element={<Discussion />}
           />
           <Route
             path="/class-info/:classCode"

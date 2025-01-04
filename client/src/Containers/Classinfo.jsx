@@ -34,7 +34,7 @@ const Classinfo = () => {
 
   const handleMarking = (studentId, assignmentId) => {
     window.open(
-      `${import.meta.env.VITE_UI_BASE_URL}/playground/${classCode}/${studentId}/${assignmentId}`
+      `${import.meta.env.VITE_UI_BASE_URL}/discussion/${classCode}/${studentId}/${assignmentId}`
     );
   };
 
