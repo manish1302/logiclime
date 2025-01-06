@@ -1,12 +1,12 @@
 .home-container {
   width: 100vw;
-  height: 93vh;
+  min-height: 100%;
   color: black;
   display: flex;
 
   .create-meet-container {
     width: 50%;
-    height: 100%;
+    height: 93vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -14,7 +14,7 @@
 
   .create-meet-image {
     width: 50%;
-    height: 100%;
+    min-height: 93vh;
     background-color: rgba(177, 156, 217, 0.3);
     display: flex;
     align-items: center;
@@ -112,7 +112,6 @@
 
 .navbar {
   width: 100% !important;
-  height: 10vh;
   box-shadow: 0 1px 10px 10px rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
@@ -124,6 +123,7 @@
     font-size: 1.5rem;
     display: flex;
     align-items: center;
+    margin: 8px 16px;
   }
 }
 

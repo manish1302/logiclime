@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import LanguageMenu from "../Components/LanguageMenu";
 import Output from "../Components/Output";
 import { CODE_SNIPPETS, LANGUAGE_VERSIONS, LANGUAGES } from "../constants";
+import { PhoneFilled } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import { getAssignmentById } from "../Endpoints/Assignment";
 import { getAssignmentCode } from "../Endpoints/StudentMarks";
@@ -11,6 +12,7 @@ import { initializeDisussionSocket, initializeSocket } from "../socket";
 import { getUserById } from "../Endpoints/Auth";
 import { toast, Toaster } from "react-hot-toast";
 import { isEducator, isStudent } from "../Helpers";
+import CallCard from "../Components/CallCard";
 
 const Discussion = () => {
   const [language, setLanguage] = useState(1); // this is the id of that language
@@ -25,9 +27,9 @@ const Discussion = () => {
   const { assignmentCode, studentId, classCode } = useParams();
   const [editorOption, setEditorOption] = useState("Home");
   const [position, setPosition] = useState(null);
+  const [clients, setClients] = useState([])
 
   const socketRef = useRef(null);
-  const decorationRef = useRef(null);
 
   const onMount = (editor) => {
     editorRef.current = editor;
@@ -128,6 +130,7 @@ const Discussion = () => {
       socketRef.current.on("connect_failed", (err) => handleErrors(err));
       socketRef.current.on("joined", ({ allClients, username, socketId }) => {
         toast.success(`${username} joined the room`);
+        setClients(allClients)
       });
       function handleErrors(err) {
         console.log(err);
@@ -166,52 +169,69 @@ const Discussion = () => {
   }, []);
 
   return (
-    <div className="code-and-compile">
+    <>
       <div>
         <Toaster />
       </div>
-      <div className="code-editor-box">
-        <div className="d-flex align-items-center justify-content-between">
-          <div>
-            <LanguageMenu onSelectChange={onSelectChange} language={language} />
+      <div className="code-and-compile">
+        <div className="code-editor-box">
+          <div className="d-flex align-items-center justify-content-between">
+            <div>
+              <LanguageMenu
+                onSelectChange={onSelectChange}
+                language={language}
+              />
+            </div>
+          </div>
+          <div onClick={cursorPosition}>
+            <Editor
+              height={"75vh"}
+              theme="vs-dark"
+              language={LANGUAGES[language - 1]}
+              defaultValue={"//code here"}
+              value={value}
+              onChange={(data) => {
+                if (socketRef.current) {
+                  const sId = isEducator()
+                    ? studentId
+                    : localStorage.getItem("userId");
+                  socketRef.current.emit("code-changed", {
+                    data: data,
+                    position: getCurrentCursorPosition(),
+                    roomId: assignmentCode + sId,
+                  });
+                }
+                setValue(data);
+              }}
+              onMount={onMount}
+            />
           </div>
         </div>
-        <div onClick={cursorPosition}>
-          <Editor
-            height={"75vh"}
-            theme="vs-dark"
+        <div className="output-box">
+          <Output
+            editorRef={editorRef}
             language={LANGUAGES[language - 1]}
-            defaultValue={"//code here"}
-            value={value}
-            onChange={(data) => {
-              if (socketRef.current) {
-                const sId = isEducator()
-                  ? studentId
-                  : localStorage.getItem("userId");
-                socketRef.current.emit("code-changed", {
-                  data: data,
-                  position: getCurrentCursorPosition(),
-                  roomId: assignmentCode + sId,
-                });
-              }
-              setValue(data);
-            }}
-            onMount={onMount}
+            assignment={assignment}
+            studentId={studentId}
+            markss={submittedCode?.Marks}
+            assignmentId={assignmentCode}
+            editorOption={editorOption}
           />
         </div>
+        <div className="call-details">
+          <div className="d-flex align-items-center justify-content-between">
+            <div className="cursor-pointer my-3">
+              <PhoneFilled style={{ color: "#00CC00" }} /> Call
+            </div>
+          </div>
+          {clients.map(item => {
+            return (
+              <CallCard username = {item.username}/>
+            )
+          })}
+        </div>
       </div>
-      <div className="output-box">
-        <Output
-          editorRef={editorRef}
-          language={LANGUAGES[language - 1]}
-          assignment={assignment}
-          studentId={studentId}
-          markss={submittedCode?.Marks}
-          assignmentId={assignmentCode}
-          editorOption={editorOption}
-        />
-      </div>
-    </div>
+    </>
   );
 };
 

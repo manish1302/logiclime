@@ -7,6 +7,7 @@ import apple from "../assets/apple-logo.png";
 import DropdownComp from "../Components/Dropdown";
 import { useState } from "react";
 import { Button, message, Space } from "antd";
+import lemon from "../assets/lemon.png";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -33,10 +34,10 @@ const Register = () => {
         navigate("/login");
       })
       .catch((err) => {
-        if(err.status == 400) {
+        if (err.status == 400) {
           errorMessage();
         }
-        console.log(err)
+        console.log(err);
       });
   };
   return (
@@ -47,6 +48,17 @@ const Register = () => {
       </div>
       <div className="right-login">
         <div className="right-login-box">
+          <div
+            className="logo cursor-pointer"
+            style={{ color: "white", fontSize: "16px", marginBottom: "32px" }}
+          >
+            <img
+              style={{ height: "20px", cursor: "pointer", marginRight: "8px" }}
+              src={lemon}
+              alt=""
+            />
+            Logic Lime
+          </div>
           <div className="Login-main">Welcome, get started !!</div>
           <Formik
             initialValues={{
@@ -58,9 +70,10 @@ const Register = () => {
             }}
             validate={(values) => {
               const errors = {};
-              // Add validation logic here if needed
               return errors;
             }}
+            validateOnChange={false}
+            validateOnBlur={false}
             onSubmit={(values) => {
               OnFormSubmit(values);
             }}
@@ -69,57 +82,106 @@ const Register = () => {
               values,
               setFieldValue,
               errors,
+              setErrors,
               touched,
               handleChange,
               handleSubmit,
-            }) => (
-              <Form onSubmit={handleSubmit} className="login-form">
-                <div className="names-field">
-                  <Field
-                    name="firstName"
-                    type="text"
-                    value={values.firstName}
-                    onChange={handleChange}
-                    placeholder="First Name"
+            }) => {
+              console.log(errors);
+              return (
+                <Form onSubmit={handleSubmit} className="login-form">
+                  <div className="names-field">
+                    <div
+                      className="d-flex flex-column"
+                      style={{ width: "48%" }}
+                    >
+                      <Field
+                        name="firstName"
+                        type="text"
+                        value={values.firstName}
+                        onChange={handleChange}
+                        placeholder="First Name"
+                        className="login-fields"
+                        style={{ marginRight: "16px", border : errors.firstName && "1px solid red" }}
+                        validate={(value) => {
+                          return [null, undefined, ""].includes(value);
+                        }}
+                      />
+                      {errors.firstName && (
+                        <div style={{ color: "red" }}>Required</div>
+                      )}
+                    </div>
+                    <div
+                      className="d-flex flex-column"
+                      style={{ width: "48%" }}
+                    >
+                      <Field
+                        name="secondName"
+                        type="text"
+                        value={values.secondName}
+                        onChange={handleChange}
+                        style = {{border : errors.secondName && "1px solid red"}}
+                        placeholder="Last Name"
+                        className="login-fields"
+                        validate={(value) => {
+                          return [null, undefined, ""].includes(value);
+                        }}
+                      />
+                      {errors.secondName && (
+                        <div style={{ color: "red" }}>Required</div>
+                      )}
+                    </div>
+                  </div>
+                  <DropdownComp
                     className="login-fields"
-                    style={{ marginRight: "16px" }}
+                    setFieldValue={setFieldValue}
+                    values={values}
+                    fieldName="role"
+                    items={["Educator", "Student"]}
                   />
-                  <Field
-                    name="secondName"
-                    type="text"
-                    value={values.secondName}
-                    onChange={handleChange}
-                    placeholder="Last Name"
-                    className="login-fields"
-                  />
-                </div>
-                <DropdownComp
-                  className="login-fields"
-                  setFieldValue={setFieldValue}
-                  values={values}
-                  fieldName="role"
-                  items={["Educator", "Student"]}
-                />
-                <Field
-                  name="email"
-                  type="email"
-                  value={values.email}
-                  onChange={handleChange}
-                  placeholder="Email"
-                  className="login-fields"
-                />
-                <Field
-                  name="password"
-                  type="password"
-                  value={values.password}
-                  onChange={handleChange}
-                  placeholder="Password"
-                  className="login-fields"
-                />
-                <button type="submit" className="login-button">
-                  Register
-                </button>
-                <div className="social-login-box">
+
+                  <div className="d-flex flex-column w-100">
+                    <Field
+                      name="email"
+                      type="text"
+                      value={values.email}
+                      onChange={handleChange}
+                      style = {{border : errors.email && "1px solid red"}}
+                      placeholder="Email"
+                      className="login-fields"
+                      validate={(value) => {
+                        if (!values.email) {
+                          return "Email is required";
+                        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
+                          return "Invalid email address";
+                        } else {
+                          return false
+                        }
+                      }}
+                    />
+                    {errors.email && <div style={{ color: "red" }}>{errors.email}</div>}
+                  </div>
+                  <div className="d-flex flex-column w-100">
+                    <Field
+                      name="password"
+                      type="password"
+                      value={values.password}
+                      style = {{border : errors.password && "1px solid red"}}
+                      onChange={handleChange}
+                      placeholder="Password"
+                      className="login-fields"
+                      validate={(value) => {
+                        return [null, undefined, ""].includes(value);
+                      }}
+                    />
+                    {errors.password && (
+                      <div style={{ color: "red" }}>Required</div>
+                    )}
+                  </div>
+                  <button type="submit" className="login-button">
+                    Register
+                  </button>
+                  {/* <div className="social-login-box">
                   <button className="social-login-button">
                     <img src={google} alt="" style={{ height: "10px" }} />{" "}
                     &nbsp; Google
@@ -128,17 +190,18 @@ const Register = () => {
                     <img src={apple} alt="" style={{ height: "15px" }} /> &nbsp;
                     Apple
                   </button>
-                </div>
-                <u
-                  onClick={() => {
-                    navigate("/login");
-                  }}
-                  className="login-opp-text"
-                >
-                  Already a user?
-                </u>
-              </Form>
-            )}
+                </div> */}
+                  <u
+                    onClick={() => {
+                      navigate("/login");
+                    }}
+                    className="login-opp-text"
+                  >
+                    Already a user?
+                  </u>
+                </Form>
+              );
+            }}
           </Formik>
         </div>
       </div>

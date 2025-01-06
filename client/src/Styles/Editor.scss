@@ -1,12 +1,12 @@
 .code-and-compile {
   display: flex;
-  width: 90vw;
-  margin: 0 16px;
+  width: 98vw;
+  margin: 16px;
+  justify-content: space-around;
 }
 
 .code-editor-box {
-  width: 60%;
-  margin-right: 16px;
+  width: 50%;
 }
 
 .output-box {
@@ -69,5 +69,30 @@
 @keyframes blink {
   50% {
     opacity: 0;
+  }
+}
+
+.call-details {
+  width: 18%;
+}
+
+.call-card {
+  width: 100%;
+  background-color: lightgray;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  margin-bottom: 16px;
+
+  .caller-name {
+    width: 50px;
+    height: 50px;
+    background-color: grey;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

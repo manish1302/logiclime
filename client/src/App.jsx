@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Login from "./Containers/Login";
 import Home from "./Containers/Home";
 import Register from "./Containers/Register";
@@ -12,11 +12,19 @@ import EducatorDashboard from "./Containers/EducatorDashboard";
 import Classinfo from "./Containers/Classinfo";
 import StudentDashboard from "./Containers/StudentDashboard";
 import Discussion from "./Containers/Discussion";
+
+const NavbarWrapper = () => {
+  const location = useLocation();
+  const hideNavbarPaths = ["/login", "/register"];
+
+  return !hideNavbarPaths.includes(location.pathname) ? <Navbar /> : null;
+};
+
 const App = () => {
   return (
     <div style={{ height: "100vh", width: "100vw" }}>
       <BrowserRouter>
-        <Navbar />
+        <NavbarWrapper />
         <Routes>
           <Route path="/home" element={<Home />} />
           <Route path="/" element={<Landingpage />} />
@@ -25,7 +33,7 @@ const App = () => {
           <Route
             path="/dashboard"
             element={
-              localStorage.getItem("role") == 'Student' ? (
+              localStorage.getItem("role") == "Student" ? (
                 <StudentDashboard />
               ) : (
                 <EducatorDashboard />
@@ -45,10 +53,7 @@ const App = () => {
             path="/discussion/:classCode/:assignmentCode"
             element={<Discussion />}
           />
-          <Route
-            path="/class-info/:classCode"
-            element={<Classinfo />}
-          />
+          <Route path="/class-info/:classCode" element={<Classinfo />} />
         </Routes>
       </BrowserRouter>
     </div>

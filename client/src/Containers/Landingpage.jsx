@@ -153,12 +153,6 @@ const Landingpage = () => {
               collaborate seamlessly in the same code editor, enabling a
               hands-on learning environment where teachers can guide students
               through coding exercises, assignments, and problem-solving tasks.
-              With our unique real-time interaction feature, instructors can
-              view and edit student code instantly, providing immediate feedback
-              and corrections to ensure students are on the right track. Whether
-              you're teaching a class or working through assignments, our
-              platform fosters engagement, learning, and growth in a
-              collaborative, efficient way.
             </div>
           </div>
         </div>

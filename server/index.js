@@ -71,11 +71,11 @@ io.on("connection", (socket) => {
     socket.join(roomId);
     const allClients = getAllClients(roomId);
     allClients.forEach(({ socketId }) => {
-      io.to(socketId).emit("joined", {
-        allClients,
-        username,
-        socketId: socket.id,
-      });
+        io.to(socketId).emit("joined", {
+          allClients,
+          username,
+          socketId: socket.id,
+        });
     });
   });
 
@@ -104,7 +104,6 @@ io.of("/discuss").on("connection", (socket) => {
     const allClients = getAllDiscussClients(roomId);
     socket.join(roomId);
     allClients.forEach(({ socketId }) => {
-      if (socketId != socket.id)
         io.of("/discuss").to(socketId).emit("joined", {
           allClients,
           username,

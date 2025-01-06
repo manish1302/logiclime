@@ -28,7 +28,7 @@ const StudentDashboard = () => {
           </button>
         )}
       </div>
-      <div className="d-flex justify-content-between flex-wrap">
+      <div className="d-flex justify-content-start flex-wrap">
         {classrooms.map((item) => {
           return (
             <div className="student-class-card">
