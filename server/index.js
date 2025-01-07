@@ -131,6 +131,37 @@ io.of("/discuss").on("connection", (socket) => {
     delete userSocketMap[socket.id];
     socket.leave();
   });
+
+  socket.on("join-call", ({toRoomId, offer}) => { 
+    console.log(toRoomId, offer)
+    io.of('/discuss').to(toRoomId).emit('incomming-call', {
+      from : socket.id,
+      offer
+    })
+  })
+
+  socket.on('call-accepted', ({to, ans}) => {
+    console.log(to, ans);
+    io.of('/discuss').to(to).emit('call-accepted', {
+      from : socket.id,
+      ans
+    })
+  })
+
+  socket.on('peer:nego:needed', ({to, offer}) => {
+    io.of('/discuss').to(to).emit('peer:nego:needed', {
+      from : socket.id,
+      offer
+    })
+  })
+
+  socket.on('peer:nego:done', ({to, ans}) => {
+    io.of('/discuss').to(to).emit('peer:nego:final', {
+      from : socket.id,
+      ans
+    })
+  })
+
 });
 
 httpServer.listen(PORT);

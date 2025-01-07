@@ -1,5 +1,5 @@
 import { Editor } from "@monaco-editor/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import LanguageMenu from "../Components/LanguageMenu";
 import Output from "../Components/Output";
 import { CODE_SNIPPETS, LANGUAGE_VERSIONS, LANGUAGES } from "../constants";
@@ -13,6 +13,7 @@ import { getUserById } from "../Endpoints/Auth";
 import { toast, Toaster } from "react-hot-toast";
 import { isEducator, isStudent } from "../Helpers";
 import CallCard from "../Components/CallCard";
+import peer from "../services/peer";
 
 const Discussion = () => {
   const [language, setLanguage] = useState(1); // this is the id of that language
@@ -27,7 +28,10 @@ const Discussion = () => {
   const { assignmentCode, studentId, classCode } = useParams();
   const [editorOption, setEditorOption] = useState("Home");
   const [position, setPosition] = useState(null);
-  const [clients, setClients] = useState([])
+  const [clients, setClients] = useState([]);
+  const [stream, setStream] = useState(null);
+  const [remoteSocketId, setRemoteSocketId] = useState(null);
+  const [remoteStream, setRemoteStream] = useState(null);
 
   const socketRef = useRef(null);
 
@@ -105,6 +109,28 @@ const Discussion = () => {
     });
   }, []);
 
+  const onCall = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: true,
+    });
+    const offer = await peer.getOffer();
+    setStream(stream);
+    const sId = isEducator() ? studentId : localStorage.getItem("userId");
+    if (socketRef.current) {
+      socketRef.current.emit("join-call", {
+        toRoomId: assignmentCode + sId,
+        offer: offer,
+      });
+    }
+  };
+
+  const onAccept = () => {
+    for(const track of stream.getTracks()) {
+      peer.peer.addTrack(track, stream)
+    }
+  }
+
   useEffect(() => {
     if (LANGUAGES[language - 1] == submittedCode?.language) {
       setValue(submittedCode?.Code);
@@ -122,6 +148,30 @@ const Discussion = () => {
     getCurrentCursorPosition();
   };
 
+  const negotiationneeded = useCallback(async () => {
+    const offer = await peer.getOffer();
+    socketRef.current.emit('peer:nego:needed', {
+      to : remoteSocketId,
+      offer
+    })
+  }, [])
+
+  useEffect(() => {
+    peer.peer.addEventListener('negotiationneeded', negotiationneeded)
+
+    return (() => {
+      peer.peer.removeEventListener('negotiationneeded', negotiationneeded)
+    })
+  }, [negotiationneeded])
+
+  useEffect(() => {
+    peer.peer.addEventListener('track', async ev => {
+      const remoteStream = ev.streams
+      setRemoteStream(remoteStream[0])
+    });
+
+  }, [])
+
   // Socket Logic here...
   useEffect(() => {
     const initialize = async () => {
@@ -130,7 +180,8 @@ const Discussion = () => {
       socketRef.current.on("connect_failed", (err) => handleErrors(err));
       socketRef.current.on("joined", ({ allClients, username, socketId }) => {
         toast.success(`${username} joined the room`);
-        setClients(allClients)
+        setClients(allClients);
+        setRemoteSocketId(socketId)
       });
       function handleErrors(err) {
         console.log(err);
@@ -141,6 +192,42 @@ const Discussion = () => {
         setPosition(position);
       });
 
+      socketRef.current.on('incomming-call', async ({from, offer}) => {
+        console.log('xxxx')
+        setRemoteSocketId(from)
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio : true,
+          video : true
+        })
+        console.log("streammmmmm")
+        setStream(stream)
+        const ans = await peer.getAnswer(offer)
+        socketRef.current.emit('call-accepted', {
+          to : from,
+          ans : ans
+        })
+      })
+
+      socketRef.current.on('call-accepted', ({from, ans}) => {
+        peer.setLocalDescription(ans);
+        console.log("call-accepted");
+        for(const track of stream.getTracks()) {
+          peer.peer.addTrack(track, stream)
+        }
+      })
+
+      socketRef.current.on('peer:nego:needed', async ({from, offer}) => {
+        const ans = await peer.getAnswer(offer);
+        socketRef.current.emit('peer:nego:done', {
+          to : from,
+          ans
+        })
+      })
+
+      socketRef.current.on('peer:nego:final', async ({ans}) => {
+        await peer.setLocalDescription(ans)
+      })
+
       socketRef.current.on("disconnected", ({ socketId, username }) => {
         toast.error(`${username} left the room`);
       });
@@ -148,7 +235,6 @@ const Discussion = () => {
       getUserById()
         .then((res) => {
           const sId = isEducator() ? studentId : localStorage.getItem("userId");
-          console.log(sId);
           socketRef.current.emit("join-room", {
             roomId: assignmentCode + sId,
             username: res?.data?.name,
@@ -219,16 +305,25 @@ const Discussion = () => {
           />
         </div>
         <div className="call-details">
-          <div className="d-flex align-items-center justify-content-between">
+          <div
+            className="d-flex align-items-center justify-content-between"
+            onClick={onCall}
+          >
             <div className="cursor-pointer my-3">
               <PhoneFilled style={{ color: "#00CC00" }} /> Call
             </div>
           </div>
-          {clients.map(item => {
-            return (
-              <CallCard username = {item.username}/>
-            )
-          })}
+          <div
+            className="d-flex align-items-center justify-content-between"
+            onClick={onCall}
+          >
+            <div className="cursor-pointer my-3">
+              <PhoneFilled style={{ color: "#00CC00" }} /> Accept
+            </div>
+          </div>
+          {console.log(stream, remoteStream, "streammmm")}
+          {stream && <CallCard stream={stream} />}
+          {remoteStream && <CallCard stream={remoteStream} />}
         </div>
       </div>
     </>
