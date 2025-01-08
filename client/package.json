@@ -14,10 +14,10 @@
     "@chakra-ui/react": "^3.2.0",
     "@emailjs/browser": "^4.4.1",
     "@emotion/react": "^11.13.5",
-    "@fortawesome/fontawesome-svg-core": "^6.6.0",
-    "@fortawesome/free-brands-svg-icons": "^6.6.0",
-    "@fortawesome/free-regular-svg-icons": "^6.6.0",
-    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-brands-svg-icons": "^6.7.2",
+    "@fortawesome/free-regular-svg-icons": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@monaco-editor/react": "^4.6.0",
     "@nextui-org/dropdown": "^2.1.31",
@@ -31,6 +31,7 @@
     "react-bootstrap": "^2.10.5",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.5.1",
+    "react-player": "^2.16.0",
     "react-router-dom": "^6.27.0",
     "react-select": "^5.8.3",
     "react-toastify": "^10.0.6",
@@ -48,6 +49,6 @@
     "eslint-plugin-react-refresh": "^0.4.14",
     "globals": "^15.11.0",
     "sass-embedded": "^1.80.6",
-    "vite": "^5.4.10"
+    "vite": "^5.4.11"
   }
 }

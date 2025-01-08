@@ -1,11 +1,23 @@
 import { Editor } from "@monaco-editor/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import LanguageMenu from "../Components/LanguageMenu";
 import Output from "../Components/Output";
+import ReactPlayer from "react-player";
 import { CODE_SNIPPETS, LANGUAGE_VERSIONS, LANGUAGES } from "../constants";
-import { PhoneFilled } from "@ant-design/icons";
+import {
+  AudioMutedOutlined,
+  AudioOutlined,
+  PhoneFilled,
+  VideoCameraAddOutlined,
+  VideoCameraFilled,
+  VideoCameraOutlined,
+} from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import { getAssignmentById } from "../Endpoints/Assignment";
+import micon from "../assets/mic-on.png";
+import micoff from "../assets/mic-off.png";
+import videoff from "../assets/videocam-off.png";
+import videoon from "../assets/videocam.png";
 import { getAssignmentCode } from "../Endpoints/StudentMarks";
 import { Segmented } from "antd";
 import { initializeDisussionSocket, initializeSocket } from "../socket";
@@ -13,6 +25,26 @@ import { getUserById } from "../Endpoints/Auth";
 import { toast, Toaster } from "react-hot-toast";
 import { isEducator, isStudent } from "../Helpers";
 import CallCard from "../Components/CallCard";
+import peer from "../service/peer";
+
+const IconButton = ({ icon, icon2, type, alt, stream, setStream }) => {
+  const [isRed, setIsRed] = useState(false);
+
+  const toggleBackground = async () => {
+    const track = stream.getTracks().find(track => track.kind == type);
+    track.enabled = !track.enabled
+    setIsRed((prev) => !prev);
+  };
+
+  return (
+    <div
+      className={`icon-container ${isRed ? "red" : "blue"}`}
+      onClick={toggleBackground}
+    >
+      <img src={isRed ? icon : icon2} alt={alt} />
+    </div>
+  );
+};
 
 const Discussion = () => {
   const [language, setLanguage] = useState(1); // this is the id of that language
@@ -27,7 +59,10 @@ const Discussion = () => {
   const { assignmentCode, studentId, classCode } = useParams();
   const [editorOption, setEditorOption] = useState("Home");
   const [position, setPosition] = useState(null);
-  const [clients, setClients] = useState([])
+  const [clients, setClients] = useState([]);
+  const [remoteSocketId, setRemoteSocketId] = useState(null);
+  const [myStream, setMyStream] = useState();
+  const [remoteStream, setRemoteStream] = useState();
 
   const socketRef = useRef(null);
 
@@ -122,6 +157,79 @@ const Discussion = () => {
     getCurrentCursorPosition();
   };
 
+  const handleCallUser = useCallback(async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: true,
+    });
+    const offer = await peer.getOffer();
+    socketRef.current.emit("user:call", { to: remoteSocketId, offer });
+    setMyStream(stream);
+  }, [remoteSocketId, socketRef.current]);
+
+  const handleIncommingCall = useCallback(
+    async ({ from, offer }) => {
+      console.log("142");
+      setRemoteSocketId(from);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
+      });
+      setMyStream(stream);
+      console.log(`Incoming Call`, from, offer);
+      const ans = await peer.getAnswer(offer);
+      socketRef.current.emit("call:accepted", { to: from, ans });
+    },
+    [socketRef.current]
+  );
+
+  const sendStreams = useCallback(() => {
+    for (const track of myStream.getTracks()) {
+      peer.peer.addTrack(track, myStream);
+    }
+  }, [myStream]);
+
+  const handleCallAccepted = useCallback(
+    ({ from, ans }) => {
+      peer.setLocalDescription(ans);
+      console.log("Call Accepted!");
+      sendStreams();
+    },
+    [sendStreams]
+  );
+
+  const handleNegoNeeded = useCallback(async () => {
+    const offer = await peer.getOffer();
+    socketRef.current.emit("peer:nego:needed", { offer, to: remoteSocketId });
+  }, [remoteSocketId, socketRef.current]);
+
+  useEffect(() => {
+    peer.peer.addEventListener("negotiationneeded", handleNegoNeeded);
+    return () => {
+      peer.peer.removeEventListener("negotiationneeded", handleNegoNeeded);
+    };
+  }, [handleNegoNeeded]);
+
+  const handleNegoNeedIncomming = useCallback(
+    async ({ from, offer }) => {
+      const ans = await peer.getAnswer(offer);
+      socketRef.current.emit("peer:nego:done", { to: from, ans });
+    },
+    [socketRef.current]
+  );
+
+  const handleNegoNeedFinal = useCallback(async ({ ans }) => {
+    await peer.setLocalDescription(ans);
+  }, []);
+
+  useEffect(() => {
+    peer.peer.addEventListener("track", async (ev) => {
+      const remoteStream = ev.streams;
+      console.log("GOT TRACKS!!");
+      setRemoteStream(remoteStream[0]);
+    });
+  }, []);
+
   // Socket Logic here...
   useEffect(() => {
     const initialize = async () => {
@@ -130,11 +238,17 @@ const Discussion = () => {
       socketRef.current.on("connect_failed", (err) => handleErrors(err));
       socketRef.current.on("joined", ({ allClients, username, socketId }) => {
         toast.success(`${username} joined the room`);
-        setClients(allClients)
+        setClients(allClients);
+        setRemoteSocketId(socketId);
       });
       function handleErrors(err) {
         console.log(err);
       }
+
+      socketRef.current.on("incomming:call", handleIncommingCall);
+      socketRef.current.on("call:accepted", handleCallAccepted);
+      socketRef.current.on("peer:nego:needed", handleNegoNeedIncomming);
+      socketRef.current.on("peer:nego:final", handleNegoNeedFinal);
 
       socketRef.current.on("code-changed", ({ data, position }) => {
         setValue(data);
@@ -167,6 +281,10 @@ const Discussion = () => {
       }
     };
   }, []);
+
+  function toggleState(element) {
+    element.classList.toggle("red");
+  }
 
   return (
     <>
@@ -219,16 +337,89 @@ const Discussion = () => {
           />
         </div>
         <div className="call-details">
-          <div className="d-flex align-items-center justify-content-between">
-            <div className="cursor-pointer my-3">
-              <PhoneFilled style={{ color: "#00CC00" }} /> Call
-            </div>
+          <div className="d-flex align-items-center">
+            {remoteSocketId && (
+              <div className="cursor-pointer my-3" onClick={handleCallUser}>
+                <PhoneFilled style={{ color: "#00CC00" }} /> Call
+              </div>
+            )}
+            &nbsp; &nbsp;
+            {myStream && (
+              <div className="cursor-pointer my-3" onClick={sendStreams}>
+                <PhoneFilled style={{ color: "#00CC00" }} /> accept
+              </div>
+            )}
           </div>
-          {clients.map(item => {
-            return (
-              <CallCard username = {item.username}/>
-            )
-          })}
+          {/* {clients.map((item) => {
+            return <CallCard username={item.username} />;
+          })} */}
+          {console.log(myStream, remoteStream, "mmmm")}
+          {myStream && (
+            <div className="d-flex flex-column align-items-center">
+              <div className="caller-details bg-dark">
+                <div className="caller-name">Manish</div>
+                <ReactPlayer
+                  playing
+                  muted
+                  width="200px"
+                  height="150px"
+                  url={myStream}
+                />
+              </div>
+              <div className="d-flex py-2">
+                <IconButton
+                  type="video"
+                  icon2={videoon}
+                  icon={videoff}
+                  alt="Video Icon"
+                  stream={myStream}
+                  setStream={setMyStream}
+                />{" "}
+                &nbsp; &nbsp;
+                <IconButton
+                  type="audio"
+                  icon2={micon}
+                  icon={micoff}
+                  alt="Audio Icon"
+                  stream = {myStream}
+                  setStream={setMyStream}
+                />
+              </div>
+            </div>
+          )}
+          {remoteStream && (
+            <div className="d-flex flex-column align-items-center">
+              <div className="caller-details bg-dark">
+                <div className="caller-name">Manish</div>
+                <ReactPlayer
+                  playing
+                  muted
+                  width="200px"
+                  height="150px"
+                  url={remoteStream}
+                />
+              </div>
+              <div className="d-flex py-2">
+                <IconButton
+                  type="video"
+                  icon2={videoon}
+                  icon={videoff}
+                  alt="Video Icon"
+                  stream = {remoteStream}
+                  setStream={setRemoteStream}
+                />{" "}
+                &nbsp; &nbsp;
+                <IconButton
+                  type="audio"
+                  icon2={micon}
+                  icon={micoff}
+                  alt="Audio Icon"
+                  stream={remoteStream}
+                  setStream={setRemoteStream}
+                />
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>

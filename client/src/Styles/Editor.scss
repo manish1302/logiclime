@@ -96,3 +96,41 @@
     justify-content: center;
   }
 }
+
+
+.icon-container {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.05); /* Default blue background */
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.icon-container img {
+  width: 25px;
+  height: 25px;
+}
+
+.icon-container.red {
+  background-color: #f9dedc; /* Red background for "off" state */
+}
+
+.caller-name {
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.2);
+  width: fit-content;
+  color: white;
+  padding: 2px 16px;
+  margin-left: 8px;
+  margin-bottom: 8px;
+  position: absolute;
+  bottom: 0;
+}
+
+.caller-details {
+  position: relative;
+}
