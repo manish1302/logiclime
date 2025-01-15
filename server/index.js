@@ -17,7 +17,7 @@ connectDB();
 const app = express();
 app.use(
   cors({
-    origin: "http://127.0.0.1:5173", // Replace with your frontend origin
+    origin: "https://127.0.0.1:5173", // Replace with your frontend origin
     credentials: true, // Allow credentials (cookies) to be sent
   })
 );
@@ -34,13 +34,15 @@ const PORT = process.env.PORT || 5050;
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://127.0.0.1:5173",
+    origin: "https://127.0.0.1:5173",
     credentials: true,
   },
 });
 
 const userSocketMap = {};
 const userDiscussSocketMap = {};
+const offers = [];
+const connectedSockets = [];
 
 function getAllClients(roomId) {
   return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
@@ -71,11 +73,11 @@ io.on("connection", (socket) => {
     socket.join(roomId);
     const allClients = getAllClients(roomId);
     allClients.forEach(({ socketId }) => {
-        io.to(socketId).emit("joined", {
-          allClients,
-          username,
-          socketId: socket.id,
-        });
+      io.to(socketId).emit("joined", {
+        allClients,
+        username,
+        socketId: socket.id,
+      });
     });
   });
 
@@ -103,12 +105,17 @@ io.of("/discuss").on("connection", (socket) => {
     userDiscussSocketMap[socket.id] = username;
     const allClients = getAllDiscussClients(roomId);
     socket.join(roomId);
+    connectedSockets.push({
+      socketId: socket.id,
+      username,
+    });
     allClients.forEach(({ socketId }) => {
-        io.of("/discuss").to(socketId).emit("joined", {
-          allClients,
-          username,
-          socketId: socket.id,
-        });
+      io.of("/discuss").to(socketId).emit("joined", {
+        allClients,
+        username,
+        socketId: socket.id,
+        offers,
+      });
     });
   });
 
@@ -119,26 +126,30 @@ io.of("/discuss").on("connection", (socket) => {
     });
   });
 
-  socket.on("user:call", ({ to, offer }) => {
-    console.log(to, offer)
-    io.of("/discuss").to(to).emit("incomming:call", { from: socket.id, offer });
+  socket.on("newAnswer", (offerObj, ackFunction) => {
+    console.log(connectedSockets);
+    console.log("Requested offerer", offerObj.offererUserName);
+    const socketToAnswer = connectedSockets.find(
+      (s) => s.username == offerObj.offererUserName
+    );
+
+    if (!socketToAnswer) {
+      console.log("No matching socket");
+      return;
+    }
+
+    const socketIdToAnswer = socketToAnswer.socketId;
+        const offerToUpdate = offers.find(o=>o.offererUserName === offerObj.offererUserName)
+        if(!offerToUpdate){
+            console.log("No OfferToUpdate")
+            return;
+        }
+        ackFunction(offerToUpdate.offerIceCandidates);
+        offerToUpdate.answer = offerObj.answer
+        offerToUpdate.answererUserName = userName
+        console.log(socketIdToAnswer)
+        socket.to(socketIdToAnswer).emit('answerResponse',offerToUpdate)
   });
-
-  socket.on("call:accepted", ({ to, ans }) => {
-    io.of("/discuss").to(to).emit("call:accepted", { from: socket.id, ans });
-  });
-
-  socket.on("peer:nego:needed", ({ to, offer }) => {
-    console.log("peer:nego:needed", offer);
-    io.of("/discuss").to(to).emit("peer:nego:needed", { from: socket.id, offer });
-  });
-
-  socket.on("peer:nego:done", ({ to, ans }) => {
-    console.log("peer:nego:done", ans);
-    io.of("/discuss").to(to).emit("peer:nego:final", { from: socket.id, ans });
-  });
-
-
 
   socket.on("disconnecting", () => {
     const myRooms = [...socket.rooms];

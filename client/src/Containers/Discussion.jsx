@@ -4,6 +4,7 @@ import LanguageMenu from "../Components/LanguageMenu";
 import Output from "../Components/Output";
 import ReactPlayer from "react-player";
 import { CODE_SNIPPETS, LANGUAGE_VERSIONS, LANGUAGES } from "../constants";
+import adapter from "webrtc-adapter";
 import {
   AudioMutedOutlined,
   AudioOutlined,
@@ -23,16 +24,24 @@ import { Segmented } from "antd";
 import { initializeDisussionSocket, initializeSocket } from "../socket";
 import { getUserById } from "../Endpoints/Auth";
 import { toast, Toaster } from "react-hot-toast";
-import { isEducator, isStudent } from "../Helpers";
+import {
+  clientSocketListeners,
+  createPeerConnection,
+  isEducator,
+  isStudent,
+  prepForCall,
+} from "../Helpers";
 import CallCard from "../Components/CallCard";
 import peer from "../service/peer";
+import CallerVideo from "../Components/CallerVideo";
+import AnswerVideo from "../Components/AnswerVideo";
 
 const IconButton = ({ icon, icon2, type, alt, stream, setStream }) => {
   const [isRed, setIsRed] = useState(false);
 
   const toggleBackground = async () => {
-    const track = stream.getTracks().find(track => track.kind == type);
-    track.enabled = !track.enabled
+    const track = stream.getTracks().find((track) => track.kind == type);
+    track.enabled = !track.enabled;
     setIsRed((prev) => !prev);
   };
 
@@ -63,6 +72,14 @@ const Discussion = () => {
   const [remoteSocketId, setRemoteSocketId] = useState(null);
   const [myStream, setMyStream] = useState();
   const [remoteStream, setRemoteStream] = useState();
+  const [localStream, setLocalStream] = useState();
+  const [callStatus, setCallStatus] = useState();
+  const [peerConnection, setPeerConnection] = useState();
+  const [userName, setUsername] = useState("");
+  const [offerData, setOfferData] = useState();
+  const [typeOfCall, setTypeOfCall] = useState();
+  const [joined, setJoined] = useState(false);
+  const [availableCalls, setAvailableCalls] = useState();
 
   const socketRef = useRef(null);
 
@@ -156,79 +173,49 @@ const Discussion = () => {
   const cursorPosition = () => {
     getCurrentCursorPosition();
   };
+  // WEBRTC logic
+  const call = async () => {
+    initCall("offer");
+  };
+  const answer = (callData) => {
+    initCall("answer");
+    setOfferData(callData);
+  };
 
-  const handleCallUser = useCallback(async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-      video: true,
-    });
-    const offer = await peer.getOffer();
-    socketRef.current.emit("user:call", { to: remoteSocketId, offer });
-    setMyStream(stream);
-  }, [remoteSocketId, socketRef.current]);
+  const initCall = async (typeOfCall) => {
+    // set localstream and get user mediia
+    await prepForCall(callStatus, setCallStatus, setLocalStream);
+    setTypeOfCall(typeOfCall);
+  };
 
-  const handleIncommingCall = useCallback(
-    async ({ from, offer }) => {
-      console.log("142");
-      setRemoteSocketId(from);
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: true,
-      });
-      setMyStream(stream);
-      console.log(`Incoming Call`, from, offer);
-      const ans = await peer.getAnswer(offer);
-      socketRef.current.emit("call:accepted", { to: from, ans });
-    },
-    [socketRef.current]
-  );
-
-  const sendStreams = useCallback(() => {
-    for (const track of myStream.getTracks()) {
-      peer.peer.addTrack(track, myStream);
+  useEffect(() => {
+    if (callStatus?.haveMedia && !peerConnection) {
+      //prepCall has finished running and callStatus is updated
+      const { peerConnection, remoteStream } = createPeerConnection(
+        userName,
+        typeOfCall,
+        socketRef
+      );
+      setPeerConnection(peerConnection);
+      setRemoteStream(remoteStream);
     }
-  }, [myStream]);
-
-  const handleCallAccepted = useCallback(
-    ({ from, ans }) => {
-      peer.setLocalDescription(ans);
-      console.log("Call Accepted!");
-      sendStreams();
-    },
-    [sendStreams]
-  );
-
-  const handleNegoNeeded = useCallback(async () => {
-    const offer = await peer.getOffer();
-    socketRef.current.emit("peer:nego:needed", { offer, to: remoteSocketId });
-  }, [remoteSocketId, socketRef.current]);
+  }, [callStatus?.haveMedia]);
 
   useEffect(() => {
-    peer.peer.addEventListener("negotiationneeded", handleNegoNeeded);
-    return () => {
-      peer.peer.removeEventListener("negotiationneeded", handleNegoNeeded);
-    };
-  }, [handleNegoNeeded]);
-
-  const handleNegoNeedIncomming = useCallback(
-    async ({ from, offer }) => {
-      const ans = await peer.getAnswer(offer);
-      socketRef.current.emit("peer:nego:done", { to: from, ans });
-    },
-    [socketRef.current]
-  );
-
-  const handleNegoNeedFinal = useCallback(async ({ ans }) => {
-    await peer.setLocalDescription(ans);
-  }, []);
+    if (typeOfCall && peerConnection) {
+      clientSocketListeners(
+        socketRef.current,
+        typeOfCall,
+        callStatus,
+        setCallStatus,
+        peerConnection
+      );
+    }
+  }, [typeOfCall, peerConnection]);
 
   useEffect(() => {
-    peer.peer.addEventListener("track", async (ev) => {
-      const remoteStream = ev.streams;
-      console.log("GOT TRACKS!!");
-      setRemoteStream(remoteStream[0]);
-    });
-  }, []);
+    console.log(localStream, "manishsw");
+  }, [localStream, peerConnection]);
 
   // Socket Logic here...
   useEffect(() => {
@@ -240,25 +227,18 @@ const Discussion = () => {
         toast.success(`${username} joined the room`);
         setClients(allClients);
         setRemoteSocketId(socketId);
+        setJoined(true);
       });
       function handleErrors(err) {
         console.log(err);
       }
-
-      socketRef.current.on("incomming:call", handleIncommingCall);
-      socketRef.current.on("call:accepted", handleCallAccepted);
-      socketRef.current.on("peer:nego:needed", handleNegoNeedIncomming);
-      socketRef.current.on("peer:nego:final", handleNegoNeedFinal);
-
       socketRef.current.on("code-changed", ({ data, position }) => {
         setValue(data);
         setPosition(position);
       });
-
       socketRef.current.on("disconnected", ({ socketId, username }) => {
         toast.error(`${username} left the room`);
       });
-
       getUserById()
         .then((res) => {
           const sId = isEducator() ? studentId : localStorage.getItem("userId");
@@ -271,6 +251,10 @@ const Discussion = () => {
         .catch((err) => {
           console.log(err);
         });
+
+      // webrtc socket events
+      socketRef.current.on("AvailableCalls");
+      socketRef.current.on("newOfferWaiting");
     };
     initialize();
 
@@ -339,86 +323,50 @@ const Discussion = () => {
         <div className="call-details">
           <div className="d-flex align-items-center">
             {remoteSocketId && (
-              <div className="cursor-pointer my-3" onClick={handleCallUser}>
+              <div className="cursor-pointer my-3" onClick={call}>
                 <PhoneFilled style={{ color: "#00CC00" }} /> Call
               </div>
             )}
             &nbsp; &nbsp;
             {myStream && (
-              <div className="cursor-pointer my-3" onClick={sendStreams}>
-                <PhoneFilled style={{ color: "#00CC00" }} /> accept
+              <div className="cursor-pointer my-3">
+                <PhoneFilled /> accept
               </div>
             )}
+            {availableCalls?.map((callData, item) => (
+              <div className="cursor-pointer my-3" onClick={answer(callData)}>
+                <PhoneFilled style={{ color: "#00CC00" }} /> accept
+              </div>
+            ))}
           </div>
-          {/* {clients.map((item) => {
-            return <CallCard username={item.username} />;
-          })} */}
-          {console.log(myStream, remoteStream, "mmmm")}
-          {myStream && (
-            <div className="d-flex flex-column align-items-center">
-              <div className="caller-details bg-dark">
-                <div className="caller-name">Manish</div>
-                <ReactPlayer
-                  playing
-                  muted
-                  width="200px"
-                  height="150px"
-                  url={myStream}
-                />
-              </div>
-              <div className="d-flex py-2">
-                <IconButton
-                  type="video"
-                  icon2={videoon}
-                  icon={videoff}
-                  alt="Video Icon"
-                  stream={myStream}
-                  setStream={setMyStream}
-                />{" "}
-                &nbsp; &nbsp;
-                <IconButton
-                  type="audio"
-                  icon2={micon}
-                  icon={micoff}
-                  alt="Audio Icon"
-                  stream = {myStream}
-                  setStream={setMyStream}
-                />
-              </div>
-            </div>
+          {localStream && peerConnection && (
+            <CallerVideo
+              callStatus={callStatus}
+              updateCallStatus={setCallStatus}
+              localStream={localStream}
+              setLocalStream={setLocalStream}
+              remoteStream={remoteStream}
+              setRemoteStream={setRemoteStream}
+              peerConnection={peerConnection}
+              userName={userName}
+              setUserName={setUsername}
+              socket={socketRef.current}
+            />
           )}
-          {remoteStream && (
-            <div className="d-flex flex-column align-items-center">
-              <div className="caller-details bg-dark">
-                <div className="caller-name">Manish</div>
-                <ReactPlayer
-                  playing
-                  muted
-                  width="200px"
-                  height="150px"
-                  url={remoteStream}
-                />
-              </div>
-              <div className="d-flex py-2">
-                <IconButton
-                  type="video"
-                  icon2={videoon}
-                  icon={videoff}
-                  alt="Video Icon"
-                  stream = {remoteStream}
-                  setStream={setRemoteStream}
-                />{" "}
-                &nbsp; &nbsp;
-                <IconButton
-                  type="audio"
-                  icon2={micon}
-                  icon={micoff}
-                  alt="Audio Icon"
-                  stream={remoteStream}
-                  setStream={setRemoteStream}
-                />
-              </div>
-            </div>
+          {remoteStream && peerConnection && (
+            <AnswerVideo
+              callStatus={callStatus}
+              updateCallStatus={setCallStatus}
+              localStream={localStream}
+              setLocalStream={setLocalStream}
+              remoteStream={remoteStream}
+              setRemoteStream={setRemoteStream}
+              peerConnection={peerConnection}
+              userName={userName}
+              setUserName={setUsername}
+              offerData={offerData}
+              socket={socketRef.current}
+            />
           )}
         </div>
       </div>
