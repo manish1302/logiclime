@@ -99,7 +99,7 @@ io.on("connection", (socket) => {
 });
 
 io.of("/discuss").on("connection", (socket) => {
-  socket.on("join-room", ({ roomId, username }) => {
+  socket.on("join-room", ({ roomId, username, peerId }) => {
     userDiscussSocketMap[socket.id] = username;
     const allClients = getAllDiscussClients(roomId);
     socket.join(roomId);
@@ -108,6 +108,7 @@ io.of("/discuss").on("connection", (socket) => {
           allClients,
           username,
           socketId: socket.id,
+          peerId : peerId
         });
     });
   });
@@ -119,23 +120,9 @@ io.of("/discuss").on("connection", (socket) => {
     });
   });
 
-  socket.on("user:call", ({ to, offer }) => {
-    console.log(to, offer)
-    io.of("/discuss").to(to).emit("incomming:call", { from: socket.id, offer });
-  });
-
-  socket.on("call:accepted", ({ to, ans }) => {
-    io.of("/discuss").to(to).emit("call:accepted", { from: socket.id, ans });
-  });
-
-  socket.on("peer:nego:needed", ({ to, offer }) => {
-    console.log("peer:nego:needed", offer);
-    io.of("/discuss").to(to).emit("peer:nego:needed", { from: socket.id, offer });
-  });
-
-  socket.on("peer:nego:done", ({ to, ans }) => {
-    console.log("peer:nego:done", ans);
-    io.of("/discuss").to(to).emit("peer:nego:final", { from: socket.id, ans });
+  socket.on('peerId', ({peerId, roomId}) => {
+    console.log('emitted')
+    socket.to(roomId).emit('peerId', peerId);
   });
 
 

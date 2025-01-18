@@ -4,6 +4,7 @@ import LanguageMenu from "../Components/LanguageMenu";
 import Output from "../Components/Output";
 import ReactPlayer from "react-player";
 import { CODE_SNIPPETS, LANGUAGE_VERSIONS, LANGUAGES } from "../constants";
+import { v4 as uuidv4 } from 'uuid';
 import {
   AudioMutedOutlined,
   AudioOutlined,
@@ -24,10 +25,10 @@ import { initializeDisussionSocket, initializeSocket } from "../socket";
 import { getUserById } from "../Endpoints/Auth";
 import { toast, Toaster } from "react-hot-toast";
 import { isEducator, isStudent } from "../Helpers";
+import Peer from "peerjs";
 import CallCard from "../Components/CallCard";
-import peer from "../service/peer";
 
-const IconButton = ({ icon, icon2, type, alt, stream, setStream }) => {
+const IconButton = ({ icon, icon2, type, alt , stream}) => {
   const [isRed, setIsRed] = useState(false);
 
   const toggleBackground = async () => {
@@ -64,60 +65,19 @@ const Discussion = () => {
   const [myStream, setMyStream] = useState();
   const [remoteStream, setRemoteStream] = useState();
 
+  // peer
+  const [peerId, setPeerId] = useState("");
+  const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
+  const remoteVideoRef = useRef(null);
+  const currentUserVideoRef = useRef(null);
+  const peerInstance = useRef(null);
+
   const socketRef = useRef(null);
 
   const onMount = (editor) => {
     editorRef.current = editor;
     editor.focus();
-
-    // if (position) {
-    //   decorationRef.current = editor.deltaDecorations(
-    //     [], // Clear existing decorations
-    //     [
-    //       {
-    //         range: new monaco.Range(
-    //           position.lineNumber,
-    //           position.column,
-    //           position.lineNumber,
-    //           position.column
-    //         ),
-    //         options: {
-    //           className: "secondary-cursor",
-    //           afterContentClassName: "username-label", // Add styling for the label (can customize as per requirement)
-    //         },
-    //       },
-    //     ]
-    //   );
-    // }
   };
-
-  // useEffect(() => {
-  //   if (editorRef.current && position) {
-  //     // Remove the previous decoration
-  //     if (decorationRef.current) {
-  //       editorRef.current.deltaDecorations(decorationRef.current, []);
-  //     }
-
-  //     // Add the new cursor decoration
-  //     decorationRef.current = editorRef.current.deltaDecorations(
-  //       [], // Clear previous decorations
-  //       [
-  //         {
-  //           range: new monaco.Range(
-  //             position.lineNumber,
-  //             position.column,
-  //             position.lineNumber,
-  //             position.column
-  //           ),
-  //           options: {
-  //             className: "secondary-cursor",
-  //             afterContentClassName: "username-label", // Optional styling
-  //           },
-  //         },
-  //       ]
-  //     );
-  //   }
-  // }, [position])
 
   const getCurrentCursorPosition = () => {
     return editorRef?.current?.getPosition();
@@ -156,79 +116,58 @@ const Discussion = () => {
   const cursorPosition = () => {
     getCurrentCursorPosition();
   };
+  // Peer logic
 
-  // const handleCallUser = useCallback(async () => {
-  //   const stream = await navigator.mediaDevices.getUserMedia({
-  //     audio: true,
-  //     video: true,
-  //   });
-  //   const offer = await peer.getOffer();
-  //   socketRef.current.emit("user:call", { to: remoteSocketId, offer });
-  //   setMyStream(stream);
-  // }, [remoteSocketId, socketRef.current]);
+  useEffect(() => {
+    const peerId = uuidv4();
+    setPeerId(peerId);
+  }, [])
 
-  // const handleIncommingCall = useCallback(
-  //   async ({ from, offer }) => {
-  //     console.log("142");
-  //     setRemoteSocketId(from);
-  //     const stream = await navigator.mediaDevices.getUserMedia({
-  //       audio: true,
-  //       video: true,
-  //     });
-  //     setMyStream(stream);
-  //     console.log(`Incoming Call`, from, offer);
-  //     const ans = await peer.getAnswer(offer);
-  //     socketRef.current.emit("call:accepted", { to: from, ans });
-  //   },
-  //   [socketRef.current]
-  // );
+  const call = (remotePeerId) => {
+    var getUserMedia =
+      navigator.getUserMedia ||
+      navigator.webkitGetUserMedia ||
+      navigator.mozGetUserMedia;
 
-  // const sendStreams = useCallback(() => {
-  //   for (const track of myStream.getTracks()) {
-  //     peer.peer.addTrack(track, myStream);
-  //   }
-  // }, [myStream]);
+    getUserMedia({ video: true, audio: true }, (mediaStream) => {
+      setMyStream(mediaStream)
 
-  // const handleCallAccepted = useCallback(
-  //   ({ from, ans }) => {
-  //     peer.setLocalDescription(ans);
-  //     console.log("Call Accepted!");
-  //     sendStreams();
-  //   },
-  //   [sendStreams]
-  // );
+      const call = peerInstance.current.call(remotePeerId, mediaStream);
 
-  // const handleNegoNeeded = useCallback(async () => {
-  //   const offer = await peer.getOffer();
-  //   socketRef.current.emit("peer:nego:needed", { offer, to: remoteSocketId });
-  // }, [remoteSocketId, socketRef.current]);
+      call.on("stream", (remoteStream) => {
+        setRemoteStream(remoteStream)
+      });
+    });
+  };
 
-  // useEffect(() => {
-  //   peer.peer.addEventListener("negotiationneeded", handleNegoNeeded);
-  //   return () => {
-  //     peer.peer.removeEventListener("negotiationneeded", handleNegoNeeded);
-  //   };
-  // }, [handleNegoNeeded]);
+  useEffect(() => {
+    const peer = new Peer();
 
-  // const handleNegoNeedIncomming = useCallback(
-  //   async ({ from, offer }) => {
-  //     const ans = await peer.getAnswer(offer);
-  //     socketRef.current.emit("peer:nego:done", { to: from, ans });
-  //   },
-  //   [socketRef.current]
-  // );
+    peer.on("open", (id) => {
+      setPeerId(id);
+      const sId = isEducator() ? studentId : localStorage.getItem("userId");
+      socketRef.current.emit("peerId", {
+        peerId: id,
+        roomId: assignmentCode + sId,
+      });
+    });
 
-  // const handleNegoNeedFinal = useCallback(async ({ ans }) => {
-  //   await peer.setLocalDescription(ans);
-  // }, []);
+    peer.on("call", (call) => {
+      var getUserMedia =
+        navigator.getUserMedia ||
+        navigator.webkitGetUserMedia ||
+        navigator.mozGetUserMedia;
 
-  // useEffect(() => {
-  //   peer.peer.addEventListener("track", async (ev) => {
-  //     const remoteStream = ev.streams;
-  //     console.log("GOT TRACKS!!");
-  //     setRemoteStream(remoteStream[0]);
-  //   });
-  // }, []);
+      getUserMedia({ video: true, audio: true }, (mediaStream) => {
+        setMyStream(mediaStream)
+        call.answer(mediaStream);
+        call.on("stream", function (remoteStream) {
+          setRemoteStream(remoteStream)
+        });
+      });
+    });
+    peerInstance.current = peer;
+  }, []);
 
   // Socket Logic here...
   useEffect(() => {
@@ -244,6 +183,11 @@ const Discussion = () => {
       function handleErrors(err) {
         console.log(err);
       }
+
+      socketRef.current.on("peerId", (peerId) => {
+        console.log(peerId);
+        setRemotePeerIdValue(peerId);
+      });
 
       // socketRef.current.on("incomming:call", handleIncommingCall);
       // socketRef.current.on("call:accepted", handleCallAccepted);
@@ -262,7 +206,6 @@ const Discussion = () => {
       getUserById()
         .then((res) => {
           const sId = isEducator() ? studentId : localStorage.getItem("userId");
-          console.log(sId);
           socketRef.current.emit("join-room", {
             roomId: assignmentCode + sId,
             username: res?.data?.name,
@@ -338,88 +281,94 @@ const Discussion = () => {
         </div>
         <div className="call-details">
           <div className="d-flex align-items-center">
-            {remoteSocketId && (
-              <div className="cursor-pointer my-3" onClick={handleCallUser}>
-                <PhoneFilled style={{ color: "#00CC00" }} /> Call
-              </div>
-            )}
+            <input
+              type="text"
+              value={remotePeerIdValue}
+              onChange={(e) => setRemotePeerIdValue(e.target.value)}
+            />
+            <div className="cursor-pointer my-3" onClick={() => call(remotePeerIdValue)}>
+              <PhoneFilled style={{ color: "#00CC00" }} /> Call
+            </div>
             &nbsp; &nbsp;
-            {myStream && (
-              <div className="cursor-pointer my-3" onClick={sendStreams}>
-                <PhoneFilled style={{ color: "#00CC00" }} /> accept
-              </div>
-            )}
+            <div className="cursor-pointer my-3">
+              <PhoneFilled style={{ color: "#00CC00" }} /> accept
+            </div>
           </div>
           {/* {clients.map((item) => {
             return <CallCard username={item.username} />;
           })} */}
-          {console.log(myStream, remoteStream, "mmmm")}
-          {myStream && (
-            <div className="d-flex flex-column align-items-center">
+          <div className="video-container">
+            <div className="d-flex flex-column align-items-center video-box">
               <div className="caller-details bg-dark">
-                <div className="caller-name">Manish</div>
-                <ReactPlayer
-                  playing
-                  muted
-                  width="200px"
-                  height="150px"
-                  url={myStream}
-                />
-              </div>
-              <div className="d-flex py-2">
-                <IconButton
-                  type="video"
-                  icon2={videoon}
-                  icon={videoff}
-                  alt="Video Icon"
-                  stream={myStream}
-                  setStream={setMyStream}
-                />{" "}
-                &nbsp; &nbsp;
-                <IconButton
-                  type="audio"
-                  icon2={micon}
-                  icon={micoff}
-                  alt="Audio Icon"
-                  stream = {myStream}
-                  setStream={setMyStream}
-                />
+                {myStream ? (
+                  <>
+                    <div className="caller-name">Manish</div>
+                    <ReactPlayer
+                      playing
+                      muted
+                      width="200px"
+                      height="150px"
+                      url={myStream}
+                    />{" "}
+                  </>
+                ) : (
+                  <CallCard username={"Manish"} />
+                )}
+                <div className="d-flex py-2 caller-buttons">
+                  <IconButton
+                    type="video"
+                    icon2={videoon}
+                    icon={videoff}
+                    alt="Video Icon"
+                    stream={myStream}
+                  />{" "}
+                  &nbsp; &nbsp;
+                  <IconButton
+                    type="audio"
+                    icon2={micon}
+                    icon={micoff}
+                    alt="Audio Icon"
+                    stream={myStream}
+                  />
+                </div>
               </div>
             </div>
-          )}
-          {remoteStream && (
-            <div className="d-flex flex-column align-items-center">
+            <div className="d-flex flex-column align-items-center video-box">
               <div className="caller-details bg-dark">
-                <div className="caller-name">Manish</div>
-                <ReactPlayer
-                  playing
-                  muted
-                  width="200px"
-                  height="150px"
-                  url={remoteStream}
-                />
-              </div>
-              <div className="d-flex py-2">
-                <IconButton
-                  type="video"
-                  icon2={videoon}
-                  icon={videoff}
-                  alt="Video Icon"
-                  stream = {remoteStream}
-                  setStream={setRemoteStream}
-                />{" "}
-                &nbsp; &nbsp;
-                <IconButton
-                  type="audio"
-                  icon2={micon}
-                  icon={micoff}
-                  alt="Audio Icon"
-                  stream={remoteStream}
-                  setStream={setRemoteStream}
-                />
+                {remoteStream ? (
+                  <>
+                    <div className="caller-name">Manish</div>
+                    <ReactPlayer
+                      playing
+                      muted
+                      width="200px"
+                      height="150px"
+                      url={remoteStream}
+                    />{" "}
+                  </>
+                ) : (
+                  <CallCard username={"Manish"} />
+                )}
+                {/* <div className="d-flex py-2 caller-buttons">
+                  <IconButton
+                    type="video"
+                    icon2={videoon}
+                    icon={videoff}
+                    alt="Video Icon"
+                    stream={remoteStream}
+                  />{" "}
+                  &nbsp; &nbsp;
+                  <IconButton
+                    type="audio"
+                    icon2={micon}
+                    icon={micoff}
+                    alt="Audio Icon"
+                    stream={remoteStream}
+                  />
+                </div> */}
               </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </>
