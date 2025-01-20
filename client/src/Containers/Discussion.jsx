@@ -61,9 +61,10 @@ const Discussion = () => {
   const [editorOption, setEditorOption] = useState("Home");
   const [position, setPosition] = useState(null);
   const [clients, setClients] = useState([]);
-  const [remoteSocketId, setRemoteSocketId] = useState(null);
+  const [remoteUserName, setRemoteUserName] = useState(null);
   const [myStream, setMyStream] = useState();
   const [remoteStream, setRemoteStream] = useState();
+  const [userName, setUserName] = useState("");
 
   // peer
   const [peerId, setPeerId] = useState("");
@@ -131,7 +132,7 @@ const Discussion = () => {
 
     getUserMedia({ video: true, audio: true }, (mediaStream) => {
       setMyStream(mediaStream)
-
+      console.log(mediaStream, "mediaStream")
       const call = peerInstance.current.call(remotePeerId, mediaStream);
 
       call.on("stream", (remoteStream) => {
@@ -169,6 +170,12 @@ const Discussion = () => {
     peerInstance.current = peer;
   }, []);
 
+  useEffect(() => {
+    if (remotePeerIdValue) {
+      call(remotePeerIdValue);
+    }
+  }, [remotePeerIdValue])
+
   // Socket Logic here...
   useEffect(() => {
     const initialize = async () => {
@@ -177,8 +184,10 @@ const Discussion = () => {
       socketRef.current.on("connect_failed", (err) => handleErrors(err));
       socketRef.current.on("joined", ({ allClients, username, socketId }) => {
         toast.success(`${username} joined the room`);
+        console.log(allClients, "allClients")
         setClients(allClients);
-        setRemoteSocketId(socketId);
+        const name = allClients.find((item) => item.socketId === socketId)?.username
+        setRemoteUserName(name);
       });
       function handleErrors(err) {
         console.log(err);
@@ -188,11 +197,6 @@ const Discussion = () => {
         console.log(peerId);
         setRemotePeerIdValue(peerId);
       });
-
-      // socketRef.current.on("incomming:call", handleIncommingCall);
-      // socketRef.current.on("call:accepted", handleCallAccepted);
-      // socketRef.current.on("peer:nego:needed", handleNegoNeedIncomming);
-      // socketRef.current.on("peer:nego:final", handleNegoNeedFinal);
 
       socketRef.current.on("code-changed", ({ data, position }) => {
         setValue(data);
@@ -206,6 +210,7 @@ const Discussion = () => {
       getUserById()
         .then((res) => {
           const sId = isEducator() ? studentId : localStorage.getItem("userId");
+          setUserName(res?.data?.name);
           socketRef.current.emit("join-room", {
             roomId: assignmentCode + sId,
             username: res?.data?.name,
@@ -312,7 +317,7 @@ const Discussion = () => {
                     />{" "}
                   </>
                 ) : (
-                  <CallCard username={"Manish"} />
+                  <CallCard username={userName} />
                 )}
                 <div className="d-flex py-2 caller-buttons">
                   <IconButton
@@ -347,7 +352,7 @@ const Discussion = () => {
                     />{" "}
                   </>
                 ) : (
-                  <CallCard username={"Manish"} />
+                  <CallCard username={remoteUserName} />
                 )}
                 {/* <div className="d-flex py-2 caller-buttons">
                   <IconButton
