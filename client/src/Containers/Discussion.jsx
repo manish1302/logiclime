@@ -4,7 +4,7 @@ import LanguageMenu from "../Components/LanguageMenu";
 import Output from "../Components/Output";
 import ReactPlayer from "react-player";
 import { CODE_SNIPPETS, LANGUAGE_VERSIONS, LANGUAGES } from "../constants";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import {
   AudioMutedOutlined,
   AudioOutlined,
@@ -28,12 +28,12 @@ import { isEducator, isStudent } from "../Helpers";
 import Peer from "peerjs";
 import CallCard from "../Components/CallCard";
 
-const IconButton = ({ icon, icon2, type, alt , stream}) => {
+const IconButton = ({ icon, icon2, type, alt, stream }) => {
   const [isRed, setIsRed] = useState(false);
 
   const toggleBackground = async () => {
-    const track = stream.getTracks().find(track => track.kind == type);
-    track.enabled = !track.enabled
+    const track = stream.getTracks().find((track) => track.kind == type);
+    track.enabled = !track.enabled;
     setIsRed((prev) => !prev);
   };
 
@@ -67,11 +67,15 @@ const Discussion = () => {
   const [userName, setUserName] = useState("");
 
   // peer
-  const [peerId, setPeerId] = useState("");
-  const [remotePeerIdValue, setRemotePeerIdValue] = useState("");
+  const [peerId, setPeerId] = useState('');
+  const [remotePeerId, setRemotePeerId] = useState('');
+  const [isVideoOn, setIsVideoOn] = useState(true);
+  const [stream, setStream] = useState(null);
+  const [peer, setPeer] = useState(null);
+  const [connection, setConnection] = useState(null);
+  
+  const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
-  const currentUserVideoRef = useRef(null);
-  const peerInstance = useRef(null);
 
   const socketRef = useRef(null);
 
@@ -119,62 +123,119 @@ const Discussion = () => {
   };
   // Peer logic
 
+  // useEffect(() => {
+  //   const peerId = uuidv4();
+  //   setPeerId(peerId);
+  // }, [])
+
   useEffect(() => {
-    const peerId = uuidv4();
-    setPeerId(peerId);
-  }, [])
-
-  const call = (remotePeerId) => {
-    var getUserMedia =
-      navigator.getUserMedia ||
-      navigator.webkitGetUserMedia ||
-      navigator.mozGetUserMedia;
-
-    getUserMedia({ video: true, audio: true }, (mediaStream) => {
-      setMyStream(mediaStream)
-      console.log(mediaStream, "mediaStream")
-      const call = peerInstance.current.call(remotePeerId, mediaStream);
-
-      call.on("stream", (remoteStream) => {
-        setRemoteStream(remoteStream)
+    const initPeer = async () => {
+      const newPeer = new Peer();
+      
+      newPeer.on('open', (id) => {
+        setPeerId(id);
       });
+
+      newPeer.on('call', (call) => {
+        if (stream) {
+          call.answer(stream);
+          call.on('stream', (remoteStream) => {
+            if (remoteVideoRef.current) {
+              remoteVideoRef.current.srcObject = remoteStream;
+            }
+          });
+        }
+      });
+
+      newPeer.on('connection', (conn) => {
+        setConnection(conn);
+        setupDataConnection(conn);
+      });
+
+      setPeer(newPeer);
+    };
+
+    const initStream = async () => {
+      try {
+        const userStream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true
+        });
+        setStream(userStream);
+        if (localVideoRef.current) {
+          localVideoRef.current.srcObject = userStream;
+        }
+      } catch (err) {
+        console.error('Failed to get media devices:', err);
+      }
+    };
+
+    initPeer();
+    initStream();
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+      if (peer) {
+        peer.destroy();
+      }
+    };
+  }, []);
+  const setupDataConnection = (conn) => {
+    conn.on('data', (data) => {
+      if (data.type === 'videoState') {
+        // Update remote video track visibility based on received state
+        const remoteVideo = remoteVideoRef.current;
+        if (remoteVideo && remoteVideo.srcObject) {
+          const videoTracks = remoteVideo.srcObject.getVideoTracks();
+          videoTracks.forEach(track => {
+            track.enabled = data.isVideoOn;
+          });
+        }
+      }
     });
   };
 
-  useEffect(() => {
-    const peer = new Peer();
+  const handleCall = () => {
+    if (peer && stream && remotePeerId) {
+      // Establish data connection first
+      const conn = peer.connect(remotePeerId);
+      setConnection(conn);
+      setupDataConnection(conn);
 
-    peer.on("open", (id) => {
-      setPeerId(id);
-      const sId = isEducator() ? studentId : localStorage.getItem("userId");
-      socketRef.current.emit("peerId", {
-        peerId: id,
-        roomId: assignmentCode + sId,
+      // Then establish media connection
+      const call = peer.call(remotePeerId, stream);
+      call.on('stream', (remoteStream) => {
+        if (remoteVideoRef.current) {
+          remoteVideoRef.current.srcObject = remoteStream;
+        }
       });
-    });
-
-    peer.on("call", (call) => {
-      var getUserMedia =
-        navigator.getUserMedia ||
-        navigator.webkitGetUserMedia ||
-        navigator.mozGetUserMedia;
-
-      getUserMedia({ video: true, audio: true }, (mediaStream) => {
-        setMyStream(mediaStream)
-        call.answer(mediaStream);
-        call.on("stream", function (remoteStream) {
-          setRemoteStream(remoteStream)
-        });
-      });
-    });
-    peerInstance.current = peer;
-  }, []);
-
-  useEffect(() => {
-    if (remotePeerIdValue) {
-      call(remotePeerIdValue);
     }
-  }, [remotePeerIdValue])
+  };
+
+  const toggleVideo = () => {
+    if (stream) {
+      const videoTrack = stream.getVideoTracks()[0];
+      const newVideoState = !videoTrack.enabled;
+      videoTrack.enabled = newVideoState;
+      setIsVideoOn(newVideoState);
+
+      // Send video state to peer
+      if (connection && connection.open) {
+        connection.send({
+          type: 'videoState',
+          isVideoOn: newVideoState
+        });
+      }
+    }
+  };
+
+  // useEffect(() => {
+  //   if (remotePeerIdValue) {
+  //     call(remotePeerIdValue);
+  //   }
+  // }, [remotePeerIdValue])
 
   // Socket Logic here...
   useEffect(() => {
@@ -184,9 +245,11 @@ const Discussion = () => {
       socketRef.current.on("connect_failed", (err) => handleErrors(err));
       socketRef.current.on("joined", ({ allClients, username, socketId }) => {
         toast.success(`${username} joined the room`);
-        console.log(allClients, "allClients")
+        console.log(allClients, "allClients");
         setClients(allClients);
-        const name = allClients.find((item) => item.socketId === socketId)?.username
+        const name = allClients.find(
+          (item) => item.socketId === socketId
+        )?.username;
         setRemoteUserName(name);
       });
       function handleErrors(err) {
@@ -234,148 +297,63 @@ const Discussion = () => {
     element.classList.toggle("red");
   }
 
+  const toggleBackground = async (stream) => {
+    const track = stream.getTracks().find((track) => track.kind == type);
+    track.enabled = !track.enabled;
+  };
+
   return (
     <>
       <div>
         <Toaster />
       </div>
-      <div className="code-and-compile">
-        <div className="code-editor-box">
-          <div className="d-flex align-items-center justify-content-between">
-            <div>
-              <LanguageMenu
-                onSelectChange={onSelectChange}
-                language={language}
-              />
-            </div>
-          </div>
-          <div onClick={cursorPosition}>
-            <Editor
-              height={"75vh"}
-              theme="vs-dark"
-              language={LANGUAGES[language - 1]}
-              defaultValue={"//code here"}
-              value={value}
-              onChange={(data) => {
-                if (socketRef.current) {
-                  const sId = isEducator()
-                    ? studentId
-                    : localStorage.getItem("userId");
-                  socketRef.current.emit("code-changed", {
-                    data: data,
-                    position: getCurrentCursorPosition(),
-                    roomId: assignmentCode + sId,
-                  });
-                }
-                setValue(data);
-              }}
-              onMount={onMount}
-            />
-          </div>
-        </div>
-        <div className="output-box">
-          <Output
-            editorRef={editorRef}
-            language={LANGUAGES[language - 1]}
-            assignment={assignment}
-            studentId={studentId}
-            markss={submittedCode?.Marks}
-            assignmentId={assignmentCode}
-            editorOption={editorOption}
+      <div className="max-w-4xl mx-auto p-4">
+      <div className="mb-4">
+        <h2 className="text-2xl font-bold mb-2">Video Chat</h2>
+        <p className="mb-2">Your ID: {peerId}</p>
+        <div className="flex gap-2 mb-4">
+          <input
+            type="text"
+            value={remotePeerId}
+            onChange={(e) => setRemotePeerId(e.target.value)}
+            placeholder="Enter peer ID to call"
+            className="flex-1 p-2 border rounded"
           />
-        </div>
-        <div className="call-details">
-          <div className="d-flex align-items-center">
-            <input
-              type="text"
-              value={remotePeerIdValue}
-              onChange={(e) => setRemotePeerIdValue(e.target.value)}
-            />
-            <div className="cursor-pointer my-3" onClick={() => call(remotePeerIdValue)}>
-              <PhoneFilled style={{ color: "#00CC00" }} /> Call
-            </div>
-            &nbsp; &nbsp;
-            <div className="cursor-pointer my-3">
-              <PhoneFilled style={{ color: "#00CC00" }} /> accept
-            </div>
-          </div>
-          {/* {clients.map((item) => {
-            return <CallCard username={item.username} />;
-          })} */}
-          <div className="video-container">
-            <div className="d-flex flex-column align-items-center video-box">
-              <div className="caller-details bg-dark">
-                {myStream ? (
-                  <>
-                    <div className="caller-name">Manish</div>
-                    <ReactPlayer
-                      playing
-                      muted
-                      width="200px"
-                      height="150px"
-                      url={myStream}
-                    />{" "}
-                  </>
-                ) : (
-                  <CallCard username={userName} />
-                )}
-                <div className="d-flex py-2 caller-buttons">
-                  <IconButton
-                    type="video"
-                    icon2={videoon}
-                    icon={videoff}
-                    alt="Video Icon"
-                    stream={myStream}
-                  />{" "}
-                  &nbsp; &nbsp;
-                  <IconButton
-                    type="audio"
-                    icon2={micon}
-                    icon={micoff}
-                    alt="Audio Icon"
-                    stream={myStream}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="d-flex flex-column align-items-center video-box">
-              <div className="caller-details bg-dark">
-                {remoteStream ? (
-                  <>
-                    <div className="caller-name">Manish</div>
-                    <ReactPlayer
-                      playing
-                      muted
-                      width="200px"
-                      height="150px"
-                      url={remoteStream}
-                    />{" "}
-                  </>
-                ) : (
-                  <CallCard username={remoteUserName} />
-                )}
-                {/* <div className="d-flex py-2 caller-buttons">
-                  <IconButton
-                    type="video"
-                    icon2={videoon}
-                    icon={videoff}
-                    alt="Video Icon"
-                    stream={remoteStream}
-                  />{" "}
-                  &nbsp; &nbsp;
-                  <IconButton
-                    type="audio"
-                    icon2={micon}
-                    icon={micoff}
-                    alt="Audio Icon"
-                    stream={remoteStream}
-                  />
-                </div> */}
-              </div>
-            </div>
-          </div>
+          <button
+            onClick={handleCall}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Call
+          </button>
         </div>
       </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="relative">
+          <video
+            ref={localVideoRef}
+            autoPlay
+            muted
+            playsInline
+            className="w-full rounded bg-gray-200"
+          />
+          <button
+            onClick={toggleVideo}
+            className="absolute bottom-4 right-4 p-2 bg-white rounded-full shadow"
+          >
+            {isVideoOn ? <button>off</button> : <button>on</button>}
+          </button>
+        </div>
+        <div>
+          <video
+            ref={remoteVideoRef}
+            autoPlay
+            playsInline
+            className="w-full rounded bg-gray-200"
+          />
+        </div>
+      </div>
+    </div>
     </>
   );
 };
