@@ -3,14 +3,16 @@
   width: 98vw;
   margin: 16px;
   justify-content: space-around;
+  overflow: hidden;
 }
 
 .code-editor-box {
-  width: 50%;
+  flex: 7;
+  min-width: 500px;
 }
 
 .output-box {
-  width: 30%;
+  flex: 3; 
 }
 
 .run-code {
@@ -110,6 +112,10 @@
   cursor: pointer;
 }
 
+.icon-container:focus {
+  outline: none;
+}
+
 .icon-container img {
   width: 25px;
   height: 25px;
@@ -117,6 +123,10 @@
 
 .icon-container.red {
   background-color: #f9dedc; /* Red background for "off" state */
+}
+
+.maroon {
+  background-color: #400E0A;
 }
 
 .caller-name {

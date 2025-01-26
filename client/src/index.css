@@ -18,3 +18,4 @@ font-family: "Poppins", sans-serif;
 @import "./Styles/Contact.scss";
 @import "./Styles/Editor.scss";
 @import './Styles/Dashboard.scss';
+@import './Styles/VideoSDK.scss';
