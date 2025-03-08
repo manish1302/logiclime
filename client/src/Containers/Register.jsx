@@ -102,13 +102,20 @@ const Register = () => {
                         onChange={handleChange}
                         placeholder="First Name"
                         className="login-fields"
-                        style={{ marginRight: "16px", border : errors.firstName && "1px solid red" }}
+                        style={{
+                          marginRight: "16px",
+                          border: errors.firstName && "1px solid red",
+                        }}
                         validate={(value) => {
-                          return [null, undefined, ""].includes(value);
+                          return [null, undefined, ""].includes(value)
+                            ? "Required"
+                            : !/^[a-zA-Z]*$/g.test(value)
+                            ? "Invalid Name"
+                            : false;
                         }}
                       />
                       {errors.firstName && (
-                        <div style={{ color: "red" }}>Required</div>
+                        <div style={{ color: "red" }}>{errors.firstName}</div>
                       )}
                     </div>
                     <div
@@ -120,15 +127,19 @@ const Register = () => {
                         type="text"
                         value={values.secondName}
                         onChange={handleChange}
-                        style = {{border : errors.secondName && "1px solid red"}}
+                        style={{ border: errors.secondName && "1px solid red" }}
                         placeholder="Last Name"
                         className="login-fields"
                         validate={(value) => {
-                          return [null, undefined, ""].includes(value);
+                          return [null, undefined, ""].includes(value)
+                            ? "Required"
+                            : !/^[a-zA-Z]*$/g.test(value)
+                            ? "Invalid Name"
+                            : false;
                         }}
                       />
                       {errors.secondName && (
-                        <div style={{ color: "red" }}>Required</div>
+                        <div style={{ color: "red" }}>{errors.secondName}</div>
                       )}
                     </div>
                   </div>
@@ -146,27 +157,33 @@ const Register = () => {
                       type="text"
                       value={values.email}
                       onChange={handleChange}
-                      style = {{border : errors.email && "1px solid red"}}
+                      style={{ border: errors.email && "1px solid red" }}
                       placeholder="Email"
                       className="login-fields"
                       validate={(value) => {
                         if (!values.email) {
                           return "Email is required";
-                        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
+                        } else if (
+                          !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(
+                            values.email
+                          )
+                        ) {
                           return "Invalid email address";
                         } else {
-                          return false
+                          return false;
                         }
                       }}
                     />
-                    {errors.email && <div style={{ color: "red" }}>{errors.email}</div>}
+                    {errors.email && (
+                      <div style={{ color: "red" }}>{errors.email}</div>
+                    )}
                   </div>
                   <div className="d-flex flex-column w-100">
                     <Field
                       name="password"
                       type="password"
                       value={values.password}
-                      style = {{border : errors.password && "1px solid red"}}
+                      style={{ border: errors.password && "1px solid red" }}
                       onChange={handleChange}
                       placeholder="Password"
                       className="login-fields"

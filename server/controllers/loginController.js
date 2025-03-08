@@ -37,7 +37,7 @@ const login = async (req, res) => {
     const userExists = await UserModel.findOne({ email });
 
     if (!userExists) {
-      return res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json({ error: "User doesn't exist. Check you email." });
     }
 
     const passwordMatch = await bcrypt.compare(password, userExists?.password);

@@ -6,6 +6,7 @@ import google from "../assets/google.png";
 import apple from "../assets/apple-logo.png";
 import leftMain from "../assets/leftMain.jpg";
 import lemon from "../assets/lemon.png";
+import toast, { Toaster } from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -21,12 +22,14 @@ const Login = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err?.response?.data?.error);
+        console.log(err, "login-error");
       });
   };
 
   return (
     <div className="login-container">
+      <Toaster />
       <div className="left-login">
         <img src={leftMain} className="left-image" />
       </div>

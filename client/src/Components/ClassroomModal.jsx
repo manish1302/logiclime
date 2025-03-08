@@ -95,13 +95,14 @@ const ClassroomModal = ({
       ) : (
         <div>
           Here is your class code. Share with with someone.
-          <div className="d-flex align-items-center">
+          <div className="d-flex align-items-center my-2">
             <pre
               style={{
-                padding: "10px",
+                padding: "6px 10px",
                 backgroundColor: "#f4f4f4",
                 borderRadius: "5px",
                 width: "fit-content",
+                margin : "0px",
                 marginRight: "8px",
               }}
             >

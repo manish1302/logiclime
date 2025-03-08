@@ -1,6 +1,7 @@
 import React from "react";
 import { Card, Button, Tag } from "antd";
 import PropTypes from "prop-types";
+import { isStudent } from "../Helpers";
 
 const difficultyColors = {
   Easy: "green",
@@ -57,24 +58,26 @@ const AssignmentCard = ({
               cursor: "pointer",
               fontWeight: 600,
               color: "white",
-              marginRight : "16px"
+              marginRight: "16px",
             }}
           >
             Solve
           </Button>
-          <Button
-            onClick={onDiscuss}
-            style={{
-              backgroundColor: "orange",
-              borderRadius: "8px",
-              border: "none",
-              cursor: "pointer",
-              fontWeight: 600,
-              color: "white",
-            }}
-          >
-            Discuss
-          </Button>
+          {isStudent() && (
+            <Button
+              onClick={onDiscuss}
+              style={{
+                backgroundColor: "orange",
+                borderRadius: "8px",
+                border: "none",
+                cursor: "pointer",
+                fontWeight: 600,
+                color: "white",
+              }}
+            >
+              Discuss
+            </Button>
+          )}
         </div>
         {marks ? (
           <div style={{ margin: "8px 0", color: "grey" }}>

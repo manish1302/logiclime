@@ -11,6 +11,7 @@ import { initializeSocket } from "../socket";
 import { getUserById } from "../Endpoints/Auth";
 import { toast, Toaster } from "react-hot-toast";
 import { isStudent } from "../Helpers";
+import VideoSDK from "../Components/VideoSDK";
 
 const PlayGround = () => {
   const [language, setLanguage] = useState(1); // this is the id of that language
@@ -24,6 +25,7 @@ const PlayGround = () => {
   const [assignment, setAssignment] = useState(null);
   const { assignmentCode, studentId, classCode } = useParams();
   const [editorOption, setEditorOption] = useState("Home");
+  const [allJoinedUsers, setAllJoinedUsers] = useState([]);
 
   const socketRef = useRef(null);
 
@@ -121,6 +123,7 @@ const PlayGround = () => {
       socketRef.current.on("connect_failed", (err) => handleErrors(err));
       socketRef.current.on("joined", ({ allClients, username, socketId }) => {
         toast.success(`${username} joined the room`);
+        setAllJoinedUsers(allClients)
       });
       function handleErrors(err) {
         console.log(err);
@@ -131,6 +134,7 @@ const PlayGround = () => {
       });
 
       socketRef.current.on("disconnected", ({ socketId, username }) => {
+        setAllJoinedUsers((prev) => prev.filter((user) => user.socketId !== socketId));
         toast.error(`${username} left the room`);
       });
 
@@ -146,6 +150,13 @@ const PlayGround = () => {
         });
     };
     initialize();
+
+    return () => {
+      if (socketRef.current?.connected) {
+        socketRef.current.removeAllListeners();
+        socketRef.current.close();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -157,9 +168,7 @@ const PlayGround = () => {
     }
   }, [homeValue]);
 
-  useEffect(() => {
-    
-  }, [value])
+  useEffect(() => {}, [value]);
 
   console.log(homeValue + "xx", value + "yy");
 
@@ -213,7 +222,7 @@ const PlayGround = () => {
           )}
         </div>
       </div>
-      <div className="output-box">
+      <div className="output-box mx-3">
         <Output
           editorRef={editorRef}
           language={LANGUAGES[language - 1]}
@@ -223,6 +232,21 @@ const PlayGround = () => {
           assignmentId={assignmentCode}
           editorOption={editorOption}
         />
+      </div>
+      <div className="call-details">
+        {/* <div className="d-flex align-items-center">
+            <div className="cursor-pointer my-3">
+              <PhoneFilled style={{ color: "#00CC00" }} /> Call
+            </div>
+            &nbsp; &nbsp;
+            <div className="cursor-pointer my-3">
+              <PhoneFilled style={{ color: "#00CC00" }} /> accept
+            </div>
+          </div> */}
+        <h3 className="my-3">Call Details</h3>
+        <div className="video">
+          <VideoSDK userName={"userName"} remoteUserNames={allJoinedUsers} />
+        </div>
       </div>
     </div>
   );

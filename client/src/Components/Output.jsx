@@ -55,6 +55,7 @@ const Output = ({
   const handleRunCode = async () => {
     const sourceCode = editorRef.current.getValue();
     if (!sourceCode) return;
+    setError("");
     setOutput("...compiling");
     const { run } = await runCode(language, sourceCode);
     setError(run.stderr);

@@ -12,20 +12,20 @@
 }
 
 .output-box {
-  flex: 3; 
+  flex: 3;  
 }
 
 .run-code {
   border: 1px solid #fff;
   padding: 5px 16px;
-  background-color: grey;
+  background-color: #00cc00;
   border-radius: 8px;
   color: white;
   margin: 16px 0;
 }
 
 .run-code:hover {
-  background-color: rgba(128, 128, 128, 0.8);
+  background-color: #00cc00;
 }
 
 .submit-code {
@@ -48,8 +48,7 @@
 }
 
 .error-output {
-  border: 1px solid red;
-  height: 75vh;
+  border: 1px solid red !important;
   padding: 16px;
   color: red;
 }
@@ -78,6 +77,12 @@
   width: 18%;
 }
 
+.call-details .video {
+  height: 74vh;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+}
 .call-card {
   width: 100%;
   background-color: lightgray;
@@ -122,7 +127,7 @@
 }
 
 .icon-container.red {
-  background-color: #f9dedc; /* Red background for "off" state */
+  background-color: #f9dedc; 
 }
 
 .maroon {

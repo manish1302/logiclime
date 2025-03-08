@@ -6,6 +6,7 @@ import {
 import { isEducator } from "../Helpers";
 import { useNavigate } from "react-router-dom";
 import ClassroomModal from "../Components/ClassroomModal";
+import { isEmptyArray } from "formik";
 
 const EducatorDashboard = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -69,6 +70,7 @@ const EducatorDashboard = () => {
         )}
       </div>
       <div className="d-flex justify-content-start flex-wrap">
+        {isEmptyArray(classrooms) && <div style={{color : "gray", fontSize : "14px"}}>No classes found</div>}
         {classrooms.map((item) => {
           return (
             <div

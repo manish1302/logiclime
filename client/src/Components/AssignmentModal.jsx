@@ -178,7 +178,7 @@ const AssignmentModal = ({
                   width: "100%",
                 }}
                 name="tags"
-                placeholder="E.g., Array, Linked List"
+                placeholder="Select tags or type new ones"
                 onChange={(value) => {
                   setFieldValue("tags", value);
                 }}

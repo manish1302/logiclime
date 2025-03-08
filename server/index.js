@@ -119,6 +119,10 @@ io.of("/discuss").on("connection", (socket) => {
     });
   });
 
+  socket.on('meetingId', ({meetingId, roomId}) => {
+    socket.to(roomId).emit('meetingId', meetingId);
+  })
+
   socket.on("user:call", ({ to, offer }) => {
     console.log(to, offer)
     io.of("/discuss").to(to).emit("incomming:call", { from: socket.id, offer });

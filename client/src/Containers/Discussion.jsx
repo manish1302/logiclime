@@ -165,6 +165,8 @@ const Discussion = () => {
     element.classList.toggle("red");
   }
 
+  const sId = isEducator() ? studentId : localStorage.getItem("userId");
+
   return (
     <>
       <div>
@@ -204,7 +206,7 @@ const Discussion = () => {
             />
           </div>
         </div>
-        <div className="output-box">
+        <div className="output-box mx-3">
           <Output
             editorRef={editorRef}
             language={LANGUAGES[language - 1]}
@@ -216,7 +218,7 @@ const Discussion = () => {
           />
         </div>
         <div className="call-details">
-          <div className="d-flex align-items-center">
+          {/* <div className="d-flex align-items-center">
             <div className="cursor-pointer my-3">
               <PhoneFilled style={{ color: "#00CC00" }} /> Call
             </div>
@@ -224,8 +226,8 @@ const Discussion = () => {
             <div className="cursor-pointer my-3">
               <PhoneFilled style={{ color: "#00CC00" }} /> accept
             </div>
-          </div>
-          <VideoSDK userName = {userName} remoteUserName = {remoteName} />
+          </div> */}
+          <VideoSDK userName = {userName} remoteUserName = {remoteName} socketRef={socketRef} roomId = {assignmentCode + sId}/>
         </div>
       </div>
     </>

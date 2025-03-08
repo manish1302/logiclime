@@ -28,17 +28,46 @@ function JoinScreen({ getMeetingAndToken }) {
     await getMeetingAndToken(meetingId);
   };
   return (
-    <div>
-      <input
-        type="text"
-        placeholder="Enter Meeting Id"
-        onChange={(e) => {
-          setMeetingId(e.target.value);
-        }}
-      />
-      <button onClick={onClick}>Join</button>
-      {" or "}
-      <button onClick={onClick}>Create Meeting</button>
+    <div className="d-flex flex-column align-items-center justify-content-center">
+      <div>
+        <input
+          type="text"
+          placeholder="Enter Meeting Id"
+          style={{
+            padding: "10px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+            marginRight : "8px"
+          }}
+          className="meeting-input"
+          onChange={(e) => {
+            setMeetingId(e.target.value);
+          }}
+        />
+        <button
+          style={{ backgroundColor: "white", border: "none" }}
+          onClick={onClick}
+        >
+          <div className="cursor-pointer">
+            <PhoneFilled style={{ color: "#00CC00" }} /> Join call
+          </div>
+        </button>
+      </div>
+      <br />
+      <div className="d-flex align-items-center justify-content-between w-100">
+        <div style={{ borderTop: "1px solid lightgrey", width: "43%" }}></div>
+        {" or "}
+        <div style={{ borderTop: "1px solid lightgrey", width: "43%" }}></div>
+      </div>
+      <br />
+      <button
+        style={{ backgroundColor: "white", border: "none" }}
+        onClick={onClick}
+      >
+        <div className="cursor-pointer">
+          <PhoneFilled style={{ color: "#00CC00" }} /> Create meeting
+        </div>
+      </button>
     </div>
   );
 }
@@ -75,51 +104,55 @@ function ParticipantView(props) {
   }, [micStream, micOn]);
 
   return (
-    <div>
-      <p>
-        Participant: {props.username}
-      </p>
-      <audio ref={micRef} autoPlay playsInline muted={isLocal} />
-      {webcamOn && (
-        <ReactPlayer
-          //
-          playsinline // extremely crucial prop
-          pip={false}
-          light={false}
-          controls={false}
-          muted={true}
-          playing={true}
-          url={videoStream}
-          width={"100%"}
-          onError={(err) => {
-            console.log(err, "participant video error");
-          }}
-        />
-      )}
-      <Controls webCamOn={webcamOn} micOn={micOn} />
+    <div className="my-3">
+      <div className="d-flex flex-column align-items-center videobox">
+        <div className="part-name">Participant: {props.username}</div>
+        <audio ref={micRef} autoPlay playsInline muted={isLocal} />
+        {webcamOn ? (
+          <ReactPlayer
+            playsinline 
+            pip={false}
+            light={false}
+            controls={false}
+            muted={true}
+            playing={true}
+            url={videoStream}
+            width={"100%"}
+            height={"220px"}
+            onError={(err) => {
+              console.log(err, "participant video error");
+            }}
+          />
+        ) : (
+          <div className="webcam-off-card">
+            <div className="initial">{props?.username?.slice(0,2)}</div>
+          </div>
+        )}
+        <Controls webCamOn={webcamOn} micOn={micOn} isRemote = {props.isRemote}/>
+      </div>
     </div>
   );
 }
 
-function Controls({ webCamOn, micOn }) {
+function Controls({ webCamOn, micOn, isRemote}) {
   const { leave, toggleMic, toggleWebcam } = useMeeting();
   return (
-    <div>
-      <button className="toggle-buttons" onClick={() => toggleMic()}>
+    <div className="my-3">
+      <button className="toggle-buttons" onClick={() => {!isRemote && toggleMic()}}>
         {micOn ? (
           <IconButton icon={micon} isOn={true} />
         ) : (
           <IconButton icon={micoff} isOn={false} />
         )}
       </button>
-      <button className="toggle-buttons" onClick={() => toggleWebcam()}>
+      <button className="toggle-buttons" onClick={() =>  {!isRemote && toggleWebcam()}}>
         {webCamOn ? (
           <IconButton icon={videoon} isOn={true} />
         ) : (
           <IconButton icon={videoff} isOn={false} />
         )}
       </button>
-      <button className="toggle-buttons" onClick={() => leave()}>
+      <button className="toggle-buttons" onClick={() =>  {!isRemote && leave()}}>
         <div className={`icon-container maroon`}>
           <img src={endcall} />
         </div>
@@ -146,28 +179,38 @@ function MeetingView(props) {
     join();
   };
 
+  console.log(props.remoteUserNames, "remoteUserNames");
+
   return (
     <div className="videosdk-container">
-      <h3>Meeting Id: {props.meetingId}</h3>
+      <h5>Meeting Id: {props.meetingId}</h5>
       {joined && joined == "JOINED" ? (
         <div>
           {[...participants.keys()].map((participantId, index) => (
             <ParticipantView
               participantId={participantId}
               key={participantId}
-              username = {!index ? props.userName : props.remoteUserName}
+              username={!index ? props.userName : (props.remoteUserNames?.length > 0 && props.remoteUserNames[index]?.username)}
+              isRemote={index}
             />
           ))}
         </div>
       ) : joined && joined == "JOINING" ? (
         <p>Joining the meeting...</p>
       ) : (
-        <button onClick={joinMeeting}>Join</button>
+        <button
+          style={{ backgroundColor: "white", border: "none" }}
+          onClick={joinMeeting}
+        >
+          <div className="cursor-pointer">
+            <PhoneFilled style={{ color: "#00CC00" }} /> Join call
+          </div>
+        </button>
       )}
     </div>
   );
 }
-const VideoSDK = ({userName, remoteUserName}) => {
+const VideoSDK = ({ userName, remoteUserNames }) => {
   const [meetingId, setMeetingId] = useState(null);
 
   const getMeetingAndToken = async (id) => {
@@ -190,7 +233,12 @@ const VideoSDK = ({userName, remoteUserName}) => {
       }}
       token={authToken}
     >
-      <MeetingView meetingId={meetingId} onMeetingLeave={onMeetingLeave} userName = {userName} remoteUserName = {remoteUserName} />
+      <MeetingView
+        meetingId={meetingId}
+        onMeetingLeave={onMeetingLeave}
+        userName={userName}
+        remoteUserNames={remoteUserNames}
+      />
     </MeetingProvider>
   ) : (
     <JoinScreen getMeetingAndToken={getMeetingAndToken} />

@@ -65,6 +65,14 @@ const LanguageMenu = ({ onSelectChange, language }) => {
               </div>
             ),
           },
+          {
+            value: 7,
+            label: (
+              <div>
+                C++ <span style={{ color: "grey" }}>(10.2.0)</span>
+              </div>
+            ),
+          },
         ]}
       />
     </Space>
