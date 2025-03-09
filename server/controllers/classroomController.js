@@ -173,19 +173,34 @@ const getStudentByClassCode = async (req, res) => {
   }
 };
 
-const joinClassroom = (req, res) => {
+const joinClassroom = async (req, res) => {
   const { code } = req.body;
   const userId = req.user.userId;
+  const role = req.user.role;
 
-  console.log(code, userId);
+  if(role === "Educator") {
+    return;
+  }
 
   try {
+    const existingStudent = await ClassroomStudentModel.findOne({
+      StudentId: userId,
+      ClassCode: code,
+    });
+
+    if (existingStudent) {
+      return res.status(400).json({
+        success: false,
+        message: "Student is already enrolled in this classroom.",
+      });
+    }
+
     const StudentClassroom = new ClassroomStudentModel({
       StudentId: userId,
       ClassCode: code,
     });
 
-    StudentClassroom.save();
+    await StudentClassroom.save();
 
     res.status(200).json(StudentClassroom);
   } catch (error) {
