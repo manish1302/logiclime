@@ -17,7 +17,7 @@ connectDB();
 const app = express();
 app.use(
   cors({
-    origin: "http://localhost:5173", // Replace with your frontend origin
+    origin: import.meta.env.VITE_UI_BASE_URL, // Replace with your frontend origin
     credentials: true, // Allow credentials (cookies) to be sent
   })
 );
@@ -34,7 +34,7 @@ const PORT = process.env.PORT || 5050;
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: import.meta.env.VITE_UI_BASE_URL,
     credentials: true,
   },
 });
