@@ -29,6 +29,10 @@ app.use("/api", classroomRoutes);
 app.use("/api", asssignmentRoutes);
 app.use("/api", studentMarksRoutes);
 
+app.get("/", (req, res) => {
+  res.send("API is running successfully");
+});
+
 const PORT = process.env.PORT || 5050;
 
 const httpServer = createServer(app);
