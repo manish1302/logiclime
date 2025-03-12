@@ -8,7 +8,7 @@ export const initializeSocket = async (classCode) => {
         transports: ['websocket']
       }
   
-      return io(import.meta.env.VITE_API_BASE_URL, options)
+      return io(import.meta.env.VITE_API_SOCKET_URL, options)
 }
 
 export const initializeDisussionSocket = async () => {
@@ -19,5 +19,5 @@ export const initializeDisussionSocket = async () => {
     transports: ['websocket']
   }
 
-  return io(`${import.meta.env.VITE_API_BASE_URL}/discuss`, options)
+  return io(`${import.meta.env.VITE_API_SOCKET_URL}/discuss`, options)
 }
