@@ -17,7 +17,6 @@ const Dashboard = () => {
     const payload = values;
     createClassroom(payload)
       .then((res) => {
-        console.log(res);
       })
       .catch((e) => {
         console.log(e);

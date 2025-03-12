@@ -170,8 +170,6 @@ const PlayGround = () => {
 
   useEffect(() => {}, [value]);
 
-  console.log(homeValue + "xx", value + "yy");
-
   return (
     <div className="code-and-compile">
       <div>
