@@ -19,5 +19,5 @@ export const initializeDisussionSocket = async () => {
     transports: ['websocket']
   }
 
-  return io(`${import.meta.env.VITE_API_BASE_URL}discuss`, options)
+  return io(`${import.meta.env.VITE_API_BASE_URL}/discuss`, options)
 }
