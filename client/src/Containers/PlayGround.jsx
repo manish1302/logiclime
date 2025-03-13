@@ -12,6 +12,7 @@ import { getUserById } from "../Endpoints/Auth";
 import { toast, Toaster } from "react-hot-toast";
 import { isStudent } from "../Helpers";
 import VideoSDK from "../Components/VideoSDK";
+import { debounce } from "lodash"
 
 const PlayGround = () => {
   const [language, setLanguage] = useState(1); // this is the id of that language
@@ -123,7 +124,7 @@ const PlayGround = () => {
       socketRef.current.on("connect_failed", (err) => handleErrors(err));
       socketRef.current.on("joined", ({ allClients, username, socketId }) => {
         toast.success(`${username} joined the room`);
-        setAllJoinedUsers(allClients)
+        setAllJoinedUsers(allClients);
       });
       function handleErrors(err) {
         console.log(err);
@@ -134,7 +135,9 @@ const PlayGround = () => {
       });
 
       socketRef.current.on("disconnected", ({ socketId, username }) => {
-        setAllJoinedUsers((prev) => prev.filter((user) => user.socketId !== socketId));
+        setAllJoinedUsers((prev) =>
+          prev.filter((user) => user.socketId !== socketId)
+        );
         toast.error(`${username} left the room`);
       });
 
@@ -159,14 +162,31 @@ const PlayGround = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (homeValue != "// code here") {
-      socketRef.current.emit("home-code-changed", {
-        data: homeValue,
-        roomId: assignmentCode,
-      });
-    }
-  }, [homeValue]);
+  // useEffect(() => {
+  //   if (homeValue != "// code here") {
+  //     socketRef.current.emit("home-code-changed", {
+  //       data: homeValue,
+  //       roomId: assignmentCode,
+  //     });
+  //   }
+  // }, [homeValue]);
+
+  const sendCodeUpdate = useCallback(
+    debounce((data) => {
+      if (socketRef.current && data != "// code here") {
+        socketRef.current.emit("home-code-changed", {
+          data,
+          roomId: assignmentCode,
+        });
+      }
+    }, 300),
+    []
+  );
+
+  const handleEditorChange = (data) => {
+    setHomeValue(data);
+    sendCodeUpdate(data);
+  };
 
   useEffect(() => {}, [value]);
 
@@ -197,7 +217,7 @@ const PlayGround = () => {
               language={LANGUAGES[language - 1]}
               value={homeValue}
               onChange={(data) => {
-                setHomeValue(data);
+                handleEditorChange(data)
               }}
               options={{
                 readOnly: isStudent(),
