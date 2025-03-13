@@ -132,7 +132,7 @@ const PlayGround = () => {
       }
 
       socketRef.current.on("home-code", ({data, socketId}) => {
-          console.log(socketId, "socketId")
+          console.log(socketId, data, "socketId123")
           setHomeValue(data);
       });
 
