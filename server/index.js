@@ -84,7 +84,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("home-code-changed", ({ data, roomId }) => {
-    socket.to(roomId).emit("home-code", data);
+    socket.to(roomId).emit("home-code", {
+      data,
+      socketId : socket.id
+    });
   });
 
   socket.on("disconnecting", () => {

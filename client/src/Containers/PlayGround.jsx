@@ -125,12 +125,14 @@ const PlayGround = () => {
       socketRef.current.on("joined", ({ allClients, username, socketId }) => {
         toast.success(`${username} joined the room`);
         setAllJoinedUsers(allClients);
+        console.log(socketId, "socketId")
       });
       function handleErrors(err) {
         console.log(err);
       }
 
-      socketRef.current.on("home-code", (data) => {
+      socketRef.current.on("home-code", ({data, socketId}) => {
+          console.log(socketId, "socketId")
           setHomeValue(data);
       });
 
