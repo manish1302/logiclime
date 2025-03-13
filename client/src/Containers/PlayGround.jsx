@@ -10,7 +10,7 @@ import { Segmented } from "antd";
 import { initializeSocket } from "../socket";
 import { getUserById } from "../Endpoints/Auth";
 import { toast, Toaster } from "react-hot-toast";
-import { isStudent } from "../Helpers";
+import { isEducator, isStudent } from "../Helpers";
 import VideoSDK from "../Components/VideoSDK";
 import { debounce } from "lodash";
 
@@ -133,7 +133,7 @@ const PlayGround = () => {
       }
 
       socketRef.current.on("home-code", ({ data, socketId }) => {
-        setHomeValue(data);
+        if(!isEducator()) setHomeValue(data);
       });
 
       socketRef.current.on("disconnected", ({ socketId, username }) => {
@@ -190,14 +190,11 @@ const PlayGround = () => {
     if (socketRef.current && data != "// code here") {
       socketRef.current.emit("home-code-changed", {
         data,
-        roomId: assignmentCode,
-        clients : allOtherClients
+        roomId: assignmentCode
       });
     }
     setHomeValue(data);
   };
-
-  useEffect(() => {}, [value]);
 
   return (
     <div className="code-and-compile">

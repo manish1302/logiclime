@@ -83,17 +83,11 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("home-code-changed", ({ data, roomId, clients }) => {
-    clients.forEach(({ socketId }) => {
-      io.to(socketId).emit("home-code", {
-        data,
-        socketId : socket.id
-      });
+  socket.on("home-code-changed", ({ data, roomId }) => {
+    socket.to(roomId).emit("home-code", {
+      data,
+      socketId : socket.id
     });
-    // socket.to(roomId).emit("home-code", {
-    //   data,
-    //   socketId : socket.id
-    // });
   });
 
   socket.on("disconnecting", () => {
