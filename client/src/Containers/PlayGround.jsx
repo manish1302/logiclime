@@ -131,6 +131,7 @@ const PlayGround = () => {
       }
 
       socketRef.current.on("home-code", (data) => {
+        console.log("home-code", data);
         setHomeValue(data);
       });
 
