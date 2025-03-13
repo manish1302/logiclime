@@ -132,7 +132,7 @@ const PlayGround = () => {
 
       socketRef.current.on("home-code", (data) => {
         console.log("home-code", data);
-        setHomeValue(data);
+        // setHomeValue(data);
       });
 
       socketRef.current.on("disconnected", ({ socketId, username }) => {
@@ -174,7 +174,6 @@ const PlayGround = () => {
 
   const sendCodeUpdate = useCallback(
     debounce((data) => {
-      console.log("I'm getting called")
       if (socketRef.current && data != "// code here") {
         socketRef.current.emit("home-code-changed", {
           data,
