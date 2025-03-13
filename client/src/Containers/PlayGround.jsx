@@ -131,9 +131,7 @@ const PlayGround = () => {
       }
 
       socketRef.current.on("home-code", (data) => {
-        setTimeout(() => {
           setHomeValue(data);
-        }, 300)
       });
 
       socketRef.current.on("disconnected", ({ socketId, username }) => {
