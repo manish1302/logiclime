@@ -73,7 +73,7 @@ io.on("connection", (socket) => {
   socket.on("join-room", ({ roomId, username }) => {
     userSocketMap[socket.id] = username;
     socket.join(roomId);
-    const allClients = getAllClients(roomId).filter(item => item.socketId != socket.socketId);
+    const allClients = getAllClients(roomId);
     allClients.forEach(({ socketId }) => {
         io.to(socketId).emit("joined", {
           allClients,
@@ -84,11 +84,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("home-code-changed", ({ data, roomId }) => {
-    const allClients = getAllClients(roomId);
-    const otherClients = allClients.filter(client => client.socketId !== socket.id);
-    otherClients.forEach(client => {
-        io.to(client.socketId).emit("home-code-updated", data);
-    });
+    socket.to(roomId).emit("home-code", data);
   });
 
   socket.on("disconnecting", () => {
