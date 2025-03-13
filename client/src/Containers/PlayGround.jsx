@@ -174,6 +174,7 @@ const PlayGround = () => {
 
   const sendCodeUpdate = useCallback(
     debounce((data) => {
+      console.log("I'm getting called")
       if (socketRef.current && data != "// code here") {
         socketRef.current.emit("home-code-changed", {
           data,

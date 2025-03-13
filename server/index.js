@@ -84,7 +84,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("home-code-changed", ({ data, roomId }) => {
-    const myRooms = getAllClients(roomId);
     socket.to(roomId).emit("home-code", data);
   });
 
