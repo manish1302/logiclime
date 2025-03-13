@@ -186,8 +186,8 @@ const PlayGround = () => {
   );
 
   const handleEditorChange = (data) => {
-    setHomeValue(data);
     sendCodeUpdate(data);
+    setHomeValue(data);
   };
 
   useEffect(() => {}, [value]);
