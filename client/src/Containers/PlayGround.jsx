@@ -27,6 +27,7 @@ const PlayGround = () => {
   const { assignmentCode, studentId, classCode } = useParams();
   const [editorOption, setEditorOption] = useState("Home");
   const [allJoinedUsers, setAllJoinedUsers] = useState([]);
+  const [allOtherClients, setAllOtherClient] = useState([]);
 
   const socketRef = useRef(null);
 
@@ -125,14 +126,13 @@ const PlayGround = () => {
       socketRef.current.on("joined", ({ allClients, username, socketId }) => {
         toast.success(`${username} joined the room`);
         setAllJoinedUsers(allClients);
-        console.log(socketId, "socketId");
+        setAllOtherClient(allClients.filter((client) => client.socketId != socketId));
       });
       function handleErrors(err) {
         console.log(err);
       }
 
       socketRef.current.on("home-code", ({ data, socketId }) => {
-        console.log(socketId, data, "socketId123");
         setHomeValue(data);
       });
 
@@ -173,23 +173,25 @@ const PlayGround = () => {
   //   }
   // }, [homeValue]);
 
-  const sendCodeUpdate = useCallback(
-    debounce((data) => {
-      if (socketRef.current && data != "// code here") {
-        socketRef.current.emit("home-code-changed", {
-          data,
-          roomId: assignmentCode,
-        });
-      }
-    }, 300),
-    []
-  );
+  // const sendCodeUpdate = useCallback(
+  //   debounce((data) => {
+  //     if (socketRef.current && data != "// code here") {
+  //       socketRef.current.emit("home-code-changed", {
+  //         data,
+  //         roomId: assignmentCode,
+  //         clients : allOtherClients
+  //       });
+  //     }
+  //   }, 300),
+  //   []
+  // );
 
   const handleEditorChange = (data) => {
     if (socketRef.current && data != "// code here") {
       socketRef.current.emit("home-code-changed", {
         data,
         roomId: assignmentCode,
+        clients : allOtherClients
       });
     }
     setHomeValue(data);

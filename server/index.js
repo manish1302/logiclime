@@ -75,19 +75,25 @@ io.on("connection", (socket) => {
     socket.join(roomId);
     const allClients = getAllClients(roomId);
     allClients.forEach(({ socketId }) => {
-        io.to(socketId).emit("joined", {
-          allClients,
-          username,
-          socketId: socket.id,
-        });
+      io.to(socketId).emit("joined", {
+        allClients,
+        username,
+        socketId: socket.id,
+      });
     });
   });
 
-  socket.on("home-code-changed", ({ data, roomId }) => {
-    socket.to(roomId).emit("home-code", {
-      data,
-      socketId : socket.id
+  socket.on("home-code-changed", ({ data, roomId, clients }) => {
+    clients.forEach(({ socketId }) => {
+      io.to(socketId).emit("home-code", {
+        data,
+        socketId : socket.id
+      });
     });
+    // socket.to(roomId).emit("home-code", {
+    //   data,
+    //   socketId : socket.id
+    // });
   });
 
   socket.on("disconnecting", () => {
@@ -110,11 +116,11 @@ io.of("/discuss").on("connection", (socket) => {
     const allClients = getAllDiscussClients(roomId);
     socket.join(roomId);
     allClients.forEach(({ socketId }) => {
-        io.of("/discuss").to(socketId).emit("joined", {
-          allClients,
-          username,
-          socketId: socket.id,
-        });
+      io.of("/discuss").to(socketId).emit("joined", {
+        allClients,
+        username,
+        socketId: socket.id,
+      });
     });
   });
 
@@ -125,12 +131,12 @@ io.of("/discuss").on("connection", (socket) => {
     });
   });
 
-  socket.on('meetingId', ({meetingId, roomId}) => {
-    socket.to(roomId).emit('meetingId', meetingId);
-  })
+  socket.on("meetingId", ({ meetingId, roomId }) => {
+    socket.to(roomId).emit("meetingId", meetingId);
+  });
 
   socket.on("user:call", ({ to, offer }) => {
-    console.log(to, offer)
+    console.log(to, offer);
     io.of("/discuss").to(to).emit("incomming:call", { from: socket.id, offer });
   });
 
@@ -140,15 +146,15 @@ io.of("/discuss").on("connection", (socket) => {
 
   socket.on("peer:nego:needed", ({ to, offer }) => {
     console.log("peer:nego:needed", offer);
-    io.of("/discuss").to(to).emit("peer:nego:needed", { from: socket.id, offer });
+    io.of("/discuss")
+      .to(to)
+      .emit("peer:nego:needed", { from: socket.id, offer });
   });
 
   socket.on("peer:nego:done", ({ to, ans }) => {
     console.log("peer:nego:done", ans);
     io.of("/discuss").to(to).emit("peer:nego:final", { from: socket.id, ans });
   });
-
-
 
   socket.on("disconnecting", () => {
     const myRooms = [...socket.rooms];
