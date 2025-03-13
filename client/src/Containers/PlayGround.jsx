@@ -12,7 +12,7 @@ import { getUserById } from "../Endpoints/Auth";
 import { toast, Toaster } from "react-hot-toast";
 import { isStudent } from "../Helpers";
 import VideoSDK from "../Components/VideoSDK";
-import { debounce } from "lodash"
+import { debounce } from "lodash";
 
 const PlayGround = () => {
   const [language, setLanguage] = useState(1); // this is the id of that language
@@ -125,15 +125,15 @@ const PlayGround = () => {
       socketRef.current.on("joined", ({ allClients, username, socketId }) => {
         toast.success(`${username} joined the room`);
         setAllJoinedUsers(allClients);
-        console.log(socketId, "socketId")
+        console.log(socketId, "socketId");
       });
       function handleErrors(err) {
         console.log(err);
       }
 
-      socketRef.current.on("home-code", ({data, socketId}) => {
-          console.log(socketId, data, "socketId123")
-          setHomeValue(data);
+      socketRef.current.on("home-code", ({ data, socketId }) => {
+        console.log(socketId, data, "socketId123");
+        setHomeValue(data);
       });
 
       socketRef.current.on("disconnected", ({ socketId, username }) => {
@@ -186,7 +186,12 @@ const PlayGround = () => {
   );
 
   const handleEditorChange = (data) => {
-    sendCodeUpdate(data);
+    if (socketRef.current && data != "// code here") {
+      socketRef.current.emit("home-code-changed", {
+        data,
+        roomId: assignmentCode,
+      });
+    }
     setHomeValue(data);
   };
 
@@ -219,7 +224,7 @@ const PlayGround = () => {
               language={LANGUAGES[language - 1]}
               value={homeValue}
               onChange={(data) => {
-                handleEditorChange(data)
+                handleEditorChange(data);
               }}
               options={{
                 readOnly: isStudent(),
