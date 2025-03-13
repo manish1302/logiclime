@@ -73,7 +73,7 @@ io.on("connection", (socket) => {
   socket.on("join-room", ({ roomId, username }) => {
     userSocketMap[socket.id] = username;
     socket.join(roomId);
-    const allClients = getAllClients(roomId);
+    const allClients = getAllClients(roomId).filter(item => item.socketId != socket.socketId);
     allClients.forEach(({ socketId }) => {
         io.to(socketId).emit("joined", {
           allClients,
