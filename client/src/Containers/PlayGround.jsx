@@ -1,5 +1,5 @@
 import { Editor } from "@monaco-editor/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import LanguageMenu from "../Components/LanguageMenu";
 import Output from "../Components/Output";
 import { CODE_SNIPPETS, LANGUAGE_VERSIONS, LANGUAGES } from "../constants";
