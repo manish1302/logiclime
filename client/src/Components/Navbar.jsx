@@ -43,7 +43,7 @@ const Navbar = () => {
       .then((res) => {
         setUserInfo(res?.data);
       })
-      .then((err) => {
+      .catch((err) => {
         console.log(err);
       });
   }, [])

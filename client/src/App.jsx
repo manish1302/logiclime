@@ -12,6 +12,9 @@ import EducatorDashboard from "./Containers/EducatorDashboard";
 import Classinfo from "./Containers/Classinfo";
 import StudentDashboard from "./Containers/StudentDashboard";
 import Discussion from "./Containers/Discussion";
+import { initializeOnlineSocket } from "./socket";
+import { useEffect, useRef, useState } from "react";
+import { isEducator, isStudent } from "./Helpers";
 
 const NavbarWrapper = () => {
   const location = useLocation();
@@ -21,6 +24,34 @@ const NavbarWrapper = () => {
 };
 
 const App = () => {
+  const onlineSocket = useRef(null);
+  const [onlineStudents, setOnlineStudents] = useState([]);
+
+  useEffect(() => {
+    onlineSocket.current = initializeOnlineSocket();
+    onlineSocket.current.on("joined", ({ message, onlineStudents }) => {
+      console.log(message, onlineStudents);
+      setOnlineStudents(onlineStudents);
+    });
+    onlineSocket.current.on("connect", () => {
+      onlineSocket.current.emit("join", {
+        roomId: "online",
+        userId: localStorage.getItem("userId"),
+        email: localStorage.getItem("email"),
+      });
+    });
+    onlineSocket.current.on("disconnected", ({onlineStudents}) => {
+      setOnlineStudents(onlineStudents);
+    });
+
+    return () => {
+      if (onlineSocket.current?.connected) {
+        onlineSocket.current.removeAllListeners();
+        onlineSocket.current.close();
+      }
+    };
+  }, []);
+
   return (
     <div style={{ height: "100vh", width: "100vw" }}>
       <BrowserRouter>
@@ -30,7 +61,7 @@ const App = () => {
           <Route path="/" element={<Landingpage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path = "/student-dashboard" element={<StudentDashboard />} />
+          <Route path="/student-dashboard" element={<StudentDashboard />} />
           <Route path="/educator-dashboard" element={<EducatorDashboard />} />
           {/* <Route
             path="/dashboard"
@@ -55,7 +86,7 @@ const App = () => {
             path="/discussion/:classCode/:assignmentCode"
             element={<Discussion />}
           />
-          <Route path="/class-info/:classCode" element={<Classinfo />} />
+          <Route path="/class-info/:classCode" element={<Classinfo onlineStudents={onlineStudents} />} />
         </Routes>
       </BrowserRouter>
     </div>

@@ -21,3 +21,14 @@ export const initializeDisussionSocket = async () => {
 
   return io(`${import.meta.env.VITE_API_SOCKET_URL}discuss`, options)
 }
+
+export const initializeOnlineSocket = () => {
+  const options = {
+    forceNew: true, 
+    reconnectionAttempts: Infinity,  
+    timeout: 5000,
+    transports: ['websocket']
+  }
+
+  return io(`${import.meta.env.VITE_API_SOCKET_URL}online`, options)
+}

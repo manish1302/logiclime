@@ -21,19 +21,20 @@ const difficultyColors = {
   Hard: "red",
 };
 
-const Classinfo = () => {
+const Classinfo = ({ onlineStudents }) => {
   const [tab, setTab] = useState("Assignments");
   const [tableData, setTableDate] = useState([]);
   const [tableDataStudent, setTableDateStudent] = useState([]);
   const [submissionsData, setSubmissionsData] = useState([]);
   const { classCode } = useParams();
 
-  const onChange = (pagination, filters, sorter, extra) => {
-  };
+  const onChange = (pagination, filters, sorter, extra) => {};
 
   const handleMarking = (studentId, assignmentId) => {
     window.open(
-      `${import.meta.env.VITE_UI_BASE_URL}/discussion/${classCode}/${studentId}/${assignmentId}`
+      `${
+        import.meta.env.VITE_UI_BASE_URL
+      }/discussion/${classCode}/${studentId}/${assignmentId}`
     );
   };
 
@@ -63,7 +64,7 @@ const Classinfo = () => {
 
         setTableDate(transformedData);
       })
-      .then((err) => {
+      .catch((err) => {
         console.log(err);
       });
 
@@ -76,7 +77,11 @@ const Classinfo = () => {
           name: item.name,
           email: item.email,
           action: <PhoneFilled />,
-          isOnline: "*",
+          isOnline: onlineStudents?.find((x) => x?.email == item?.email) ? (
+            <Tag color="green">Online</Tag>
+          ) : (
+            <Tag color="red">Offline</Tag>
+          ),
         }));
 
         setTableDateStudent(transformedData);
@@ -105,6 +110,20 @@ const Classinfo = () => {
       })
       .catch((err) => console.log(err));
   }, []);
+
+  useEffect(() => {
+    const temp = [...tableDataStudent];
+    temp.forEach((item) => {
+      const isOnline = onlineStudents?.find((x) => x?.email == item?.email);
+      if (isOnline) {
+        item.isOnline = <Tag color="green">Online</Tag>;
+      } else {
+        item.isOnline = <Tag color="red">Offline</Tag>;
+      }
+    });
+    console.log(onlineStudents, "temp");
+    setTableDateStudent(temp);
+  }, [onlineStudents]);
 
   return (
     <div className="class-info">
