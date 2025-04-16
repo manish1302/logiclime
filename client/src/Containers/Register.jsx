@@ -8,10 +8,12 @@ import DropdownComp from "../Components/Dropdown";
 import { useState } from "react";
 import { Button, message, Space } from "antd";
 import lemon from "../assets/lemon.png";
+import { RotatingLines } from "react-loader-spinner";
 
 const Register = () => {
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
+  const [loading, setLoading] = useState(false);
 
   const errorMessage = () => {
     messageApi.open({
@@ -21,6 +23,7 @@ const Register = () => {
   };
 
   const OnFormSubmit = (values) => {
+    setLoading(true);
     const payload = {
       firstName: values.firstName,
       secondName: values.secondName,
@@ -32,8 +35,10 @@ const Register = () => {
     registerRequest(payload)
       .then((res) => {
         navigate("/login");
+        setLoading(false);
       })
       .catch((err) => {
+        setLoading(false);
         if (err.status == 400) {
           errorMessage();
         }
@@ -196,7 +201,14 @@ const Register = () => {
                     )}
                   </div>
                   <button type="submit" className="login-button">
-                    Register
+                    Register &nbsp;
+                    <RotatingLines 
+                      strokeColor="white"
+                      strokeWidth="5"
+                      animationDuration="0.75"
+                      width="16"
+                      visible={loading}
+                    />
                   </button>
                   {/* <div className="social-login-box">
                   <button className="social-login-button">

@@ -176,7 +176,7 @@ const CodeMeet = () => {
           backgroundColor: "#f0f2f5",
         }}
       >
-        {assignments.map((assignment) => (
+        {assignments.length > 0 ? assignments.map((assignment) => (
           <AssignmentCard
             key={assignment._id}
             title={assignment.title}
@@ -187,7 +187,7 @@ const CodeMeet = () => {
             marks = {assignment.marks}
             submitted = {assignment.Success}
           />
-        ))}
+        )) : <div style={{color : "grey"}}>No assignments found</div>}
       </div>
       <AssignmentModal
         setIsModalOpen={setIsModalOpen}

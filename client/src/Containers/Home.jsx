@@ -108,7 +108,7 @@ const Home = () => {
               <button
                 disabled
                 style={{
-                  cursor: "pointer",
+                  cursor: "not-allowed",
                   border: "none",
                   backgroundColor: "white",
                 }}

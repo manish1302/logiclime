@@ -7,10 +7,14 @@ import apple from "../assets/apple-logo.png";
 import leftMain from "../assets/leftMain.jpg";
 import lemon from "../assets/lemon.png";
 import toast, { Toaster } from "react-hot-toast";
+import { RotatingLines } from "react-loader-spinner";
+import { useState } from "react";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const OnFormSubmit = (values) => {
+    setLoading(true);
     loginRequest(values)
       .then((res) => {
         localStorage.setItem("token", res.data.token);
@@ -20,10 +24,12 @@ const Login = () => {
         if (res.status == 200) {
           navigate("/home");
         }
+        setLoading(false);
       })
       .catch((err) => {
         toast.error(err?.response?.data?.error);
         console.log(err, "login-error");
+        setLoading(false);
       });
   };
 
@@ -60,8 +66,8 @@ const Login = () => {
             onSubmit={(values) => {
               OnFormSubmit(values);
             }}
-            validateOnChange = {false}
-            validateOnBlur = {false}
+            validateOnChange={false}
+            validateOnBlur={false}
           >
             {({ values, errors, touched, handleChange, handleSubmit }) => (
               <Form onSubmit={handleSubmit} className="login-form">
@@ -77,14 +83,20 @@ const Login = () => {
                     validate={(value) => {
                       if (!values.email) {
                         return "Email is required";
-                      } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
+                      } else if (
+                        !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(
+                          values.email
+                        )
+                      ) {
                         return "Invalid email address";
                       } else {
-                        return false
+                        return false;
                       }
                     }}
                   />
-                  {errors.email && <div style={{ color: "red" }}>{errors.email}</div>}
+                  {errors.email && (
+                    <div style={{ color: "red" }}>{errors.email}</div>
+                  )}
                 </div>
                 <div className="d-flex flex-column w-100">
                   <Field
@@ -105,6 +117,13 @@ const Login = () => {
                 </div>
                 <button className="login-button" type="submit">
                   Login
+                  <RotatingLines
+                    strokeColor="white"
+                    strokeWidth="5"
+                    animationDuration="0.75"
+                    width="16"
+                    visible={loading}
+                  />
                 </button>
                 {/* <div className="social-login-box">
                   <button className="social-login-button">
