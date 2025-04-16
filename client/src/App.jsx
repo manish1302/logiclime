@@ -30,7 +30,7 @@ const App = () => {
   useEffect(() => {
     onlineSocket.current = initializeOnlineSocket();
     onlineSocket.current.on("joined", ({ message, onlineStudents }) => {
-      console.log(message, onlineStudents);
+      console.log(message, onlineStudents, "joined");
       setOnlineStudents(onlineStudents);
     });
     onlineSocket.current.on("connect", () => {
