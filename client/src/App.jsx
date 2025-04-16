@@ -30,7 +30,9 @@ const App = () => {
           <Route path="/" element={<Landingpage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route
+          <Route path = "/student-dashboard" element={<StudentDashboard />} />
+          <Route path="/educator-dashboard" element={<EducatorDashboard />} />
+          {/* <Route
             path="/dashboard"
             element={
               localStorage.getItem("role") == "Student" ? (
@@ -39,7 +41,7 @@ const App = () => {
                 <EducatorDashboard />
               )
             }
-          />
+          /> */}
           <Route path="/classroom/:classCode" element={<CodeMeet />} />
           <Route
             path="/classroom/:classCode/:assignmentCode"

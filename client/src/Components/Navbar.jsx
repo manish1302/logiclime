@@ -4,7 +4,7 @@ import lemon from "../assets/lemon.png";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, ConfigProvider, Flex, Popover } from "antd";
 import { getUserById, logout } from "../Endpoints/Auth";
-import { isTokenExpired } from "../Helpers";
+import { isStudent, isTokenExpired } from "../Helpers";
 const text = <span>Profile</span>;
 
 const buttonWidth = 80;
@@ -15,7 +15,7 @@ const Navbar = () => {
   const [log, setLog] = useState();
 
   const handleDashboard = () => {
-    navigate("/dashboard");
+    isStudent() ? navigate("/student-dashboard") : navigate("/educator-dashboard");
   };
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const Navbar = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("email");
     localStorage.removeItem("role");
-    logout().then((res) => console.log(res).catch((err) => console.log(err)));
+    logout().then((res) => console.log(res)).catch((err) => console.log(err));
     navigate("/login");
   };
 
@@ -38,7 +38,7 @@ const Navbar = () => {
     navigate("/login");
   };
 
-  const handleProfile = () => {
+  useEffect(() => {
     getUserById()
       .then((res) => {
         setUserInfo(res?.data);
@@ -46,6 +46,16 @@ const Navbar = () => {
       .then((err) => {
         console.log(err);
       });
+  }, [])
+
+  const handleProfile = () => {
+    // getUserById()
+    //   .then((res) => {
+    //     setUserInfo(res?.data);
+    //   })
+    //   .then((err) => {
+    //     console.log(err);
+    //   });
   };
 
   const content = (
