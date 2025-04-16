@@ -17,8 +17,8 @@ connectDB();
 const app = express();
 app.use(
   cors({
-    origin: process.env.VITE_UI_BASE_URL, // Replace with your frontend origin
-    credentials: true, // Allow credentials (cookies) to be sent
+    origin: process.env.VITE_UI_BASE_URL,
+    credentials: true,
   })
 );
 app.use(cookieParser());
@@ -45,6 +45,8 @@ const io = new Server(httpServer, {
 
 const userSocketMap = {};
 const userDiscussSocketMap = {};
+const userOnlineSocketMap = {};
+const userOnlineEmailMap = {};
 
 function getAllClients(roomId) {
   return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
@@ -68,6 +70,18 @@ function getAllDiscussClients(roomId) {
   );
 }
 
+function getAllOnlineClients(roomId) {
+  return Array.from(io.of("/online").adapter.rooms.get(roomId) || []).map(
+    (socketId) => {
+      return {
+        socketId,
+        username: userOnlineSocketMap[socketId],
+        email: userOnlineEmailMap[socketId],
+      };
+    }
+  );
+}
+
 // const classNamespace = io.of(/^\/classCode:.+$/)
 io.on("connection", (socket) => {
   socket.on("join-room", ({ roomId, username }) => {
@@ -86,7 +100,7 @@ io.on("connection", (socket) => {
   socket.on("home-code-changed", ({ data, roomId }) => {
     socket.to(roomId).emit("home-code", {
       data,
-      socketId : socket.id
+      socketId: socket.id,
     });
   });
 
@@ -159,9 +173,41 @@ io.of("/discuss").on("connection", (socket) => {
       });
     });
 
-    delete userSocketMap[socket.id];
+    delete userDiscussSocketMap[socket.id];
     socket.leave();
   });
 });
 
-httpServer.listen(PORT);
+io.of("/online").on("connection", (socket) => {
+  socket.on("join", ({ roomId, userId, email }) => {
+    userOnlineSocketMap[socket.id] = userId;
+    userOnlineEmailMap[socket.id] = email;
+    socket.join(roomId);
+    const allClients = getAllOnlineClients(roomId);
+    io.of("/online").in(roomId).emit("joined", {
+      message: "joined",
+      onlineStudents: allClients,
+    });
+  });
+
+  socket.on("disconnecting", () => {
+    const email = userOnlineEmailMap[socket.id];
+
+    delete userOnlineSocketMap[socket.id];
+    delete userOnlineEmailMap[socket.id];
+
+    const updatedEmails = getAllOnlineClients("online");
+
+    setTimeout(() => {
+      const updatedEmails = getAllOnlineClients("online");
+      socket.to("online").emit("disconnected", {
+        message: `${email} left`,
+        onlineStudents: updatedEmails,
+      });
+    }, 0);
+  });
+});
+
+httpServer.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
