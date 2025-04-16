@@ -25,7 +25,7 @@ const PlayGround = () => {
   const editorRef = useRef(null);
   const [assignment, setAssignment] = useState(null);
   const { assignmentCode, studentId, classCode } = useParams();
-  const [editorOption, setEditorOption] = useState("Home");
+  const [editorOption, setEditorOption] = useState("Session");
   const [allJoinedUsers, setAllJoinedUsers] = useState([]);
   const [allOtherClients, setAllOtherClient] = useState([]);
 
@@ -208,7 +208,7 @@ const PlayGround = () => {
           </div>
           <div className="mb-2">
             <Segmented
-              options={["Home", "Practice"]}
+              options={["Session", "Practice"]}
               onChange={(value) => {
                 setEditorOption(value);
               }}
@@ -216,7 +216,7 @@ const PlayGround = () => {
           </div>
         </div>
         <div onClick={cursorPosition}>
-          {editorOption == "Home" && (
+          {editorOption == "Session" && (
             <Editor
               height={"75vh"}
               theme="vs-dark"
@@ -255,6 +255,7 @@ const PlayGround = () => {
           markss={submittedCode?.Marks}
           assignmentId={assignmentCode}
           editorOption={editorOption}
+          isDiscussion={false}
         />
       </div>
       <div className="call-details">

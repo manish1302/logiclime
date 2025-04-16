@@ -30,7 +30,8 @@ const Output = ({
   studentId,
   markss,
   assignmentId,
-  editorOption
+  editorOption,
+  isDiscussion
 }) => {
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
@@ -93,14 +94,14 @@ const Output = ({
             Submit
           </button>
         )}
-        <MarksInput
+        {isDiscussion && <MarksInput
           studentId={studentId}
           marks={marks}
           setMarks={setMarks}
           isEditable={isEditable}
           setIsEditable={setIsEditable}
           assignmentId={assignmentId}
-        />
+        />}
         {/* <div
           className="link-text mx-3"
           style={{ textDecoration: "underline", color: "blue" }}

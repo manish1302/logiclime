@@ -92,11 +92,11 @@ export const columnsStudent = [
     //     multiple: 3,
     //   },
   },
-  {
-    title: "Action",
-    dataIndex: "action",
-    width : 150
-  },
+  // {
+  //   title: "Action",
+  //   dataIndex: "action",
+  //   width : 150
+  // },
   {
     title: "Online",
     dataIndex: "isOnline",
@@ -136,11 +136,11 @@ export const columnSubmissions = [
     //     multiple: 3,
     //   },
   },
-  {
-    title: "Action",
-    dataIndex: "action",
-    width : 150
-  },
+  // {
+  //   title: "Action",
+  //   dataIndex: "action",
+  //   width : 150
+  // },
   {
     title: "Marks",
     dataIndex: "marks",

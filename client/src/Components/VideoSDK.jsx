@@ -29,7 +29,7 @@ function JoinScreen({ getMeetingAndToken }) {
   };
   return (
     <div className="d-flex flex-column align-items-center justify-content-center">
-      <div>
+      <div className="d-flex flex-column align-items-center justify-content-center">
         <input
           type="text"
           placeholder="Enter Meeting Id"
@@ -37,7 +37,7 @@ function JoinScreen({ getMeetingAndToken }) {
             padding: "10px",
             borderRadius: "5px",
             border: "1px solid #ccc",
-            marginRight : "8px"
+            marginBottom: "10px",
           }}
           className="meeting-input"
           onChange={(e) => {
