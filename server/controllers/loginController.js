@@ -24,7 +24,7 @@ const createUser = async (req, res) => {
     });
 
     const createdUser = await newUser.save();
-    res.status(201).json(createdUser);
+    res.status(200).json(createdUser);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to create user", error });

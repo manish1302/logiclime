@@ -14,7 +14,10 @@
     align-items: center;
     padding: 40px 100px;
     box-sizing: border-box;
+    background-color: #0d1117;
+    color: white;
   }
+
 
   .text-section {
     width: 70%;
@@ -28,8 +31,9 @@
   }
 
   .sub-heading {
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     margin-bottom: 16px;
+    color: lightgray;
   }
 
   .description {
@@ -38,24 +42,7 @@
     color: #555;
   }
 
-  .cta-button {
-    padding: 9px 20px;
-    font-size: 1.1rem;
-    background-color: #b19cd9;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    border: 1px solid #b19cd9;
-  }
 
-  .cta-button:hover {
-    border: 1px solid #b19cd9;
-    background-color: white;
-    color: #b19cd9;
-    font-weight: 600;
-  }
 
   .image-section {
     width: 50%;
@@ -99,6 +86,9 @@
     justify-content: center;
     width: 100%;
     min-height: 100vh;
+    border-top: 1px solid grey;
+    background-color: #0d1117;
+    color: white;
   }
 
   .features-header {
@@ -115,38 +105,77 @@
     }
 
     .f-desc {
-      font-size: 1.5rem;
+      font-size: 1.1rem;
       margin-bottom: 16px;
     }
   }
 
   .features-content {
-    width: 60%;
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    align-self: center;
-  }
-
-  .feature-card {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    width: 30%;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-
-  .feature-card h3 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-  }
-
-  .feature-card p {
-    font-size: 0.8rem;
-    color: #555;
-  }
+  width: 80%;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-self: center;
+  flex-wrap: wrap;
 }
 
+.feature-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  width: 30%;
+  color: #fff;
+  backdrop-filter: blur(12px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+  border: 1px solid rgba(0, 212, 255, 0.6);
+}
+
+.feature-card h2 {
+  font-size: 1.8rem;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feature-card span {
+  background: linear-gradient(135deg, #00d4ff, #9b5cff);
+  border-radius: 50%;
+  height: 36px;
+  width: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #fff;
+}
+
+.feature-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #00d4ff, #9b5cff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.feature-card p {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+}
+
+.heading-words {
+  background: linear-gradient(135deg, #00d4ff, #9b5cff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
 .Aboutus {
   padding: 32px;

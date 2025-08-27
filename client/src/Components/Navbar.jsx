@@ -5,6 +5,19 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Button, ConfigProvider, Flex, Popover } from "antd";
 import { getUserById, logout } from "../Endpoints/Auth";
 import { isStudent, isTokenExpired } from "../Helpers";
+
+import {
+  Navbar as AceNavbar,
+  NavBody,
+  NavItems,
+  MobileNav,
+  NavbarLogo,
+  NavbarButton,
+  MobileNavHeader,
+  MobileNavToggle,
+  MobileNavMenu,
+} from "../AceComponents/ui/resizable-navbar";
+
 const text = <span>Profile</span>;
 
 const buttonWidth = 80;
@@ -14,8 +27,12 @@ const Navbar = () => {
   const [userInfo, setUserInfo] = useState({});
   const [log, setLog] = useState();
 
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const handleDashboard = () => {
-    isStudent() ? navigate("/student-dashboard") : navigate("/educator-dashboard");
+    isStudent()
+      ? navigate("/student-dashboard")
+      : navigate("/educator-dashboard");
   };
 
   useEffect(() => {
@@ -30,7 +47,9 @@ const Navbar = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("email");
     localStorage.removeItem("role");
-    logout().then((res) => console.log(res)).catch((err) => console.log(err));
+    logout()
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
     navigate("/login");
   };
 
@@ -46,7 +65,7 @@ const Navbar = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, [])
+  }, []);
 
   const handleProfile = () => {
     // getUserById()
@@ -67,55 +86,95 @@ const Navbar = () => {
     </div>
   );
 
+  const navItems = [
+    {
+      name: "Dashboard",
+      link: "#features",
+      click: handleDashboard,
+    },
+    {
+      name: "Home",
+      link: "#pricing",
+      click: () => navigate("/home"),
+    },
+    {
+      name: log ? "Login" : "Logout",
+      link: "#contact",
+      click: log ? handleLogin : handleLogout,
+    },
+    {
+      name: "Contact",
+      link: "#contact",
+      click: () => scrollTo("#contact"),
+    }
+  ];
+
   return (
-    <div className="navbar">
-      <div className="logo cursor-pointer" onClick={handleDashboard}>
-        <img
-          style={{ height: "30px", cursor: "pointer", marginRight: "8px" }}
-          src={lemon}
-          alt=""
-        />
-        Logic Lime
-      </div>
-      <div className="d-flex align-items-center justify-content-center">
-        <div className="cursor-pointer" onClick={handleDashboard}>
-          Dashboard
-        </div>{" "}
-        &nbsp; &nbsp;
-        {log ? (
-          <div className="cursor-pointer" onClick={handleLogin}>
-            Login
-          </div>
-        ) : (
-          <div className="cursor-pointer" onClick={handleLogout}>
-            Logout
-          </div>
-        )}
-        &nbsp; &nbsp;
-        <div onClick={handleProfile}>
-          <ConfigProvider
-            button={{
-              style: {
-                width: buttonWidth,
-                margin: 4,
-              },
-            }}
-          >
-            <Popover
-              placement="bottom"
-              title={text}
-              content={content}
-              trigger="click"
+    <div className="fixed w-full z-10 py-3">
+      <AceNavbar>
+        {/* Desktop Navigation */}
+        <NavBody>
+          <NavbarLogo onClick={() => {}} />
+          <NavItems items={navItems} />
+          <div className="flex items-center gap-4">
+            {/* <NavbarButton variant="secondary">Profile</NavbarButton> */}
+            <NavbarButton
+              onClick={() => {
+                alert("Profile clicked");
+                navigate("/home");
+              }}
+              className="get-started-button"
             >
-              <img
-                style={{ height: "30px", cursor: "pointer" }}
-                src={user}
-                alt=""
-              />
-            </Popover>
-          </ConfigProvider>
-        </div>
-      </div>
+              Get Started
+            </NavbarButton>
+          </div>
+        </NavBody>
+
+        {/* Mobile Navigation */}
+        <MobileNav>
+          <MobileNavHeader>
+            <NavbarLogo />
+            <MobileNavToggle
+              isOpen={isMobileMenuOpen}
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            />
+          </MobileNavHeader>
+
+          <MobileNavMenu
+            isOpen={isMobileMenuOpen}
+            onClose={() => setIsMobileMenuOpen(false)}
+          >
+            {navItems.map((item, idx) => (
+              <a
+                key={`mobile-link-${idx}`}
+                href={item.link}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="relative text-neutral-600 dark:text-neutral-300"
+              >
+                <span className="block">{item.name}</span>
+              </a>
+            ))}
+            <div className="flex w-full flex-col gap-4">
+              <NavbarButton
+                onClick={() => setIsMobileMenuOpen(false)}
+                variant="primary"
+                className="w-full"
+              >
+                Login
+              </NavbarButton>
+              <NavbarButton
+                onClick={() => setIsMobileMenuOpen(false)}
+                variant="primary"
+                className="w-full"
+              >
+                Book a call
+              </NavbarButton>
+            </div>
+          </MobileNavMenu>
+        </MobileNav>
+      </AceNavbar>
+
+      {/* Navbar */}
     </div>
   );
 };

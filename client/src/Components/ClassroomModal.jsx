@@ -9,7 +9,7 @@ const ClassroomModal = ({
   handleCancel,
   classCode = false,
   setClassroom,
-  setIsModalOpen
+  setIsModalOpen,
 }) => {
   const [copied, setCopied] = useState(null);
 
@@ -27,19 +27,13 @@ const ClassroomModal = ({
 
   const handleJoin = () => {
     window.open(`${import.meta.env.VITE_UI_BASE_URL}/classroom/${classCode}`);
-    setCreate(true)
+    setCreate(true);
     setClassroom(null);
     setIsModalOpen(false);
-  }
+  };
 
   return (
-    <Modal
-      title="Clasroom Details"
-      footer={<></>}
-      centered
-      open={isModalOpen}
-      onCancel={handleCancel}
-    >
+    <div>
       {!classCode ? (
         <Formik
           initialValues={{
@@ -82,43 +76,90 @@ const ClassroomModal = ({
                             className="classroom-fields"
                         /> */}
               <div style={{ width: "100%" }} className="d-flex flex-end">
-                <button className="create-class-cancel" onClick={handleCancel}>
-                  Cancel
-                </button>
-                <button className="create-class-create" type="submit">
+                <button
+                  style={{
+                    borderRadius: "8px",
+                    background:
+                      "linear-gradient(90deg, #06b6d4 0%, #6366f1 100%)",
+                    border: "none",
+                    padding: "8px 16px",
+                    marginRight: "16px",
+                  }}
+                  type="submit"
+                >
                   Create
+                </button>
+                <button
+                  style={{
+                    borderRadius: "8px",
+                    background: "rgba(255, 255, 255, 0.1)",
+                    border: "none",
+                    padding: "8px 16px",
+                  }}
+                  onClick={handleCancel}
+                >
+                  Cancel
                 </button>
               </div>
             </Form>
           )}
         </Formik>
       ) : (
-        <div>
-          Here is your class code. Share with with someone.
-          <div className="d-flex align-items-center my-2">
+        <div
+          style={{
+            borderRadius: "16px",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <div style={{ marginBottom: "6px", fontWeight: 500 }}>
+            Here is your class code. Share with someone.
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              marginBottom: "12px",
+            }}
+          >
             <pre
               style={{
-                padding: "6px 10px",
-                backgroundColor: "#f4f4f4",
-                borderRadius: "5px",
-                width: "fit-content",
-                margin : "0px",
-                marginRight: "8px",
+                padding: "7px 14px",
+                backgroundColor: "#1e293b",
+                borderRadius: "6px",
+                margin: 0,
+                fontSize: "13px",
+                fontWeight: 600,
+                letterSpacing: "0.2em",
+                color: "#fff",
               }}
             >
               <code className="class-link">{classCode}</code>
-            </pre>{" "}
+            </pre>
             {copied ? (
-              <div style={{ color: "grey" }}>Copied!</div>
+              <span style={{ color: "#9ca3af", fontSize: "13px" }}>
+                Copied!
+              </span>
             ) : (
               <CopyOutlined
                 className="cursor-pointer"
-                style={{ color: "grey" }}
+                style={{
+                  color: "#b19cd9",
+                  fontSize: "18px",
+                  verticalAlign: "middle",
+                }}
                 onClick={handleCopy}
               />
             )}
           </div>
-          <div style={{ width: "100%" }} className="d-flex flex-end">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: "10px",
+            }}
+          >
             <button className="create-class-cancel" onClick={handleCancel}>
               later
             </button>
@@ -128,7 +169,7 @@ const ClassroomModal = ({
           </div>
         </div>
       )}
-    </Modal>
+    </div>
   );
 };
 

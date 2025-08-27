@@ -24,77 +24,71 @@ const ContactUs = () => {
         publicKey: "FquIDkDOjRORHyrtv",
       })
       .then(
-        () => {
-          console.log("SUCCESS!");
-        },
-        (error) => {
-          console.log("FAILED...", error.text);
-        }
+        () => console.log("SUCCESS!"),
+        (error) => console.log("FAILED...", error.text)
       );
     setSubmitted(true);
   };
 
   return (
-    <div className="contact-us">
-      <h2 style={{ fontSize: "2rem" }}>
-        Have a{" "}
-        <span style={{ color: "#b19cd9", fontSize: "2rem" }}>Question?</span>
-      </h2>
-      <p>
-        We’d love to hear from you! Whether you have questions, feedback, or
-        need assistance, feel free to reach out.
-      </p>
-      
-      <h3>Contact Form</h3>
-      {submitted && (
-        <p> Thank you for reaching out! We'll get back to you soon.</p>
-      )}
-      <form onSubmit={handleSubmit}>
-        <div className="Form-input">
-          <label htmlFor="name">My name is </label> &nbsp;
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            placeholder="Name"
-          />
+    <div style={{width: "100%", backgroundColor: "#0d1117"}}>
+      <div className="contact-container">
+        <div className="contact-info">
+          <h2>
+            Have a <span className="accent">Question?</span>
+          </h2>
+          <p>
+            We’d love to hear from you! Whether you have questions, feedback, or
+            need assistance, feel free to reach out.
+          </p>
+          {submitted && (
+            <p className="success-msg">
+              Thank you for reaching out! We'll get back to you soon.
+            </p>
+          )}
         </div>
 
-        <div className="Form-input">
-          <label htmlFor="name">Here is my email </label> &nbsp;
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            placeholder="email"
-          />
-        </div>
+        <form className="contact-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>My name is</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              placeholder="Enter your name"
+            />
+          </div>
 
-        <div className="textarea-input">
-          <label htmlFor="name">And my Message </label> &nbsp;
-          <textarea
-            id="message"
-            name="message"
-            value={formData.message}
-            onChange={handleChange}
-            required
-            placeholder="message"
-          />
-        </div>
-        <button
-          type="submit"
-          style={{ width: "fit-content" }}
-          className="cta-button"
-        >
-          Get Started
-        </button>
-      </form>
+          <div className="form-group">
+            <label>Here is my email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              placeholder="Enter your email"
+            />
+          </div>
+
+          <div className="form-group">
+            <label>And my message</label>
+            <textarea
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              required
+              placeholder="Write your message..."
+            />
+          </div>
+
+          <button type="submit" className="cta-button">
+            Send Mail
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

@@ -1,18 +1,22 @@
-import { Button } from "antd";
 import { Field, Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { loginRequest } from "../Endpoints/Auth";
-import google from "../assets/google.png";
-import apple from "../assets/apple-logo.png";
 import leftMain from "../assets/leftMain.jpg";
 import lemon from "../assets/lemon.png";
 import toast, { Toaster } from "react-hot-toast";
 import { RotatingLines } from "react-loader-spinner";
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
+  };
+
   const OnFormSubmit = (values) => {
     setLoading(true);
     loginRequest(values)
@@ -34,117 +38,115 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
+    <div
+      className="login-page"
+      style={{
+        background:
+          "linear-gradient(135deg, #0d1117 40%, #121925ff 50%, #0d1117 60%)",
+      }}
+    >
       <Toaster />
-      <div className="left-login">
-        <img src={leftMain} className="left-image" />
-      </div>
-      <div className="right-login">
-        <div className="right-login-box">
-          <div
-            className="logo cursor-pointer"
-            style={{ color: "white", fontSize: "16px", marginBottom: "32px" }}
-          >
-            <img
-              style={{ height: "20px", cursor: "pointer", marginRight: "8px" }}
-              src={lemon}
-              alt=""
-            />
-            Logic Lime
-          </div>
-          <div className="Login-main">Glad to see ya!!</div>
-          <Formik
-            initialValues={{
-              email: "",
-              password: "",
-            }}
-            validate={(values) => {
-              const errors = {};
-              // Add validation logic here if needed
-              return errors;
-            }}
-            onSubmit={(values) => {
-              OnFormSubmit(values);
-            }}
-            validateOnChange={false}
-            validateOnBlur={false}
-          >
-            {({ values, errors, touched, handleChange, handleSubmit }) => (
-              <Form onSubmit={handleSubmit} className="login-form">
-                <div className="d-flex flex-column w-100">
-                  <Field
-                    name="email"
-                    type="text"
-                    value={values.email}
-                    onChange={handleChange}
-                    placeholder="Email Id"
-                    className="login-fields"
-                    style={{ border: errors.email && "1px solid red" }}
-                    validate={(value) => {
-                      if (!values.email) {
-                        return "Email is required";
-                      } else if (
-                        !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(
-                          values.email
-                        )
-                      ) {
-                        return "Invalid email address";
-                      } else {
-                        return false;
-                      }
-                    }}
-                  />
-                  {errors.email && (
-                    <div style={{ color: "red" }}>{errors.email}</div>
-                  )}
-                </div>
-                <div className="d-flex flex-column w-100">
+      <div className="login-card">
+        {/* Logo / Brand */}
+        <div className="brand">
+          <img src={lemon} alt="Logic Lime logo" className="brand-logo" />
+          <span className="brand-text">Logic Lime</span>
+        </div>
+
+        {/* Titles */}
+        <h2 className="title">Welcome Back</h2>
+        <p className="subtitle">Login to continue your journey</p>
+
+        {/* Formik Form */}
+        <Formik
+          initialValues={{
+            email: "",
+            password: "",
+          }}
+          validate={(values) => {
+            const errors = {};
+            if (!values.email) {
+              errors.email = "Email is required";
+            } else if (
+              !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+            ) {
+              errors.email = "Invalid email address";
+            }
+            if (!values.password) {
+              errors.password = "Password is required";
+            }
+            return errors;
+          }}
+          onSubmit={(values) => {
+            OnFormSubmit(values);
+          }}
+          validateOnChange={false}
+          validateOnBlur={false}
+        >
+          {({ values, errors, handleChange, handleSubmit }) => (
+            <Form onSubmit={handleSubmit} className="login-form" noValidate>
+              {/* Email */}
+              <div className="field">
+                <Field
+                  name="email"
+                  type="email"
+                  value={values.email}
+                  onChange={handleChange}
+                  placeholder="Email"
+                  className="login-input"
+                />
+                {errors.email && <div className="error">{errors.email}</div>}
+              </div>
+
+              {/* Password */}
+              <div className="ps-field">
+                <div>
                   <Field
                     name="password"
-                    type="password"
+                    type={passwordVisible ? "text" : "password"}
                     value={values.password}
-                    style={{ border: errors.password && "1px solid red" }}
                     onChange={handleChange}
                     placeholder="Password"
-                    className="login-fields"
-                    validate={(value) => {
-                      return [null, undefined, ""].includes(value);
-                    }}
+                    style = {{paddingRight : passwordVisible ? '40px' : '38px'}}
+                    className="login-input"
                   />
-                  {errors.password && (
-                    <div style={{ color: "red" }}>Required</div>
-                  )}
+                  {errors.password && <div className="error">Required</div>}
                 </div>
-                <button className="login-button" type="submit">
-                  Login
+                <div>
+                  <FontAwesomeIcon
+                    icon={passwordVisible ? faEyeSlash : faEye}
+                    className="password-toggle-icon"
+                    style={{right : passwordVisible ? '10px' : '11px'}}
+                    onClick={togglePasswordVisibility}
+                  />
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <button className="btn-gradient" type="submit" disabled={loading}>
+                {loading ? (
                   <RotatingLines
                     strokeColor="white"
                     strokeWidth="5"
                     animationDuration="0.75"
-                    width="16"
-                    visible={loading}
+                    width="20"
+                    visible
                   />
-                </button>
-                {/* <div className="social-login-box">
-                  <button className="social-login-button">
-                    <img src={google} alt="" style={{ height: "10px" }} />{" "}
-                    &nbsp; Google
-                  </button>
-                  <button className="social-login-button">
-                    <img src={apple} alt="" style={{ height: "15px" }} /> &nbsp;
-                    Apple
-                  </button>
-                </div> */}
-                <u
-                  className="login-opp-text"
-                  onClick={() => navigate("/register")}
-                >
-                  New here? Register
-                </u>
-              </Form>
-            )}
-          </Formik>
-        </div>
+                ) : (
+                  "Login"
+                )}
+              </button>
+
+              {/* Register Link */}
+              <div className="register-text">
+                <span>New here?</span>
+                <span className="link" onClick={() => navigate("/register")}>
+                  Register
+                </span>
+              </div>
+            </Form>
+          )}
+        </Formik>
       </div>
     </div>
   );

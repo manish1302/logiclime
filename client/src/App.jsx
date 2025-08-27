@@ -16,6 +16,7 @@ import { initializeOnlineSocket } from "./socket";
 import { useEffect, useRef, useState } from "react";
 import { isEducator, isStudent } from "./Helpers";
 
+
 const NavbarWrapper = () => {
   const location = useLocation();
   const hideNavbarPaths = ["/login", "/register"];

@@ -1,20 +1,13 @@
-import coding from "../assets/coding.png";
-import realtime from "../assets/real-time.png";
-import videoChat from "../assets/video-call.png";
-import settings from "../assets/settings.png";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ClassroomModal from "../Components/ClassroomModal";
-import {
-  createClassroom,
-  getClassroomByCode,
-  getClassroomsById,
-} from "../Endpoints/Classroom";
-import Classroom from "./Classroom";
-import { useNavigate } from "react-router-dom";
-import { isEducator, isTokenExpired } from "../Helpers";
-import { SmileOutlined } from "@ant-design/icons";
-import { Button, notification } from "antd";
+import { createClassroom } from "../Endpoints/Classroom";
 import { joinClassroom } from "../Endpoints/Assignment";
+import { useNavigate } from "react-router-dom";
+import { isEducator } from "../Helpers";
+import { SmileOutlined } from "@ant-design/icons";
+import { Button, Input, notification, Typography, Space, Card } from "antd";
+
+const { Title, Text } = Typography;
 
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,17 +16,12 @@ const Home = () => {
   const navigate = useNavigate();
 
   const [api, contextHolder] = notification.useNotification();
+
   const openNotification = () => {
     api.open({
       message: "Only Educators can create a class",
       description: "Change your role to an Educator",
-      icon: (
-        <SmileOutlined
-          style={{
-            color: "#108ee9",
-          }}
-        />
-      ),
+      icon: <SmileOutlined style={{ color: "#38bdf8" }} />,
     });
   };
 
@@ -44,12 +32,13 @@ const Home = () => {
       navigate("/login");
       return;
     }
-    if (userRole == "Educator") {
+    if (userRole === "Educator") {
       setIsModalOpen(true);
     } else {
       openNotification();
     }
   };
+
   const handleFormSubmit = (values) => {
     const payload = {
       Name: values.title,
@@ -64,14 +53,13 @@ const Home = () => {
         console.log(err);
       });
   };
+
   const handleCancel = () => {
     setIsModalOpen(false);
   };
 
   const handleJoin = () => {
-    joinClassroom({
-      code : code
-    })
+    joinClassroom({ code })
       .then((res) => {
         console.log(res);
       })
@@ -80,113 +68,113 @@ const Home = () => {
   };
 
   return (
-    <div className="home-container">
+    <div
+      className="flex items-center justify-center min-h-screen relative"
+      style={{
+        background:
+          "linear-gradient(135deg, #0d1117 40%, #121925ff 50%, #0d1117 60%)",
+        padding: "2rem",
+      }}
+    >
       {contextHolder}
-      <div className="create-meet-container">
-        <div className="heading-container">
-          <div className="heading">Real-Time Coding Classes for Everyone</div>
-          <p className="subheading">
-            Create, teach, and collaborate with your students in an interactive
-            coding environment.
-          </p>
-          <div className="create-input">
-            {isEducator() && (
-              <div className="create-button" onClick={showModal}>
-                Create a Class
-              </div>
-            )}{" "}
-            &nbsp; &nbsp;
-            <input
-              type="text"
-              maxLength="6"
-              style={{ fontSize: "1rem", width: "180px", marginRight: "16px" }}
-              placeholder="Enter code to join"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
+
+      <Card
+        style={{
+          maxWidth: 460,
+          width: "100%",
+          padding: "2rem",
+          borderRadius: "1rem",
+          background: "rgb(13, 17, 23, 0.05)",
+          border: "1px solid rgba(255,255,255,0.1)",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+          color: "#fff",
+          backdropFilter: "blur(10px)",
+        }}
+      >
+        <Space direction="vertical" style={{ width: "100%" }} size="large">
+          <div style={{ textAlign: "center" }}>
+            <Title
+              level={3}
+              style={{
+                marginBottom: "0.25rem",
+                color: "white",
+              }}
+            >
+              {isModalOpen ? "Create a class" : "Join or Create a Class"}
+            </Title>
+            <Text style={{ color: "#94a3b8" }}>
+              {isModalOpen
+                ? "Fill in the details to create a new class"
+                : "Create a new class or join with a code"}
+            </Text>
+          </div>
+
+          {isModalOpen && (
+            <ClassroomModal
+              classCode={classroom?.classCode}
+              setClassroom={setClassroom}
+              setIsModalOpen={setIsModalOpen}
+              isModalOpen={isModalOpen}
+              handleCancel={handleCancel}
+              handleFormSubmit={handleFormSubmit}
             />
-            {!code ? (
-              <button
-                disabled
+          )}
+
+          {isEducator() && !isModalOpen && (
+            <Button
+              type="primary"
+              block
+              size="large"
+              style={{
+                borderRadius: "8px",
+                background: "linear-gradient(90deg, #06b6d4 0%, #6366f1 100%)",
+                border: "none",
+              }}
+              onClick={showModal}
+            >
+              Create a Class
+            </Button>
+          )}
+
+          {!isModalOpen && (
+            <div>
+              <Input
+                placeholder="Enter class code"
+                maxLength={6}
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
                 style={{
-                  cursor: "not-allowed",
-                  border: "none",
-                  backgroundColor: "white",
+                  fontSize: "1rem",
+                  borderRadius: "8px",
+                  backgroundColor: "rgba(255,255,255,0.05)",
+                  border: "1px solid rgba(255,255,255,0.15)",
+                  color: "white",
+                  marginBottom: "1rem",
                 }}
-              >
-                join
-              </button>
-            ) : (
-              <button
+                className="custom-input"
+              />
+
+              <Button
+                block
+                size="large"
                 style={{
-                  cursor: "pointer",
+                  borderRadius: "8px",
+                  background: code
+                    ? "linear-gradient(90deg, #06b6d4 0%, #6366f1 100%)"
+                    : "rgba(255,255,255,0.1)",
+                  color: "white",
                   border: "none",
-                  backgroundColor: "white",
+                  cursor: code ? "pointer" : "not-allowed",
                 }}
+                disabled={!code}
                 onClick={handleJoin}
               >
-                join
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-      <ClassroomModal
-        classCode={classroom?.classCode}
-        setClassroom={setClassroom}
-        setIsModalOpen={setIsModalOpen}
-        isModalOpen={isModalOpen}
-        handleCancel={handleCancel}
-        handleFormSubmit={handleFormSubmit}
-      />
-      <div className="create-meet-image">
-        <div className="feature-content">
-          <div className="feature-title">
-            What We Offer
-            <div className="feature-title-desc">
-              Explore the key features that make teaching and learning code
-              easier, faster, and more interactive.
+                Join
+              </Button>
             </div>
-          </div>
-          <div className="feature-box">
-            <div className="feature-info">
-              {" "}
-              <img className="feature-image" src={coding} /> <br />
-              Interactive Code Editor
-              {/* <div className="feature-desc">
-                Enable students to write and execute code instantly in a
-                collaborative coding environment.
-              </div> */}
-            </div>
-            <div className="feature-info">
-              {" "}
-              <img className="feature-image" src={realtime} /> <br />
-              Real-Time Collaboration
-              {/* <div className="feature-desc">
-                Teachers and students can code and communicate in real time,
-                enhancing the learning experience.
-              </div> */}
-            </div>
-            <div className="feature-info">
-              {" "}
-              <img className="feature-image" src={settings} /> <br />
-              Customizable Class Setup
-              {/* <div className="feature-desc">
-                Easily set up coding sessions with personalized class settings
-                and project templates.
-              </div> */}
-            </div>
-            <div className="feature-info">
-              {" "}
-              <img className="feature-image" src={videoChat} /> <br />
-              Video calling and chat
-              {/* <div className="feature-desc">
-                Teachers can monitor progress and provide immediate help to
-                students as they code.
-              </div> */}
-            </div>
-          </div>
-        </div>
-      </div>
+          )}
+        </Space>
+      </Card>
     </div>
   );
 };
