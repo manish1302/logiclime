@@ -54,7 +54,9 @@ const App = () => {
   }, []);
 
   return (
-    <div style={{ height: "100vh", width: "100vw" }}>
+    <div style={{ height: "100vh", width: "100vw",
+      background: "linear-gradient(135deg, #0d1117 10%, #121925ff 50%, #0d1117 95%)",
+     }}>
       <BrowserRouter>
         <NavbarWrapper />
         <Routes>

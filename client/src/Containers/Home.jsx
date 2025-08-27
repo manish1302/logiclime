@@ -55,6 +55,7 @@ const Home = () => {
   };
 
   const handleCancel = () => {
+    setClassroom(null);
     setIsModalOpen(false);
   };
 

@@ -112,12 +112,13 @@ const Output = ({
       <Card
         title={
           <div className="d-flex align-items-center justify-content-between">
-            <div>{assignment?.title}</div>
+            <div style={{color : "white"}}>{assignment?.title}</div>
             <Tag color={getDifficultyColor(assignment?.difficulty)}>
               {assignment?.difficulty}
             </Tag>
           </div>
         }
+        variant = "borderless"
         bordered={true}
         style={{
           height: "47vh",
@@ -125,20 +126,22 @@ const Output = ({
           marginBottom: "20px",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
           overflowY: "auto",
+          backgroundColor: "#0d1117",
+          backdropFilter: "blur(12px)",
+          border: "1px solid rgba(255,255,255,0.1)",
+          color : "white"
         }}
       >
         {/* Description */}
-        <Text strong>Description:</Text>
-        <Text style={{ display: "block", marginBottom: "16px" }}>
+        <Text strong style={{color : "white"}}>Description:</Text>
+        <Text style={{ display: "block", marginBottom: "16px", color : "white" }}>
           {assignment?.description}
         </Text>
 
-        <Divider />
-
         {/* Test Cases */}
-        <Text strong>Test Cases:</Text>
+        <Text strong style={{color : "white"}}>Test Cases:</Text>
         <List
-          style={{ marginBottom: "16px" }}
+          style={{ marginBottom: "16px", border: "1px solid rgba(255,255,255,0.1)", }}
           bordered
           dataSource={assignment?.testCases}
           renderItem={(testCase, index) => (
@@ -151,12 +154,13 @@ const Output = ({
                 }}
               >
                 <Col span={12}>
-                  <Text strong>Input:</Text> <Text>{testCase.input}</Text>
+                  <Text style={{color : "white"}} strong>Input:</Text> <Text style={{color : "white"}}>{testCase.input}</Text>
                 </Col>
                 <Col span={12}>
-                  <Text strong>Output:</Text> <Text>{testCase.output}</Text>
+                  <Text style={{color : "white"}} strong>Output:</Text> <Text style={{color : "white"}}>{testCase.output}</Text>
                 </Col>
               </Row>
+              
             </List.Item>
           )}
         />
@@ -173,13 +177,13 @@ const Output = ({
         )} */}
 
         {/* Constraints */}
-        <Text strong>Constraints:</Text>
-        <Text style={{ display: "block", marginBottom: "16px" }}>
+        <Text strong style={{color : "white"}}>Constraints:</Text>
+        <Text style={{ display: "block", marginBottom: "16px", color : "white" }}>
           {assignment?.constraints}
         </Text>
 
         {/* Tags */}
-        <Text strong>Tags:</Text>
+        <Text strong style={{color : "white"}}>Tags:</Text>
         <div style={{ marginBottom: "16px" }}>
           {assignment?.tags.map((tag) => (
             <Tag color="blue" key={tag}>
@@ -188,7 +192,7 @@ const Output = ({
           ))}
         </div>
       </Card>
-      <div className={`output ${error && "error-output"}`}>
+      <div className={`output ${error && "error-output"}`} style={{color : "white"}}>
         {error != ""
           ? error
           : output != ""

@@ -79,7 +79,7 @@ const EducatorDashboard = () => {
             >
               <div>
                 <div className="d-flex align-items-center justify-content-between">
-                  <div className="class-name">{item?._doc?.name}</div>
+                  <div className="class-name" style={{color : "white"}}>{item?._doc?.name}</div>
                   <div
                     onClick={(e) => {
                       e.stopPropagation();
@@ -97,14 +97,14 @@ const EducatorDashboard = () => {
                 <div className="class-desc">{item?._doc?.description}</div>
               </div>
 
-              <div className="d-flex w-100 justify-content-between">
+              <div className="d-flex w-100 justify-content-between text-white">
                 <div>Assignments: {item?.assignmentCount}</div>
               </div>
             </div>
           );
         })}
       </div>
-      <ClassroomModal
+      {/* <ClassroomModal
         classCode={classroom?.classCode}
         setClassroom={setClassroom}
         setIsModalOpen={setModalOpen}
@@ -114,7 +114,7 @@ const EducatorDashboard = () => {
         handleFormSubmit={handleFormSubmit}
         create={create}
         setCreate={setCreate}
-      />
+      /> */}
     </div>
   );
 };

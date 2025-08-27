@@ -4,10 +4,11 @@
 .toggle-buttons {
     outline: none;
     border: none;
-    background-color: white;
+    background: transparent;
 }
 .toggle-buttons:focus {
     outline: none;
+    background: transparent;
 }
 
 .videobox {
@@ -15,12 +16,24 @@
 }
 
 .part-name {
-    background-color: rgba(0, 0, 0, 0.1);
-    color: black;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
     padding: 5px 10px;
     font-size: 12px;
     border-radius: 4px;
     margin-bottom: 16px;
+}
+
+.meeting-input {
+    border: 1px solid lightgrey;
+    border-radius: 8px;
+    padding: 16px;
+    width: 100%;
+}
+
+.meeting-input::placeholder {
+    font-size: 1rem;
+    color: lightgrey;
 }
 
 .meeting-input:focus {

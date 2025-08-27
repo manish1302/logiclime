@@ -1,13 +1,13 @@
 .dashboard-container {
   width: 100vw;
-  height: 93vh;
+  height: 100vh;
   color: black;
-  padding: 16px 32px;
+  padding: 70px 32px;
+  background: linear-gradient(135deg, #0d1117 10%, #121925ff 50%, #0d1117 95%);
 
   .class-card {
-    border: none;
+    border: 1px solid rgba(255,255,255,0.1);
     border-radius: 8px;
-    // box-shadow: 3px 3px 10px 4px rgba(0, 0, 0, 0.05);
     padding: 8px 16px;
     width: 32%;
     height: 150px;
@@ -16,7 +16,8 @@
     flex-direction: column;
     margin: 16px 0;
     margin-right: 16px;
-    background-color: rgba(0, 0, 0, 0.05);
+    background: rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 32px rgba(0,0,0,0.2);
     cursor: pointer;
     .class-name {
       font-size: 20px;
@@ -25,7 +26,7 @@
     .class-desc {
       font-size: 14px;
       font-weight: 500;
-      color: grey;
+      color: lightgray;
     }
   }
 
@@ -45,6 +46,7 @@
     .class-name {
       font-size: 20px;
       font-weight: 600;
+      color: white;
     }
     .class-desc {
       font-size: 14px;
@@ -54,10 +56,23 @@
   }
 
   .class-card:hover {
-    border: 1px solid black;
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+    border: 1px solid rgba(0, 212, 255, 0.6);
   }
 }
 
 .class-info {
   padding: 16px 32px;
+}
+
+.assignment-card {
+    margin: 16px 0;
+    margin-right: 16px;
+    background: rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 32px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 0 16px;
+    color: white;
 }

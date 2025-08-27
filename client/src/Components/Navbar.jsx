@@ -120,7 +120,6 @@ const Navbar = () => {
             {/* <NavbarButton variant="secondary">Profile</NavbarButton> */}
             <NavbarButton
               onClick={() => {
-                alert("Profile clicked");
                 navigate("/home");
               }}
               className="get-started-button"

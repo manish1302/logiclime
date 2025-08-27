@@ -18,7 +18,6 @@
     color: white;
   }
 
-
   .text-section {
     width: 70%;
     text-align: center;
@@ -41,8 +40,6 @@
     margin-bottom: 30px;
     color: #555;
   }
-
-
 
   .image-section {
     width: 50%;
@@ -111,64 +108,63 @@
   }
 
   .features-content {
-  width: 80%;
-  display: flex;
-  justify-content: space-between;
-  gap: 20px;
-  align-self: center;
-  flex-wrap: wrap;
-}
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-self: center;
+    flex-wrap: wrap;
+  }
 
-.feature-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 24px;
-  width: 30%;
-  color: #fff;
-  backdrop-filter: blur(12px);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
-}
+  .feature-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 24px;
+    width: 30%;
+    color: #fff;
+    backdrop-filter: blur(12px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+  }
 
-.feature-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
-  border: 1px solid rgba(0, 212, 255, 0.6);
-}
+  .feature-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+    border: 1px solid rgba(0, 212, 255, 0.6);
+  }
 
-.feature-card h2 {
-  font-size: 1.8rem;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+  .feature-card h2 {
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-.feature-card span {
-  background: linear-gradient(135deg, #00d4ff, #9b5cff);
-  border-radius: 50%;
-  height: 36px;
-  width: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  color: #fff;
-}
+  .feature-card span {
+    background: linear-gradient(135deg, #00d4ff, #9b5cff);
+    border-radius: 50%;
+    height: 36px;
+    width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #fff;
+  }
 
-.feature-card h3 {
-  font-size: 1.4rem;
-  margin-bottom: 12px;
-  background: linear-gradient(135deg, #00d4ff, #9b5cff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+  .feature-card h3 {
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #00d4ff, #9b5cff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 
-.feature-card p {
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.8);
-}
-
+  .feature-card p {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
 }
 
 .heading-words {
@@ -195,11 +191,11 @@
     font-size: 1rem;
     font-weight: 500;
   }
-  
+
   .aboutus-content {
     width: 70%;
     display: flex;
-    justify-content: center;  
+    justify-content: center;
   }
 
   .about-img {
@@ -208,5 +204,96 @@
 
   .About-header {
     margin-left: 40px;
+  }
+}
+
+/* Full-screen dark overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Modal box */
+.modal-container {
+  background: rgb(13, 17, 23, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  color: #fff;
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  position: relative;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Title */
+.modal-title {
+  margin: 0 0 15px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Body */
+.modal-body {
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #333;
+}
+
+/* Footer */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Buttons */
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn.cancel {
+  background: #ddd;
+}
+
+.btn.confirm {
+  background: #007bff;
+  color: white;
+}
+
+/* Close button */
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

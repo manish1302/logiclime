@@ -124,12 +124,13 @@ const CodeMeet = () => {
             <pre
               style={{
                 padding: "2px 10px",
-                backgroundColor: "#f4f4f4",
+                backgroundColor: "#1e293b",
                 borderRadius: "5px",
                 width: "fit-content",
                 marginRight: "8px",
                 marginBottom: 0,
                 marginTop: "2px",
+                color: "white",
               }}
             >
               <code>{classCode}</code>
@@ -146,7 +147,7 @@ const CodeMeet = () => {
           </div>
         </div>
         <div className="d-flex align-items-center">
-          <div className="educator-heading text-muted">Educator: </div>&nbsp;
+          <div className="educator-label">Educator: </div>&nbsp;
           <div className="educator-heading">
             {educatorData.firstName} {educatorData.secondName}
           </div>
@@ -163,7 +164,7 @@ const CodeMeet = () => {
               setIsModalOpen(true);
             }}
           >
-            + Create assignment
+            + Create
           </button>
         )}
       </div>
@@ -171,9 +172,7 @@ const CodeMeet = () => {
         style={{
           display: "flex",
           flexWrap: "wrap",
-          justifyContent: "space-between",
           padding: "24px",
-          backgroundColor: "#f0f2f5",
         }}
       >
         {assignments.length > 0 ? assignments.map((assignment) => (

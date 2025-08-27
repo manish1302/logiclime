@@ -24,10 +24,10 @@ const AssignmentCard = ({
       style={{
         borderRadius: "12px",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-        width: "49.5%",
+        width: "32%",
         marginBottom: "16px",
       }}
-      bodyStyle={{ padding: "16px" }}
+      className="assignment-card"
     >
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <h4 style={{ margin: 0, marginRight: "16px" }}>{title}</h4>

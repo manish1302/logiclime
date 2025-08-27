@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import * as Yup from "yup";
 import { Select } from "antd";
 import { saveAssignments } from "../Endpoints/Assignment";
+import CustomModal from "./CustomModal";
 
 const AssignmentModal = ({
   modalKey,
@@ -100,12 +101,10 @@ const AssignmentModal = ({
   ];
 
   return (
-    <Modal
+    <CustomModal
       title="Assignment Details"
-      footer={<></>}
-      centered
-      open={isModalOpen}
-      onCancel={handleCancel}
+      isOpen={isModalOpen}
+      onClose={handleCancel}
       className="ass-modal"
       style={{
         height: "70vh",
@@ -118,9 +117,11 @@ const AssignmentModal = ({
         validationSchema={validationSchema}
         onSubmit={handleFormSubmit}
         enableReinitialize
+        validateOnBlur = {false}
+        validateOnChange = {false}
       >
         {({
-          values,
+          values, 
           setValues,
           resetForm,
           setFieldValue,
@@ -300,7 +301,7 @@ const AssignmentModal = ({
           </Form>
         )}
       </Formik>
-    </Modal>
+    </CustomModal>
   );
 };
 

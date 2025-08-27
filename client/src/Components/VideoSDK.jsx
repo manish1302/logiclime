@@ -39,35 +39,42 @@ function JoinScreen({ getMeetingAndToken }) {
             border: "1px solid #ccc",
             marginBottom: "10px",
           }}
-          className="meeting-input"
+          className="login-input"
           onChange={(e) => {
             setMeetingId(e.target.value);
           }}
         />
+      </div>
+      <div className="d-flex">
         <button
-          style={{ backgroundColor: "white", border: "none" }}
+          style={{
+            color: "white",
+            border: "1px solid #694bff",
+            padding: "4px 10px",
+            borderRadius: "5px",
+            marginRight: "10px",
+          }}
           onClick={onClick}
         >
           <div className="cursor-pointer">
             <PhoneFilled style={{ color: "#00CC00" }} /> Join call
           </div>
         </button>
+        <button
+          style={{
+            color: "white",
+            border: "1px solid #694bff",
+            padding: "4px 10px",
+            borderRadius: "5px",
+            backgroundColor: "#694bff",
+          }}
+          onClick={onClick}
+        >
+          <div className="cursor-pointer">
+            <PhoneFilled style={{ color: "#00CC00" }} /> Create meeting
+          </div>
+        </button>
       </div>
-      <br />
-      <div className="d-flex align-items-center justify-content-between w-100">
-        <div style={{ borderTop: "1px solid lightgrey", width: "43%" }}></div>
-        {" or "}
-        <div style={{ borderTop: "1px solid lightgrey", width: "43%" }}></div>
-      </div>
-      <br />
-      <button
-        style={{ backgroundColor: "white", border: "none" }}
-        onClick={onClick}
-      >
-        <div className="cursor-pointer">
-          <PhoneFilled style={{ color: "#00CC00" }} /> Create meeting
-        </div>
-      </button>
     </div>
   );
 }
@@ -110,7 +117,7 @@ function ParticipantView(props) {
         <audio ref={micRef} autoPlay playsInline muted={isLocal} />
         {webcamOn ? (
           <ReactPlayer
-            playsinline 
+            playsinline
             pip={false}
             light={false}
             controls={false}
@@ -125,34 +132,49 @@ function ParticipantView(props) {
           />
         ) : (
           <div className="webcam-off-card">
-            <div className="initial">{props?.username?.slice(0,2)}</div>
+            <div className="initial">{props?.username?.slice(0, 2)}</div>
           </div>
         )}
-        <Controls webCamOn={webcamOn} micOn={micOn} isRemote = {props.isRemote}/>
+        <Controls webCamOn={webcamOn} micOn={micOn} isRemote={props.isRemote} />
       </div>
     </div>
   );
 }
 
-function Controls({ webCamOn, micOn, isRemote}) {
+function Controls({ webCamOn, micOn, isRemote }) {
   const { leave, toggleMic, toggleWebcam } = useMeeting();
   return (
     <div className="my-3">
-      <button className="toggle-buttons" onClick={() => {!isRemote && toggleMic()}}>
+      <button
+        className="toggle-buttons"
+        onClick={() => {
+          !isRemote && toggleMic();
+        }}
+      >
         {micOn ? (
           <IconButton icon={micon} isOn={true} />
         ) : (
           <IconButton icon={micoff} isOn={false} />
         )}
       </button>
-      <button className="toggle-buttons" onClick={() =>  {!isRemote && toggleWebcam()}}>
+      <button
+        className="toggle-buttons"
+        onClick={() => {
+          !isRemote && toggleWebcam();
+        }}
+      >
         {webCamOn ? (
           <IconButton icon={videoon} isOn={true} />
         ) : (
           <IconButton icon={videoff} isOn={false} />
         )}
       </button>
-      <button className="toggle-buttons" onClick={() =>  {!isRemote && leave()}}>
+      <button
+        className="toggle-buttons"
+        onClick={() => {
+          !isRemote && leave();
+        }}
+      >
         <div className={`icon-container maroon`}>
           <img src={endcall} />
         </div>
@@ -183,26 +205,39 @@ function MeetingView(props) {
 
   return (
     <div className="videosdk-container">
-      <h5>Meeting Id: {props.meetingId}</h5>
+      <h5 style={{color : "white"}}><span style={{color : "grey"}}>Meeting Id:</span> {props.meetingId}</h5>
       {joined && joined == "JOINED" ? (
         <div>
           {[...participants.keys()].map((participantId, index) => (
             <ParticipantView
               participantId={participantId}
               key={participantId}
-              username={!index ? props.userName : (props.remoteUserNames?.length > 0 && props.remoteUserNames[index]?.username)}
+              username={
+                !index
+                  ? props.userName
+                  : props.remoteUserNames?.length > 0 &&
+                    props.remoteUserNames[index]?.username
+              }
               isRemote={index}
             />
           ))}
         </div>
       ) : joined && joined == "JOINING" ? (
-        <p>Joining the meeting...</p>
+        <p style={{color : "white"}}>Joining the meeting...</p>
       ) : (
         <button
-          style={{ backgroundColor: "white", border: "none" }}
           onClick={joinMeeting}
         >
-          <div className="cursor-pointer">
+          <div
+            className="cursor-pointer"
+            style={{
+              color: "white",
+              border: "1px solid #694bff",
+              padding: "4px 10px",
+              borderRadius: "5px",
+              marginRight: "10px",
+            }}
+          >
             <PhoneFilled style={{ color: "#00CC00" }} /> Join call
           </div>
         </button>

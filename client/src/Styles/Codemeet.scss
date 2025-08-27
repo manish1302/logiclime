@@ -1,91 +1,102 @@
 .code-meet-container {
-    height: 93vh;
-    color: black;
-    display: flex;
-    flex-grow: 0;
-    flex-direction: column;
-    margin: 0 32px;
-    padding-bottom: 32px;
+  height: 100vh;
+  color: white;
+  background: linear-gradient(135deg, #0d1117 10%, #121925ff 50%, #0d1117 95%);
+  display: flex;
+  flex-grow: 0;
+  flex-direction: column;
+  padding: 0px 32px;
+  padding-top: 70px;
+  padding-bottom: 32px;
 }
 
 .code-copy {
-    align-self: flex-start;
-    height: 100%;
+  align-self: flex-start;
+  height: 100%;
 }
 
 .code-meet-header {
-    width: 100%;
-    height: 5vh;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 16px;
-    .code-meet-heading {
-        font-weight: 600;
-        font-size: 20px;
-        margin-right: 16px;
-    }
+  width: 100%;
+  height: 5vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  .code-meet-heading {
+    font-weight: 600;
+    font-size: 20px;
+    margin-right: 16px;
+    color: white;
+  }
 }
 
 .code-meet-desc {
-    border-bottom: 1px solid lightgrey;
-    padding-bottom: 16px;
+  border-bottom: 1px solid lightgrey;
+  padding-bottom: 16px;
 }
 
 .code-meet-create-assign {
-    margin: 16px 0;
-    text-align: end;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  margin: 16px 0;
+  text-align: end;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-    .create-button {
-        background-color: #b19cd9;
-        color: white;
-        font-size: 1.1rem;
-        padding: 8px 30px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
+  .create-button {
+    background: #694bff;
+    color: white;
+    font-size: 1rem;
+    padding: 4px 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.22s, box-shadow 0.22s, transform 0.13s;
+    letter-spacing: 0.4px;
+    outline: none;
+  }
 
-    .create-button:hover {
-        background-color: rgba(79, 71, 93, 0.7);
-    }
+  /* Hover effect: slightly brighter and lifted */
+  .create-button:hover {
+    background: #694bff;
 
-    
-    .create-button:focus {
-        outline: none;
-    }
+    box-shadow: 0 4px 18px rgba(104, 75, 255, 0.26);
+    transform: translateY(-2px) scale(1.03);
+  }
 
-    .create-button:active {
-        background-color: #b19cd9;
-    }
+  /* Focus: Add an outline for accessibility */
+  .create-button:focus {
+    outline: none;
+  }
+
+  /* Active: subtle press effect */
+  .create-button:active {
+    background: #694bff;
+    transform: scale(0.98);
+    outline: none;
+  }
 }
 
 .error {
-    font-size: 12px;
-    color: red;
+  font-size: 12px;
+  color: red;
 }
 
 .test-cases {
-    font-size: 20px;
-    font-weight: 500;
-
+  font-size: 20px;
+  font-weight: 500;
 }
 
 .submit-assignment-button {
-    border: 1px solid #b19cd9;
-    background-color: #b19cd9;
-    color: white;
-    border-radius: 8px;
-    padding: 4px 8px;
+  border: 1px solid #694bff;
+  background-color: #694bff;
+  color: white;
+  border-radius: 8px;
+  padding: 4px 8px;
 }
 
 .test-case-button {
-    font-size: small;
-    font-weight: 500;
-    border: none;
-    background-color: none;
+  font-size: small;
+  font-weight: 500;
+  border: none;
+  background-color: none;
 }

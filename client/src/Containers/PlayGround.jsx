@@ -268,7 +268,7 @@ const PlayGround = () => {
               <PhoneFilled style={{ color: "#00CC00" }} /> accept
             </div>
           </div> */}
-        <h3 className="my-3">Call Details</h3>
+        <h3 className="my-3 text-white">Call Details</h3>
         <div className="video">
           <VideoSDK userName={"userName"} remoteUserNames={allJoinedUsers} />
         </div>
