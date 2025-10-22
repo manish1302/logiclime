@@ -70,7 +70,8 @@ const Landingpage = () => {
           <div className="features-header">
             <div className="f-heading">What sets us apart?</div>
             <div className="f-desc">
-              deployment testing...
+              At <span className="">Logic Lime</span> we not only offer a
+              service, we also offer love and experience.
             </div>
           </div>
           <div className="features-content">
