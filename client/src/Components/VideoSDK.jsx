@@ -28,16 +28,16 @@ function JoinScreen({ getMeetingAndToken }) {
     await getMeetingAndToken(meetingId);
   };
   return (
-    <div className="d-flex flex-column align-items-center justify-content-center">
-      <div className="d-flex flex-column align-items-center justify-content-center">
+    <div className="w-100 d-flex flex-column align-items-center justify-content-center">
+      <div className="w-100 d-flex flex-column align-items-center justify-content-center">
         <input
           type="text"
           placeholder="Enter Meeting Id"
           style={{
             padding: "10px",
             borderRadius: "5px",
-            border: "1px solid #ccc",
             marginBottom: "10px",
+            width: "100%",
           }}
           className="login-input"
           onChange={(e) => {
@@ -45,7 +45,7 @@ function JoinScreen({ getMeetingAndToken }) {
           }}
         />
       </div>
-      <div className="d-flex">
+      <div className="w-100 d-flex align-items-center justify-content-center">
         <button
           style={{
             color: "white",

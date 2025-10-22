@@ -126,20 +126,20 @@ const Output = ({
           marginBottom: "20px",
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
           overflowY: "auto",
-          backgroundColor: "#0d1117",
+          backgroundColor: "rgba(0, 0, 0, 0.3)",
           backdropFilter: "blur(12px)",
           border: "1px solid rgba(255,255,255,0.1)",
           color : "white"
         }}
       >
         {/* Description */}
-        <Text strong style={{color : "white"}}>Description:</Text>
-        <Text style={{ display: "block", marginBottom: "16px", color : "white" }}>
+        <Text style={{color : "grey", fontWeight : "400"}}>Description:</Text>
+        <Text style={{ display: "block", marginBottom: "16px", fontSize: "18px", color : "white" }}>
           {assignment?.description}
         </Text>
 
         {/* Test Cases */}
-        <Text strong style={{color : "white"}}>Test Cases:</Text>
+        <Text style={{color : "grey"}}>Test Cases:</Text>
         <List
           style={{ marginBottom: "16px", border: "1px solid rgba(255,255,255,0.1)", }}
           bordered
@@ -154,10 +154,10 @@ const Output = ({
                 }}
               >
                 <Col span={12}>
-                  <Text style={{color : "white"}} strong>Input:</Text> <Text style={{color : "white"}}>{testCase.input}</Text>
+                  <Text style={{color : "grey"}} >Input:</Text> <Text style={{color : "white"}}>{testCase.input}</Text>
                 </Col>
                 <Col span={12}>
-                  <Text style={{color : "white"}} strong>Output:</Text> <Text style={{color : "white"}}>{testCase.output}</Text>
+                  <Text style={{color : "grey"}} >Output:</Text> <Text style={{color : "white"}}>{testCase.output}</Text>
                 </Col>
               </Row>
               
@@ -177,14 +177,14 @@ const Output = ({
         )} */}
 
         {/* Constraints */}
-        <Text strong style={{color : "white"}}>Constraints:</Text>
+        <Text style={{color : "grey"}}>Constraints:</Text>
         <Text style={{ display: "block", marginBottom: "16px", color : "white" }}>
           {assignment?.constraints}
         </Text>
 
         {/* Tags */}
-        <Text strong style={{color : "white"}}>Tags:</Text>
-        <div style={{ marginBottom: "16px" }}>
+        <Text style={{color : "grey"}} >Tags:</Text>
+        <div style={{ margin: "8px 0 16px 0" }}>
           {assignment?.tags.map((tag) => (
             <Tag color="blue" key={tag}>
               {tag}
@@ -197,7 +197,7 @@ const Output = ({
           ? error
           : output != ""
           ? output
-          : "//Run code to show output here"}
+          : <span style={{color : "grey"}}>//Run code to show output here</span>}
       </div>
     </>
   );

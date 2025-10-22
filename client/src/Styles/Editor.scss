@@ -18,16 +18,16 @@
 }
 
 .run-code {
-  border: 1px solid #fff;
-  padding: 5px 16px;
-  background-color: #00cc00;
+  padding: 4px 16px;
+  background-color: #694bff;
   border-radius: 8px;
   color: white;
   margin: 16px 0;
+  font-size: 16px;
 }
 
 .run-code:hover {
-  background-color: #00cc00;
+  background-color: #694bffcc;
 }
 
 .submit-code {
@@ -47,6 +47,11 @@
   border: 1px solid lightgray;
   height: 25vh;
   padding: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 32px rgba(0,0,0,0.2);
+  backdrop-filter: blur(12px);
+  border-radius: 8px;
 }
 
 .error-output {
@@ -83,6 +88,7 @@
   height: 74vh;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.3);
   padding: 16px;
 }
 .call-card {

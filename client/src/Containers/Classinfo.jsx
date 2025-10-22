@@ -1,4 +1,4 @@
-import { Segmented, Table, Tag } from "antd";
+import { ConfigProvider, Segmented, Table, Tag } from "antd";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -127,36 +127,99 @@ const Classinfo = ({ onlineStudents }) => {
 
   return (
     <div className="class-info">
-      <Segmented
-        options={tabs}
-        onChange={(value) => {
-          setTab(value);
+      <ConfigProvider
+        theme={{
+          components: {
+            Segmented: {
+              itemSelectedBg: "#1677ff", // selected background
+              itemHoverBg: "#40a9ff", // hover background
+              itemSelectedColor: "#ffffff", // <-- selected text color
+              itemColor: "rgba(255,255,255,0.85)", // normal text color
+            },
+          },
         }}
-      />
+      >
+        <Segmented
+          className="custom-segmented"
+          options={tabs}
+          onChange={setTab}
+          style={{
+            backgroundColor: "rgba(255,255,255,0.05)",
+            padding: "8px",
+            borderRadius: "8px",
+            color: "white",
+          }}
+        />
+      </ConfigProvider>
 
       {tab == "Students" ? (
-        <div style={{ width: "80%", margin: "16px 0" }}>
-          <Table
-            columns={columnsStudent}
-            dataSource={tableDataStudent}
-            onChange={onChange}
-          />
+        <div style={{ width: "100%", margin: "16px 0" }}>
+          <ConfigProvider
+            theme={{
+              components: {
+                Table: {
+                  colorBgContainer: "rgba(0,0,0,0.05)", // table background
+                  colorText: "#ffffff", // normal text
+                  colorTextHeading: "#ffffff", // column headers
+                  colorBgElevated: "rgba(255,255,255,0.1)", // rows (hover/alternate)
+                  colorPrimary: "#1677ff", // primary color (optional)
+                },
+              },
+            }}
+          >
+            <Table
+              columns={columnsStudent}
+              dataSource={tableDataStudent}
+              onChange={onChange}
+              pagination={false}
+              bordered={false} // optional
+            />
+          </ConfigProvider>
         </div>
       ) : tab == "Assignments" ? (
-        <div style={{ width: "80%", margin: "16px 0" }}>
-          <Table
-            columns={columnsAssignments}
-            dataSource={tableData}
-            onChange={onChange}
-          />{" "}
+        <div style={{ width: "100%", margin: "16px 0" }}>
+          <ConfigProvider
+            theme={{
+              components: {
+                Table: {
+                  colorBgContainer: "rgba(0,0,0,0.05)", // table background
+                  colorText: "#ffffff", // normal text
+                  colorTextHeading: "#ffffff", // column headers
+                  colorBgElevated: "rgba(255,255,255,0.1)", // rows (hover/alternate)
+                  colorPrimary: "#1677ff", // primary color (optional)
+                  width: "100%",
+                },
+              },
+            }}
+          >
+            <Table
+              columns={columnsAssignments}
+              dataSource={tableData}
+              onChange={onChange}
+            />{" "}
+          </ConfigProvider>
         </div>
       ) : (
-        <div style={{ width: "80%", margin: "16px 0" }}>
-          <Table
-            columns={columnSubmissions}
-            dataSource={submissionsData}
-            onChange={onChange}
-          />{" "}
+        <div style={{ width: "100%", margin: "16px 0" }}>
+          <ConfigProvider
+            theme={{
+              components: {
+                Table: {
+                  colorBgContainer: "rgba(0,0,0,0.05)", // table background
+                  colorText: "#ffffff", // normal text
+                  colorTextHeading: "#ffffff", // column headers
+                  colorBgElevated: "rgba(255,255,255,0.1)", // rows (hover/alternate)
+                  colorPrimary: "#1677ff", // primary color (optional)
+                },
+              },
+            }}
+          >
+            <Table
+              columns={columnSubmissions}
+              dataSource={submissionsData}
+              onChange={onChange}
+            />{" "}
+          </ConfigProvider>
         </div>
       )}
     </div>

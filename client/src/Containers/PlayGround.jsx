@@ -31,28 +31,20 @@ const PlayGround = () => {
 
   const socketRef = useRef(null);
 
-  const onMountHome = (editor) => {
+  const onMountHome = (editor, monaco) => {
     editorRef.current = editor;
     editor.focus();
-    const position = { lineNumber: 2, column: 5 };
 
-    // editor.deltaDecorations(
-    //   [],
-    //   [
-    //     {
-    //       range: new monaco.Range(
-    //         position.lineNumber,
-    //         position.column,
-    //         position.lineNumber,
-    //         position.column
-    //       ),
-    //       options: {
-    //         className: "secondary-cursor",
-    //         afterContentClassName: "username-label", // Add styling for the label
-    //       },
-    //     },
-    //   ]
-    // );
+    monaco.editor.defineTheme("myCustomTheme", {
+      base: "vs-dark",
+      inherit: true,
+      rules: [],
+      colors: {
+        "editor.background": "#0d1117",
+      },
+    });
+
+    monaco.editor.setTheme("myCustomTheme");
   };
 
   const onMount = (editor) => {
@@ -126,14 +118,16 @@ const PlayGround = () => {
       socketRef.current.on("joined", ({ allClients, username, socketId }) => {
         toast.success(`${username} joined the room`);
         setAllJoinedUsers(allClients);
-        setAllOtherClient(allClients.filter((client) => client.socketId != socketId));
+        setAllOtherClient(
+          allClients.filter((client) => client.socketId != socketId)
+        );
       });
       function handleErrors(err) {
         console.log(err);
       }
 
       socketRef.current.on("home-code", ({ data, socketId }) => {
-        if(!isEducator()) setHomeValue(data);
+        if (!isEducator()) setHomeValue(data);
       });
 
       socketRef.current.on("disconnected", ({ socketId, username }) => {
@@ -190,7 +184,7 @@ const PlayGround = () => {
     if (socketRef.current && data != "// code here") {
       socketRef.current.emit("home-code-changed", {
         data,
-        roomId: assignmentCode
+        roomId: assignmentCode,
       });
     }
     setHomeValue(data);
@@ -206,7 +200,7 @@ const PlayGround = () => {
           <div>
             <LanguageMenu onSelectChange={onSelectChange} language={language} />
           </div>
-          <div className="mb-2">
+          <div>
             <Segmented
               options={["Session", "Practice"]}
               onChange={(value) => {
@@ -217,32 +211,60 @@ const PlayGround = () => {
         </div>
         <div onClick={cursorPosition}>
           {editorOption == "Session" && (
-            <Editor
-              height={"75vh"}
-              theme="vs-dark"
-              language={LANGUAGES[language - 1]}
-              value={homeValue}
-              onChange={(data) => {
-                handleEditorChange(data);
+            <div
+              style={{
+                height: "75vh",
+                borderRadius: "8px",
+                overflow: "hidden",
               }}
-              options={{
-                readOnly: isStudent(),
-              }}
-              onMount={onMountHome}
-            />
+            >
+              <Editor
+                height={"75vh"}
+                theme="vs-dark"
+                language={LANGUAGES[language - 1]}
+                value={homeValue}
+                onChange={(data) => {
+                  handleEditorChange(data);
+                }}
+                options={{
+                  readOnly: isStudent(),
+                  scrollbar: {
+                    verticalScrollbarSize: 6, // 👈 reduce vertical scrollbar width
+                    horizontalScrollbarSize: 6, // 👈 reduce horizontal scrollbar height
+                    alwaysConsumeMouseWheel: false, // optional: allows page scroll with wheel
+                  },
+                }}
+                onMount={onMountHome}
+              />
+            </div>
           )}
           {editorOption == "Practice" && (
-            <Editor
-              height={"75vh"}
-              theme="vs-dark"
-              language={LANGUAGES[language - 1]}
-              defaultValue={"//code here"}
-              value={value}
-              onChange={(data) => {
-                setValue(data);
+            <div
+              style={{
+                height: "75vh",
+                borderRadius: "8px",
+                overflow: "hidden",
               }}
-              onMount={onMount}
-            />
+            >
+              <Editor
+                height={"75vh"}
+                theme="vs-dark"
+                language={LANGUAGES[language - 1]}
+                defaultValue={"//code here"}
+                options={{
+                  scrollbar: {
+                    verticalScrollbarSize: 6, 
+                    horizontalScrollbarSize: 6,
+                    alwaysConsumeMouseWheel: false, // optional: allows page scroll with wheel
+                  },
+                }}
+                value={value}
+                onChange={(data) => {
+                  setValue(data);
+                }}
+                onMount={onMount}
+              />
+            </div>
           )}
         </div>
       </div>

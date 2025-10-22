@@ -101,12 +101,14 @@ const Home = () => {
                 color: "white",
               }}
             >
-              {isModalOpen ? "Create a class" : "Join or Create a Class"}
+              {isModalOpen ? "Create a class" : isEducator() ? "Join or Create a Class" : "Join a class"}
             </Title>
             <Text style={{ color: "#94a3b8" }}>
               {isModalOpen
                 ? "Fill in the details to create a new class"
-                : "Create a new class or join with a code"}
+                : isEducator() ?
+                "Create a new class or join with a code"
+                : "Enter a class code to join a class"}
             </Text>
           </div>
 
