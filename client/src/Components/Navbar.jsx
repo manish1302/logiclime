@@ -106,7 +106,7 @@ const Navbar = () => {
       name: "Contact",
       link: "#contact",
       click: () => scrollTo("#contact"),
-    }
+    },
   ];
 
   return (
@@ -116,17 +116,19 @@ const Navbar = () => {
         <NavBody>
           <NavbarLogo onClick={() => {}} />
           <NavItems items={navItems} />
-          <div className="flex items-center gap-4">
-            {/* <NavbarButton variant="secondary">Profile</NavbarButton> */}
-            <NavbarButton
-              onClick={() => {
-                navigate("/home");
-              }}
-              className="get-started-button"
-            >
-              Get Started
-            </NavbarButton>
-          </div>
+          {window.location.pathname == "/" && (
+            <div className="flex items-center gap-4">
+              {/* <NavbarButton variant="secondary">Profile</NavbarButton> */}
+              <NavbarButton
+                onClick={() => {
+                  navigate("/home");
+                }}
+                className="get-started-button"
+              >
+                Get Started
+              </NavbarButton>
+            </div>
+          )}
         </NavBody>
 
         {/* Mobile Navigation */}

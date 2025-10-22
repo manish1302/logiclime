@@ -10,6 +10,7 @@ import {
 
 import React, { useRef, useState } from "react";
 import lemonLogo from '../../assets/lemon.png'
+import { useNavigate } from "react-router-dom";
 
 
 export const Navbar = ({
@@ -191,6 +192,7 @@ export const MobileNavToggle = ({
 };
 
 export const NavbarLogo = () => {
+  const navigate = useNavigate();
   return (
     <div
       href="#"
@@ -200,7 +202,9 @@ export const NavbarLogo = () => {
         alt="logo"
         width={20}
         height={20} />
-      <div className="logo cursor-pointer">Logic Lime</div>
+      <div className="ms-2 logo cursor-pointer" onClick={() => {
+        navigate("/home");
+      }}>Logic Lime</div>
     </div>
   );
 };

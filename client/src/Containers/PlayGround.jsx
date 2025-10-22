@@ -6,7 +6,7 @@ import { CODE_SNIPPETS, LANGUAGE_VERSIONS, LANGUAGES } from "../constants";
 import { useParams } from "react-router-dom";
 import { getAssignmentById } from "../Endpoints/Assignment";
 import { getAssignmentCode } from "../Endpoints/StudentMarks";
-import { Segmented } from "antd";
+import { ConfigProvider, Segmented, theme, Space } from "antd";
 import { initializeSocket } from "../socket";
 import { getUserById } from "../Endpoints/Auth";
 import { toast, Toaster } from "react-hot-toast";
@@ -28,6 +28,7 @@ const PlayGround = () => {
   const [editorOption, setEditorOption] = useState("Session");
   const [allJoinedUsers, setAllJoinedUsers] = useState([]);
   const [allOtherClients, setAllOtherClient] = useState([]);
+  const { darkAlgorithm } = theme;
 
   const socketRef = useRef(null);
 
@@ -201,12 +202,28 @@ const PlayGround = () => {
             <LanguageMenu onSelectChange={onSelectChange} language={language} />
           </div>
           <div>
-            <Segmented
-              options={["Session", "Practice"]}
-              onChange={(value) => {
-                setEditorOption(value);
+            <ConfigProvider
+              theme={{
+                components: {
+                  Segmented: {
+                    itemSelectedBg: "#1677ff", // selected background
+                    itemHoverBg: "#40a9ff", // hover background
+                    itemSelectedColor: "#ffffff", // <-- selected text color
+                    itemColor: "rgba(255,255,255,0.85)", // normal text color
+                  },
+                },
               }}
-            />
+            >
+              <Segmented
+                options={["Session", "Practice"]}
+                onChange={(value) => setEditorOption(value)}
+                style={{
+                  backgroundColor: "#1f1f1f",
+                  color: "#fff",
+                  borderColor: "#333",
+                }}
+              />
+            </ConfigProvider>
           </div>
         </div>
         <div onClick={cursorPosition}>
@@ -253,7 +270,7 @@ const PlayGround = () => {
                 defaultValue={"//code here"}
                 options={{
                   scrollbar: {
-                    verticalScrollbarSize: 6, 
+                    verticalScrollbarSize: 6,
                     horizontalScrollbarSize: 6,
                     alwaysConsumeMouseWheel: false, // optional: allows page scroll with wheel
                   },
